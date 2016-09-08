@@ -1,2 +1,2 @@
 # Space-Flight
-The game about the space.
+The mobile project (game) about the space.
