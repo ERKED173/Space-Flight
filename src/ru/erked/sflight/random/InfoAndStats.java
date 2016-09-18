@@ -12,6 +12,8 @@ public class InfoAndStats {
 	public static long launch;
 	public static long date;
 	public static long money;
+	public static long fuel;
+	public static long metal;
 	
 	public static String selectedFirst = "null";
 	public static String selectedSecond = "null";
@@ -23,7 +25,6 @@ public class InfoAndStats {
 	public static int days;
 	public static float prevDay;
 	public static boolean hasTask;
-	public static boolean isFirstTutorial = true;
 	
 	public static RocketDetail firstStage = new RocketDetail("","",0.0F,0.0F,0.0F,0,0,0,false);
 	public static RocketDetail secondStage = new RocketDetail("","",0.0F,0.0F,0.0F,0,0,0,false);

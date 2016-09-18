@@ -9,6 +9,8 @@ public class ResetTheGame {
 		InfoAndStats.date = 0;
 		InfoAndStats.launch = 0;
 		InfoAndStats.money = 50;
+		InfoAndStats.fuel = 50;
+		InfoAndStats.metal = 50;
 		InfoAndStats.days = 0;
 		
 		InfoAndStats.hasOrder = false;

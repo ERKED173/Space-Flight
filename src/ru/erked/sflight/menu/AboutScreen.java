@@ -22,8 +22,8 @@ public class AboutScreen implements Screen{
 	private SFlightInputController controller;
 	
 	//Вращение объектов
-	public static float planet1PrevRotation;
-	public static float planet2PrevRotation;
+	public static float planet1PrevRotation = 0.0F;
+	public static float planet2PrevRotation = 0.0F;
 	public static float cometPrevRotation;
 	
 	//Титры

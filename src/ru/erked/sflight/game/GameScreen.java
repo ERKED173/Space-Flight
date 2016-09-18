@@ -178,6 +178,8 @@ public class GameScreen implements Screen{
 //Иконка КосмоКоинов
 	private Texture money;
 	private Sprite moneySprite;
+	private Sprite fuelSprite;
+	private Sprite metalSprite;
 	private float moneyX;
 	private float moneyY;
 	private float moneyWidth;
@@ -427,7 +429,11 @@ public class GameScreen implements Screen{
 		if(isLaunch) drawSmokeParticles();
 		
 		moneySprite.draw(batch);
+		fuelSprite.draw(batch);
+		metalSprite.draw(batch);
 		text.draw(batch, ": " + Long.toString((int)(InfoAndStats.money)), moneySprite.getX() + moneySprite.getWidth() + moneySprite.getWidth()*0.15F, moneySprite.getY() + moneySprite.getHeight() - text.getCapHeight()/2);
+		text.draw(batch, ": " + Long.toString((int)(InfoAndStats.fuel)), fuelSprite.getX() + fuelSprite.getWidth() + fuelSprite.getWidth()*0.15F, fuelSprite.getY() + fuelSprite.getHeight() - text.getCapHeight()/2);
+		text.draw(batch, ": " + Long.toString((int)(InfoAndStats.metal)), metalSprite.getX() + metalSprite.getWidth() + metalSprite.getWidth()*0.15F, metalSprite.getY() + metalSprite.getHeight() - text.getCapHeight()/2);
 		
 		batch.end();
 		/**Отрисовка объектов*/
@@ -495,6 +501,10 @@ public class GameScreen implements Screen{
 		moneyY = camera.position.y - moneyHeight + (height/2 - 0.015F*height);
 		moneySprite.setX(moneyX);
 		moneySprite.setY(moneyY);
+		fuelSprite.setX(moneyX);
+		fuelSprite.setY(moneyY - 1.25F*moneyHeight);
+		metalSprite.setX(moneyX);
+		metalSprite.setY(moneyY - 2.5F*moneyHeight);
 	}
 	private void nextDayCoords(){
 		//Установка координат следующего дня*/
@@ -675,11 +685,16 @@ public class GameScreen implements Screen{
 		//Иконка КосмоКоинов\\
 		money = new Texture("objects/cosmocoin.png");
 		moneySprite = new Sprite(money);
+		fuelSprite = new Sprite(new Texture("objects/fuel.png"));
+		metalSprite = new Sprite(new Texture("objects/metal.png"));
+		moneySprite = new Sprite(money);
 		moneyWidth = 0.05F*width;
 		moneyHeight = moneyWidth;
 		moneyX = camera.position.x - moneyWidth - (width/2 - 0.15F*width);
 		moneyY = camera.position.y - moneyHeight + (height/2 - 0.015F*height);
 		moneySprite.setBounds(moneyX, moneyY, moneyWidth, moneyHeight);
+		fuelSprite.setBounds(moneyX, moneyY - 1.1F*moneyHeight, moneyWidth, moneyHeight);
+		metalSprite.setBounds(moneyX, moneyY - 2.1F*moneyHeight, moneyWidth, moneyHeight);
 	}
 	private void nextDayInit(){
 		//Окно следующего дня\\
@@ -1041,61 +1056,59 @@ public class GameScreen implements Screen{
 	}
 	
 	private void buttonListener(){
-		if(!isLaunch && !InfoAndStats.isFirstTutorial){
-			//Слушатель нажатия на кнопку "Main Menu"*/
-			if(controller.isClickedGame(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-				if(!isNextDayDraw){
-					game.setScreen(new MainMenu(game));
-					this.dispose();
-				}
+		//Слушатель нажатия на кнопку "Main Menu"*/
+		if(controller.isClickedGame(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
+			if(!isNextDayDraw){
+				game.setScreen(new MainMenu(game));
+				this.dispose();
 			}
-			//Слушатель нажатия на кнопку "Next Day"*/
-			if(controller.isClickedGame(nextDayButtonX, nextDayButtonY, nextDayButtonWidth, nextDayButtonHeight)){
-				if(!isNextDayDraw){
-					if(!(InfoAndStats.money == 1)){
-						cost = rand.nextInt((int)(InfoAndStats.money/100.0F*(float)(rand.nextInt(101) + 1) + 1));
-					}else{
-						cost = 1;
-					}
-					InfoAndStats.date++;
-					InfoAndStats.money -= cost;
-					isNextDayDraw = true;
+		}
+		//Слушатель нажатия на кнопку "Next Day"*/
+		if(controller.isClickedGame(nextDayButtonX, nextDayButtonY, nextDayButtonWidth, nextDayButtonHeight)){
+			if(!isNextDayDraw){
+				if(!(InfoAndStats.money == 1)){
+					cost = rand.nextInt((int)(InfoAndStats.money/100.0F*(float)(rand.nextInt(101) + 1) + 1));
+				}else{
+					cost = 1;
 				}
+				InfoAndStats.date++;
+				InfoAndStats.money -= cost;
+				isNextDayDraw = true;
 			}
-			//Слушатель нажатия на кнопку "Выход из Next Day"*/
-			if(controller.isClickedGame(backNextDay1X, backNextDay1Y, backNextDay1Width, backNextDay1Height)){
-				if(isNextDayDraw){
-					isNextDayDraw = false;
-					clockSprite.setRotation(0);
-				}
+		}
+		//Слушатель нажатия на кнопку "Выход из Next Day"*/
+		if(controller.isClickedGame(backNextDay1X, backNextDay1Y, backNextDay1Width, backNextDay1Height)){
+			if(isNextDayDraw){
+			isNextDayDraw = false;
+			clockSprite.setRotation(0);
 			}
-			//Слушатель нажатия на ангар*/
-			if(controller.isClickedGame(angar1Sprite.getX(), angar1Sprite.getY(), angar1Width, angar1Height)){
-				if(!isNextDayDraw){
-					game.setScreen(new AngarScreen(game));
-					this.dispose();
-				}
+		}
+		//Слушатель нажатия на ангар*/
+		if(controller.isClickedGame(angar1Sprite.getX(), angar1Sprite.getY(), angar1Width, angar1Height)){
+			if(!isNextDayDraw){
+				game.setScreen(new AngarScreen(game));
+				this.dispose();
 			}
-			//Слушатель нажатия на аналитический центр*/
-			if(controller.isClickedGame(analytic1Sprite.getX(), analytic1Sprite.getY(), analytic1Width, analytic1Height)){
-				if(!isNextDayDraw){	
-					game.setScreen(new AnalyticCentreScreen(game));
-					this.dispose();
-				}
+		}
+		//Слушатель нажатия на аналитический центр*/
+		if(controller.isClickedGame(analytic1Sprite.getX(), analytic1Sprite.getY(), analytic1Width, analytic1Height)){
+			if(!isNextDayDraw){	
+				game.setScreen(new AnalyticCentreScreen(game));
+				this.dispose();
 			}
-			//Слушатель нажатия на диспетчерскую вышку*/
-			if(controller.isClickedGame(control1Sprite.getX(), control1Sprite.getY(), control1Width, control1Height)){
-				if(!isNextDayDraw){	
-					game.setScreen(new ControlCentreScreen(game));
-					this.dispose();
-				}
+		}
+		//Слушатель нажатия на диспетчерскую вышку*/
+		if(controller.isClickedGame(control1Sprite.getX(), control1Sprite.getY(), control1Width, control1Height)){
+			if(!isNextDayDraw){	
+				game.setScreen(new ControlCentreScreen(game));
+				this.dispose();
 			}
-			//Слушатель нажатия на научный центр*/
-			if(controller.isClickedGame(scienceCentre1Sprite.getX(), scienceCentre1Sprite.getY(), scienceCentre1Width, scienceCentre1Height)){
-				if(!isNextDayDraw){	
-					game.setScreen(new ScienceCentreScreen(game));
-					this.dispose();
-				}
+		}
+		//Слушатель нажатия на научный центр*/
+		if(controller.isClickedGame(scienceCentre1Sprite.getX(), scienceCentre1Sprite.getY(), scienceCentre1Width, scienceCentre1Height)){
+			if(!isNextDayDraw){	
+				game.setScreen(new ScienceCentreScreen(game));
+				this.dispose();
 			}
 		}
 	}
