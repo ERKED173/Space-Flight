@@ -298,11 +298,6 @@ public class GameScreen implements Screen{
 	//NULL-TEXTURE
 	public static Sprite nullSprite;
 	
-	//Обучение
-	private static Sprite tutorialSprite;
-	private static Sprite nextSprite;
-	private static int counter;
-	
 	private boolean wasLaunchSound;
 	private Music launchSoundPath = Gdx.audio.newMusic(Gdx.files.internal("sounds/misc/WavLibraryNet_Sound6386.mp3"));
 	
@@ -368,7 +363,6 @@ public class GameScreen implements Screen{
 		nextDayInit();
 		controlInit();
 		smokeInit();
-		tutorialInit();
 		
 		UT_1202Init();
 		MT_0112Init();
@@ -431,7 +425,6 @@ public class GameScreen implements Screen{
 		drawNextDayInterface(delta);
 		
 		if(isLaunch) drawSmokeParticles();
-		if(InfoAndStats.isFirstTutorial) drawTutorial();
 		
 		moneySprite.draw(batch);
 		text.draw(batch, ": " + Long.toString((int)(InfoAndStats.money)), moneySprite.getX() + moneySprite.getWidth() + moneySprite.getWidth()*0.15F, moneySprite.getY() + moneySprite.getHeight() - text.getCapHeight()/2);
@@ -767,15 +760,6 @@ public class GameScreen implements Screen{
 		smokeSprite.setRotation(rand.nextInt(359));
 		smokeYellowSprite.setRotation(rand.nextInt(359));
 	}
-	private void tutorialInit(){
-		tutorialSprite = new Sprite(new Texture("random/tutWindow1US.png"));
-		if(InfoAndStats.lngRussian)
-			tutorialSprite.setTexture(new Texture("random/tutWindow1RU.png"));
-		tutorialSprite.setBounds(camera.position.x - 0.5F*width, camera.position.y - 0.5F*height, width, height);
-		nextSprite = new Sprite(new Texture("btns/next.png"));
-		nextSprite.setBounds(tutorialSprite.getX() + 0.9F*tutorialSprite.getWidth(), tutorialSprite.getY() + 0.1F*tutorialSprite.getHeight(), 0.1F*tutorialSprite.getWidth(), 0.05F*tutorialSprite.getWidth());
-		counter = 1;
-	}
 	
 	private void UT_1202Init(){
 		//UT_1202\\
@@ -1055,29 +1039,6 @@ public class GameScreen implements Screen{
 			smokeYellowSprite.draw(batch);
 		}
 	}
-	private void drawTutorial(){
-		if(counter == 2 && InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow2RU.png"));
-		if(counter == 2 && !InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow2US.png"));
-		if(counter == 3 && InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow3RU.png"));
-		if(counter == 3 && !InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow3US.png"));
-		if(counter == 4 && InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow4RU.png"));
-		if(counter == 4 && !InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow4US.png"));
-		if(counter == 5 && InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow5RU.png"));
-		if(counter == 5 && !InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow5US.png"));
-		if(counter == 6 && InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow6RU.png"));
-		if(counter == 6 && !InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow6US.png"));
-		if(counter == 7 && InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow7RU.png"));
-		if(counter == 7 && !InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow7US.png"));
-		if(counter == 8 && InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow8RU.png"));
-		if(counter == 8 && !InfoAndStats.lngRussian) tutorialSprite.setTexture(new Texture("random/tutWindow8US.png"));
-		if(counter == 9) InfoAndStats.isFirstTutorial = false;
-		tutorialSprite.setX(camera.position.x - 0.5F*width);
-		tutorialSprite.setY(camera.position.y - 0.5F*height);
-		nextSprite.setX(tutorialSprite.getX() + 0.8F*tutorialSprite.getWidth());
-		nextSprite.setY(tutorialSprite.getY() + 0.1F*tutorialSprite.getHeight());
-		tutorialSprite.draw(batch);
-		nextSprite.draw(batch);
-	}
 	
 	private void buttonListener(){
 		if(!isLaunch && !InfoAndStats.isFirstTutorial){
@@ -1135,11 +1096,6 @@ public class GameScreen implements Screen{
 					game.setScreen(new ScienceCentreScreen(game));
 					this.dispose();
 				}
-			}
-		}else if(InfoAndStats.isFirstTutorial){
-			//Слушатель нажатия на кнопку туториала*/
-			if(controller.isClickedGame(nextSprite.getX(), nextSprite.getY(), nextSprite.getWidth(), nextSprite.getHeight())){
-				counter++;
 			}
 		}
 	}
