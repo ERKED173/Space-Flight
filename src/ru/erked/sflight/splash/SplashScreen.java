@@ -23,6 +23,8 @@ public class SplashScreen implements Screen {
 	private SpriteBatch batch;
 	private Texture splashImg;
 	private Sprite splash;
+	private Sprite blackAlpha;
+	private float alp;
 	
 	private float splashTimer;
 
@@ -39,6 +41,7 @@ public class SplashScreen implements Screen {
 	public void show() {
 		/**Инициализация*/
 		splashTimer = 0.0F;
+		alp = 0.0F;
 		
 		splashX = 0.0F;
 		splashY = (-1)*(256*splashTentionIndex)/2 + height/2; //Выставляю относительно центра устройства по Y
@@ -49,6 +52,10 @@ public class SplashScreen implements Screen {
 		/**Инициализация*/
 		
 		splash.setBounds(splashX, splashY, width, 256*splashTentionIndex);
+	
+		blackAlpha = new Sprite(new Texture("objects/black.png"));
+		blackAlpha.setBounds(0.0F, 0.0F, width, height);
+		blackAlpha.setAlpha(0.0F);
 	}
 
 	/**Вызывается при показе скрина Splash*/
@@ -56,6 +63,8 @@ public class SplashScreen implements Screen {
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
 
+		System.out.println(alp);
+		
 		/**Необходимо для уничтожения эффекта следов*/
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -68,7 +77,16 @@ public class SplashScreen implements Screen {
 			splash.draw(batch);
 			batch.end();
 		}else{
-			this.dispose();
+			alp+=0.025F;
+			batch.begin();
+			splash.draw(batch);
+			blackAlpha.draw(batch);
+			batch.end();
+			if(alp<1.0F){
+				blackAlpha.setAlpha(alp);
+			}else{
+				this.dispose();
+			}
 		}
 	}
 

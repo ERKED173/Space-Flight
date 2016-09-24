@@ -323,7 +323,7 @@ public class FlightScreen implements Screen{
 		text.getData().setScale((float)(0.00075F*width));
 		textFail.getData().setScale((float)(0.00075F*width));
 		textSuc.getData().setScale((float)(0.00075F*width));
-		
+
 	}
 
 	@Override

@@ -86,6 +86,9 @@ public class MainMenu implements Screen {
 	private float optionsButtonWidth;
 	private float optionsButtonHeight;
 	public static float optionsButtonTentionIndex; //Соотношение сторон кнопки
+
+	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
+	private float alp = 1.0F;
 	
 	private SFlightInputController controller;
 
@@ -218,12 +221,21 @@ public class MainMenu implements Screen {
 		exitButtonInactiveSprite.setBounds(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight);
 		exitButtonActiveSprite.setBounds(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight);
 		/**Инициализация*/
+	
+		blackAlpha.setBounds(0.0F, 0.0F, width, height);
+		blackAlpha.setAlpha(1.0F);
 	}
 
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
-		/**Дебаг*/
+
+		if(alp>0.0F){
+			blackAlpha.setAlpha(alp);
+			alp-=0.025F;
+		}else{
+			blackAlpha.setAlpha(0.0F);
+		}
 		
 		/**Необходимо для уничтожения эффекта следов*/
 		Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -271,6 +283,8 @@ public class MainMenu implements Screen {
 			exitButtonActiveSprite.draw(batch);
 		else
 			exitButtonInactiveSprite.draw(batch);
+		
+		blackAlpha.draw(batch);
 		
 		batch.end();
 		

@@ -649,7 +649,7 @@ public class GameScreen implements Screen{
 		analytic1Texture = new Texture("objects/analytic_1.png");
 		analytic1Sprite = new Sprite(analytic1Texture);
 		analytic1TentionIndex = (float)analytic1Sprite.getWidth()/analytic1Sprite.getHeight();
-		analytic1Width = 0.20F*width;
+		analytic1Width = 0.2F*width;
 		analytic1Height = (float)analytic1Width/analytic1TentionIndex;
 		analytic1X = 0.739F*backgroundSprite.getWidth();
 		analytic1Y = 0.8F*backgroundSprite.getHeight();
@@ -657,10 +657,10 @@ public class GameScreen implements Screen{
 		//Аналитический_центр_2\\
 		analytic2Texture = new Texture("objects/analytic_2.png");
 		analytic2Sprite = new Sprite(analytic2Texture);
-		analytic2Width = 0.3F*width;
+		analytic2Width = 0.4F*width;
 		analytic2Height = (float)analytic2Width/analytic1TentionIndex;
-		analytic2X = 0.739F*backgroundSprite.getWidth() - 0.16625615763546798029556650246305F*analytic2Width;
-		analytic2Y = 0.8F*backgroundSprite.getHeight() - 0.16598778004073319755600814663951F*analytic2Height;
+		analytic2X = 0.739F*backgroundSprite.getWidth() - 0.24909090909090909090909090909091F*analytic2Width;
+		analytic2Y = 0.8F*backgroundSprite.getHeight() - 0.2509090909090909090909090909091F*analytic2Height;
 		analytic2Sprite.setBounds(analytic2X, analytic2Y, analytic2Width, analytic2Height);
 	}
 	private void nextDayButtonInit(){

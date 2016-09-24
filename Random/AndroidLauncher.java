@@ -20,6 +20,8 @@ public class AndroidLauncher extends AndroidApplication {
 	public static final String LAUNCH = "launch";
 	public static final String DATE = "date";
 	public static final String MONEY = "money";
+	public static final String FUEL = "fuel";
+	public static final String METAL = "metal";
 	
 	public static final String ORDER_AVAILABILITY = "order_availability";
 	public static final String ORDER_NAME = "order_name";
@@ -27,7 +29,6 @@ public class AndroidLauncher extends AndroidApplication {
 	public static final String ORDER_LEVEL = "order_level";
 	
 	public static final String LNG = "lng";
-	public static final String IS_FIRST_TUTORIAL = "is_first_tutorial";
 	
 	public static final String UPGRADE_DAYS = "upgrade_days";
 	public static final String HAS_TASK = "has_task";
@@ -141,9 +142,10 @@ public class AndroidLauncher extends AndroidApplication {
 	    ed.putLong(LAUNCH, InfoAndStats.launch);
 	    ed.putLong(DATE, InfoAndStats.date);
 	    ed.putLong(MONEY, InfoAndStats.money);
+	    ed.putLong(FUEL, InfoAndStats.fuel);
+	    ed.putLong(METAL, InfoAndStats.metal);
 	    
 	    ed.putBoolean(LNG, InfoAndStats.lngRussian);
-	    ed.putBoolean(IS_FIRST_TUTORIAL, InfoAndStats.isFirstTutorial);
 	    
 	    ed.putBoolean(ORDER_AVAILABILITY, InfoAndStats.hasOrder); 
 	    ed.putString(ORDER_NAME, InfoAndStats.currentOrder.getOrderName());
@@ -253,9 +255,10 @@ public class AndroidLauncher extends AndroidApplication {
 	    InfoAndStats.launch = stats.getLong(LAUNCH, 0);
 	    InfoAndStats.date = stats.getLong(DATE, 0);
 	    InfoAndStats.money = stats.getLong(MONEY, 50);
+	    InfoAndStats.fuel = stats.getLong(FUEL, 50);
+	    InfoAndStats.metal = stats.getLong(METAL, 50);
 	    
 	    InfoAndStats.lngRussian = stats.getBoolean(LNG, false);
-	    InfoAndStats.isFirstTutorial = stats.getBoolean(IS_FIRST_TUTORIAL, true);
 	    
 	    InfoAndStats.days = stats.getInt(UPGRADE_DAYS, 0);
 	    InfoAndStats.hasTask = stats.getBoolean(HAS_TASK, false);
