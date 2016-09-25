@@ -46,15 +46,10 @@ public class StatisticScreen implements Screen{
 	public static String statsUS = "STATISTICS";
 	public static String statsRU = "СТАТИСТИКА";
 	public static String elapsedTime;
-	private static String lifeTime;
 	private static long hours;
 	private static long minutes;
 	private static long seconds;
 	public static long launches;
-	private static long days;
-	private static long weeks;
-	private static long months;
-	private static long years;
 	
 	public StatisticScreen(Game game){
 		this.game = game;
@@ -139,26 +134,22 @@ public class StatisticScreen implements Screen{
 		minutes = (int)seconds/60;
 		hours = (int)minutes/60;
 		launches = InfoAndStats.launch;
-		days = InfoAndStats.date%7 + 1;
-		weeks = (int)InfoAndStats.date/7;
-		months = (int)weeks/4;
-		years = (int)months/12;
 		if(!InfoAndStats.lngRussian){
 			elapsedTime = "Time in the game: " + Integer.toString((int) hours) + "h " + Integer.toString((int) minutes%60) + "m " + Integer.toString((int) seconds%60) + "s";
 			header.draw(batch, statsUS, width/2 - (int)(0.055F*width)*2.5F, 0.9F*height);
 			text.draw(batch, elapsedTime, 0.075F*width, 0.75F*height);
 			text.draw(batch, "Rocket launches: " + Long.toString((int)(launches)), 0.075F*width, 0.7F*height);
-			lifeTime = "The lifetime of the company: " + Long.toString((int)(years)) + "y/" + Long.toString((int)(months)) + "m/" + Long.toString((int)(weeks)) + "w/" + Long.toString((int)(days))  + "d";
-			text.draw(batch, lifeTime, 0.075F*width, 0.65F*height);
-			text.draw(batch, "Cosmocoins: " + Long.toString((int)(InfoAndStats.money)), 0.075F*width, 0.6F*height);
+			text.draw(batch, "Cosmocoins: " + Long.toString((int)(InfoAndStats.money)), 0.075F*width, 0.65F*height);
+			text.draw(batch, "Fuel: " + Long.toString((int)(InfoAndStats.fuel)), 0.075F*width, 0.6F*height);
+			text.draw(batch, "Metal: " + Long.toString((int)(InfoAndStats.metal)), 0.075F*width, 0.55F*height);
 		}else{
 			elapsedTime = "Время в игре: " + Integer.toString((int) hours) + "ч " + Integer.toString((int) minutes%60) + "м " + Integer.toString((int) seconds%60) + "с";
 			header.draw(batch, statsRU, width/2 - (int)(0.185F*width), 0.9F*height);
 			text.draw(batch, elapsedTime, 0.075F*width, 0.75F*height);
 			text.draw(batch, "Запусков ракет: " + Long.toString((int)(launches)), 0.075F*width, 0.7F*height);
-			lifeTime = "Возраст компании: " + Long.toString((int)(years)) + "лет/" + Long.toString((int)(months)) + "мес/" + Long.toString((int)(weeks)) + "нед/" + Long.toString((int)(days))  + "дней";
-			text.draw(batch, lifeTime, 0.075F*width, 0.65F*height);
-			text.draw(batch, "Космокоины: " + Long.toString((int)(InfoAndStats.money)), 0.075F*width, 0.6F*height);
+			text.draw(batch, "Космокоины: " + Long.toString((int)(InfoAndStats.money)), 0.075F*width, 0.65F*height);
+			text.draw(batch, "Топливо: " + Long.toString((int)(InfoAndStats.fuel)), 0.075F*width, 0.6F*height);
+			text.draw(batch, "Метал: " + Long.toString((int)(InfoAndStats.metal)), 0.075F*width, 0.55F*height);
 		}
 		
 		batch.end();

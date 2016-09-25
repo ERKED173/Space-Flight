@@ -62,8 +62,6 @@ public class SplashScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
-
-		System.out.println(alp);
 		
 		/**Необходимо для уничтожения эффекта следов*/
 		Gdx.gl.glClearColor(0, 0, 0, 0);

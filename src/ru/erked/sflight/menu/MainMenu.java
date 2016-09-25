@@ -89,6 +89,10 @@ public class MainMenu implements Screen {
 
 	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
 	private float alp = 1.0F;
+	private boolean isTransGame;
+	private boolean isTransAbout;
+	private boolean isTransOptions;
+	private boolean isTransExit;
 	
 	private SFlightInputController controller;
 
@@ -111,6 +115,11 @@ public class MainMenu implements Screen {
 		music.setLooping(true);
 		music.setVolume(1.0f);
 		music.play();
+		
+		isTransGame = false;
+		isTransAbout = false;
+		isTransOptions = false;
+		isTransExit = false;
 		
 		//Фон//
 		backgroundTexture = new Texture("bckgrnd/menu_background.png");
@@ -229,12 +238,13 @@ public class MainMenu implements Screen {
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
-
-		if(alp>0.0F){
+		
+		if(alp>0.0F && (!isTransGame && !isTransAbout && !isTransOptions && !isTransExit)){
 			blackAlpha.setAlpha(alp);
-			alp-=0.025F;
-		}else{
+			alp-=0.033F;
+		}else if(!isTransGame && !isTransAbout && !isTransOptions && !isTransExit){
 			blackAlpha.setAlpha(0.0F);
+			alp = 0.0F;
 		}
 		
 		/**Необходимо для уничтожения эффекта следов*/
@@ -289,20 +299,59 @@ public class MainMenu implements Screen {
 		batch.end();
 		
 		/**Проверка нажатий на кнопки*/
-		if(controller.isClicked(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight)){
-			Gdx.app.exit();
+		if(controller.isClicked(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight) || isTransExit){
+			isTransExit = true;
+			isTransAbout = false;
+			isTransGame = false;
+			isTransOptions = false;
+			if(alp>1.0F){
+				Gdx.app.exit();
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.033F;
+			}
 		}
-		if(controller.isClicked(aboutButtonX, aboutButtonY, aboutButtonWidth, aboutButtonHeight)){
-			this.dispose();
-			game.setScreen(new AboutScreen(game));
+		if(controller.isClicked(aboutButtonX, aboutButtonY, aboutButtonWidth, aboutButtonHeight) || isTransAbout){
+			isTransExit = false;
+			isTransAbout = true;
+			isTransGame = false;
+			isTransOptions = false;
+			if(alp>1.0F){
+				this.dispose();
+				game.setScreen(new AboutScreen(game));
+				alp = 1.0F;
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.033F;
+			}
 		}
-		if(controller.isClicked(startButtonX, startButtonY, startButtonWidth, startButtonHeight)){
-			this.dispose();
-			game.setScreen(new GameScreen(game));
+		if(controller.isClicked(startButtonX, startButtonY, startButtonWidth, startButtonHeight) || isTransGame){
+			isTransExit = false;
+			isTransAbout = false;
+			isTransGame = true;
+			isTransOptions = false;
+			if(alp>1.0F){
+				this.dispose();
+				game.setScreen(new GameScreen(game));
+				alp = 1.0F;
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.033F;
+			}
 		}
-		if(controller.isClicked(optionsButtonX, optionsButtonY, optionsButtonWidth, optionsButtonHeight)){
-			this.dispose();
-			game.setScreen(new OptionsScreen(game));
+		if(controller.isClicked(optionsButtonX, optionsButtonY, optionsButtonWidth, optionsButtonHeight) || isTransOptions){
+			isTransExit = false;
+			isTransAbout = false;
+			isTransGame = false;
+			isTransOptions = true;
+			if(alp>1.0F){
+				this.dispose();
+				game.setScreen(new OptionsScreen(game));
+				alp = 1.0F;
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.033F;
+			}
 		}
 		/**Проверка нажатий на кнопки*/
 	}

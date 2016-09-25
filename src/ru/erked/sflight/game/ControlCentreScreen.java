@@ -77,63 +77,7 @@ public class ControlCentreScreen implements Screen{
 	private float backStartWindow2Y;
 	private float backStartWindow2Width;
 	private float backStartWindow2Height;
-	//Вход во окно характеристик ракеты
-	private Texture inCharWindowInactive;
-	private Texture inCharWindowActive;
-	private Sprite inCharWindowSpriteInactive;
-	private Sprite inCharWindowSpriteActive;
-	private float inCharWindowX;
-	private float inCharWindowY;
-	private float inCharWindowWidth;
-	private float inCharWindowHeight;
-	private float inCharWindowTentionIndex;
-	//Окно характеристик ракеты
-	private Sprite charWindowSprite;
-	private float charWindowX;
-	private float charWindowY;
-	private float charWindowWidth;
-	private float charWindowHeight;
-	private static boolean isCharWindowDraw;
-	//Выход из окна характеристик ракеты
-	private Sprite backCharWindowSpriteInactive;
-	private Sprite backCharWindowSpriteActive;
-	private float backCharWindow1X;
-	private float backCharWindow1Y;
-	private float backCharWindow1Width;
-	private float backCharWindow1Height;
-	private float backCharWindow2X;
-	private float backCharWindow2Y;
-	private float backCharWindow2Width;
-	private float backCharWindow2Height;
-	//Вход во окно текщего заказа
-	private Texture inOrderWindowInactive;
-	private Texture inOrderWindowActive;
-	private Sprite inOrderWindowSpriteInactive;
-	private Sprite inOrderWindowSpriteActive;
-	private float inOrderWindowX;
-	private float inOrderWindowY;
-	private float inOrderWindowWidth;
-	private float inOrderWindowHeight;
-	private float inOrderWindowTentionIndex;
-	//Окно текущего заказа
-	private Sprite orderWindowSprite;
-	private float orderWindowX;
-	private float orderWindowY;
-	private float orderWindowWidth;
-	private float orderWindowHeight;
-	private static boolean isOrderWindowDraw;
-	//Выход из окна текщео заказа
-	private Sprite backOrderWindowSpriteInactive;
-	private Sprite backOrderWindowSpriteActive;
-	private float backOrderWindow1X;
-	private float backOrderWindow1Y;
-	private float backOrderWindow1Width;
-	private float backOrderWindow1Height;
-	private float backOrderWindow2X;
-	private float backOrderWindow2Y;
-	private float backOrderWindow2Width;
-	private float backOrderWindow2Height;
-	//Окно панели управления
+	//Монограмма
 	private Sprite monogrammSprite;
 	private float monogrammX;
 	private float monogrammY;
@@ -170,10 +114,6 @@ public class ControlCentreScreen implements Screen{
 
 		MainMenu.music.play();
 		
-		RocketDetailStats.totalThrust = InfoAndStats.firstStage.getRocketDetailThrust() + InfoAndStats.secondStage.getRocketDetailThrust() + InfoAndStats.thirdStage.getRocketDetailThrust();
-		RocketDetailStats.totalSpecificImpulse = InfoAndStats.firstStage.getRocketDetailImpulse() + InfoAndStats.secondStage.getRocketDetailImpulse() + InfoAndStats.thirdStage.getRocketDetailImpulse();
-		RocketDetailStats.totalWorkingTime = InfoAndStats.firstStage.getRocketDetailTime() + InfoAndStats.secondStage.getRocketDetailTime() + InfoAndStats.thirdStage.getRocketDetailTime();
-		
 		//Фон\\
 		backgroundTexture = new Texture("bckgrnd/control_inside.png");
 		backgroundSprite = new Sprite(backgroundTexture);
@@ -199,22 +139,7 @@ public class ControlCentreScreen implements Screen{
 		//Инициализация\\
 		panelInit();
 		startWindowInit();
-		charWindowInit();
-		charInInit();
-		orderWindowInit();
-		orderInInit();
 		startButtonInit();
-		
-		//Составление имени ракеты\\
-		if(!InfoAndStats.selectedFirst.equals("null") && !InfoAndStats.selectedSecond.equals("null") && !InfoAndStats.selectedThird.equals("null")){
-			RocketDetailStats.totalName += InfoAndStats.firstStage.getRocketDetailName().substring(1, 2) + InfoAndStats.secondStage.getRocketDetailName().substring(1, 2) + InfoAndStats.thirdStage.getRocketDetailName().substring(1, 2);
-			RocketDetailStats.totalName += "-";
-			RocketDetailStats.totalName += InfoAndStats.firstStage.getRocketDetailName().substring(InfoAndStats.firstStage.getRocketDetailName().length()-1);
-			RocketDetailStats.totalName += InfoAndStats.secondStage.getRocketDetailName().substring(InfoAndStats.secondStage.getRocketDetailName().length()-1);
-			RocketDetailStats.totalName += InfoAndStats.thirdStage.getRocketDetailName().substring(InfoAndStats.thirdStage.getRocketDetailName().length()-1);
-		}else{
-			RocketDetailStats.totalName = "";
-		}
 		
 		//Текст\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
@@ -262,8 +187,6 @@ public class ControlCentreScreen implements Screen{
 		
 		drawPanel();
 		drawStartWindow();
-		drawCharWindow();
-		drawOrderWindow();
 		
 		batch.end();
 		
@@ -319,90 +242,6 @@ public class ControlCentreScreen implements Screen{
 		backZSprite = new Sprite(new Texture("bckgrnd/backgroundGray.png"));
 		backZSprite.setBounds(0.0F, 0.0F, width, height);
 	}
-	private void charWindowInit(){
-		//Окно характеристик ракеты\\
-		charWindowSprite = new Sprite(ImgResDraw.dialogWindow);
-		charWindowWidth = 0.75F*width;
-		charWindowHeight = charWindowWidth/1.45F;
-		charWindowX = 0.5F*width - 0.5F*charWindowWidth;
-		charWindowY = 0.5F*height - 0.5F*charWindowHeight;
-		charWindowSprite.setBounds(charWindowX, charWindowY, charWindowWidth, charWindowHeight);
-		isCharWindowDraw = false;
-		backCharWindowSpriteInactive = new Sprite(ImgResDraw.backIconInactive);
-		backCharWindowSpriteActive = new Sprite(ImgResDraw.backIconActive);
-		backCharWindow1Width = 0.065F*width;
-		backCharWindow1Height = backCharWindow1Width;
-		backCharWindow1X = charWindowX + 0.95F*charWindowWidth - backCharWindow1Width;
-		backCharWindow1Y = charWindowY + 0.05F*charWindowHeight;
-		backCharWindowSpriteInactive.setBounds(backCharWindow1X, backCharWindow1Y, backCharWindow1Width, backCharWindow1Height);
-		backCharWindow2Width = 0.0975F*width;
-		backCharWindow2Height = backCharWindow2Width;
-		backCharWindow2X = charWindowX + 0.95F*charWindowWidth - backCharWindow1Width - 0.16666666666666666666666666666667F*backCharWindow2Width;
-		backCharWindow2Y = charWindowY + 0.05F*charWindowHeight - 0.16666666666666666666666666666667F*backCharWindow2Height;
-		backCharWindowSpriteActive.setBounds(backCharWindow2X, backCharWindow2Y, backCharWindow2Width, backCharWindow2Height);
-		backZSprite = new Sprite(new Texture("bckgrnd/backgroundGray.png"));
-		backZSprite.setBounds(0.0F, 0.0F, width, height);
-	}
-	private void charInInit(){
-		//Кнопка входа в характеристики ракеты\\
-		inCharWindowInactive = new Texture("btns/button_rocket_stats_inactive_US.png");
-		inCharWindowActive = new Texture("btns/button_rocket_stats_active_US.png");
-		inCharWindowSpriteInactive = new Sprite(inCharWindowInactive);
-		inCharWindowSpriteActive = new Sprite(inCharWindowActive);
-		if(InfoAndStats.lngRussian){
-			inCharWindowSpriteInactive.setTexture(new Texture("btns/RU/button_rocket_stats_inactive_RU.png"));
-			inCharWindowSpriteActive.setTexture(new Texture("btns/RU/button_rocket_stats_active_RU.png"));
-		}
-		inCharWindowTentionIndex = (float)inCharWindowInactive.getWidth()/inCharWindowInactive.getHeight();
-		inCharWindowWidth = 0.3F*width;
-		inCharWindowHeight = inCharWindowWidth/inCharWindowTentionIndex;
-		inCharWindowX = charWindowX + 0.25F*charWindowWidth - 0.5F*inCharWindowWidth;
-		inCharWindowY = charWindowY + 0.11F*charWindowHeight;
-		inCharWindowSpriteInactive.setBounds(inCharWindowX, inCharWindowY, inCharWindowWidth, inCharWindowHeight);
-		inCharWindowSpriteActive.setBounds(inCharWindowX, inCharWindowY, inCharWindowWidth, inCharWindowHeight);
-	}
-	private void orderWindowInit(){
-		//Окно характеристик ракеты\\
-		orderWindowSprite = new Sprite(ImgResDraw.dialogWindow);
-		orderWindowWidth = 0.75F*width;
-		orderWindowHeight = orderWindowWidth/1.45F;
-		orderWindowX = 0.5F*width - 0.5F*orderWindowWidth;
-		orderWindowY = 0.5F*height - 0.5F*orderWindowHeight;
-		orderWindowSprite.setBounds(orderWindowX, orderWindowY, orderWindowWidth, orderWindowHeight);
-		isOrderWindowDraw = false;
-		backOrderWindowSpriteInactive = new Sprite(ImgResDraw.backIconInactive);
-		backOrderWindowSpriteActive = new Sprite(ImgResDraw.backIconActive);
-		backOrderWindow1Width = 0.065F*width;
-		backOrderWindow1Height = backOrderWindow1Width;
-		backOrderWindow1X = orderWindowX + 0.95F*orderWindowWidth - backOrderWindow1Width;
-		backOrderWindow1Y = orderWindowY + 0.05F*orderWindowHeight;
-		backOrderWindowSpriteInactive.setBounds(backOrderWindow1X, backOrderWindow1Y, backOrderWindow1Width, backOrderWindow1Height);
-		backOrderWindow2Width = 0.0975F*width;
-		backOrderWindow2Height = backOrderWindow2Width;
-		backOrderWindow2X = orderWindowX + 0.95F*orderWindowWidth - backOrderWindow1Width - 0.16666666666666666666666666666667F*backOrderWindow2Width;
-		backOrderWindow2Y = orderWindowY + 0.05F*orderWindowHeight - 0.16666666666666666666666666666667F*backOrderWindow2Height;
-		backOrderWindowSpriteActive.setBounds(backOrderWindow2X, backOrderWindow2Y, backOrderWindow2Width, backOrderWindow2Height);
-		backZSprite = new Sprite(new Texture("bckgrnd/backgroundGray.png"));
-		backZSprite.setBounds(0.0F, 0.0F, width, height);
-	}
-	private void orderInInit(){
-		//Кнопка входа в характеристики ракеты\\
-		inOrderWindowInactive = new Texture("btns/button_current_order_inactive_US.png");
-		inOrderWindowActive = new Texture("btns/button_current_order_active_US.png");
-		inOrderWindowSpriteInactive = new Sprite(inOrderWindowInactive);
-		inOrderWindowSpriteActive = new Sprite(inOrderWindowActive);
-		if(InfoAndStats.lngRussian){
-			inOrderWindowSpriteInactive.setTexture(new Texture("btns/RU/button_current_order_inactive_RU.png"));
-			inOrderWindowSpriteActive.setTexture(new Texture("btns/RU/button_current_order_active_RU.png"));
-		}
-		inOrderWindowTentionIndex = (float)inOrderWindowInactive.getWidth()/inOrderWindowInactive.getHeight();
-		inOrderWindowWidth = 0.3F*width;
-		inOrderWindowHeight = inOrderWindowWidth/inOrderWindowTentionIndex;
-		inOrderWindowX = orderWindowX + 0.65F*orderWindowWidth - 0.5F*inOrderWindowWidth;
-		inOrderWindowY = orderWindowY + 0.14F*orderWindowHeight;
-		inOrderWindowSpriteInactive.setBounds(inOrderWindowX, inOrderWindowY, inOrderWindowWidth, inOrderWindowHeight);
-		inOrderWindowSpriteActive.setBounds(inOrderWindowX, inOrderWindowY, inOrderWindowWidth, inOrderWindowHeight);
-	}
 	private void startButtonInit(){
 		//Кнопка старта ракеты\\
 		startButtonInactive = new Texture("btns/startButtonInactive.png");
@@ -436,49 +275,11 @@ public class ControlCentreScreen implements Screen{
 			}else{
 				backStartWindowSpriteInactive.draw(batch);
 			}
-			if(controller.isOn(inCharWindowX, inCharWindowY, inCharWindowWidth, inCharWindowHeight)){
-				inCharWindowSpriteActive.draw(batch);
-			}else{
-				inCharWindowSpriteInactive.draw(batch);
-			}
-			if(controller.isOn(inOrderWindowX, inOrderWindowY, inOrderWindowWidth, inOrderWindowHeight)){
-				inOrderWindowSpriteActive.draw(batch);
-			}else{
-				inOrderWindowSpriteInactive.draw(batch);
-			}
 			monogrammSprite.draw(batch);
 			if(controller.isOn(startButton1X, startButton1Y, startButton1Width, startButton1Height)){
 				startButtonActiveSprite.draw(batch);
 			}else{
 				startButtonInactiveSprite.draw(batch);
-			}
-		}
-	}
-	private void drawCharWindow(){
-		//Отрисовка диалогового окна характеристик ракеты//
-		if(isCharWindowDraw){
-			backZSprite.draw(batch);
-			charWindowSprite.draw(batch);
-			int price = InfoAndStats.getFirstDetail().getRocketDetailPrice() + InfoAndStats.getSecondDetail().getRocketDetailPrice() + InfoAndStats.getThirdDetail().getRocketDetailPrice();
-			if(!InfoAndStats.lngRussian){
-				text.draw(batch, "Rocket's characteristics", charWindowX + 0.28F*charWindowWidth, 0.5F*charWindowY + charWindowHeight);
-				text.draw(batch, "Rocket's name: " + RocketDetailStats.totalName, charWindowX + 0.05F*charWindowWidth, charWindowY + 0.875F*charWindowHeight - 1.5F*text.getCapHeight());
-				text.draw(batch, "Total thrust: " + RocketDetailStats.totalThrust, charWindowX + 0.05F*charWindowWidth, charWindowY + 0.875F*charWindowHeight - 3.0F*text.getCapHeight());
-				text.draw(batch, "Total specific impulse: " + RocketDetailStats.totalSpecificImpulse, charWindowX + 0.05F*charWindowWidth, charWindowY + 0.875F*charWindowHeight - 4.5F*text.getCapHeight());
-				text.draw(batch, "Total working time: " + RocketDetailStats.totalWorkingTime, charWindowX + 0.05F*charWindowWidth, charWindowY + 0.875F*charWindowHeight - 6.0F*text.getCapHeight());
-				text.draw(batch, "Total rocket's price: " + price + " cosmocoins", charWindowX + 0.05F*charWindowWidth, charWindowY + 0.875F*charWindowHeight - 7.5F*text.getCapHeight());
-			}else{
-				text.draw(batch, "Характеристики ракеты", charWindowX + 0.255F*charWindowWidth, 0.5F*charWindowY + charWindowHeight);
-				text.draw(batch, "Название ракеты: " + RocketDetailStats.totalName, charWindowX + 0.05F*charWindowWidth, charWindowY + 0.875F*charWindowHeight - 1.5F*text.getCapHeight());
-				text.draw(batch, "Общая тяга: " + RocketDetailStats.totalThrust, charWindowX + 0.05F*charWindowWidth, charWindowY + 0.875F*charWindowHeight - 3.0F*text.getCapHeight());
-				text.draw(batch, "Общий удельный импульс: " + RocketDetailStats.totalSpecificImpulse, charWindowX + 0.05F*charWindowWidth, charWindowY + 0.875F*charWindowHeight - 4.5F*text.getCapHeight());
-				text.draw(batch, "Общее время работы: " + RocketDetailStats.totalWorkingTime, charWindowX + 0.05F*charWindowWidth, charWindowY + 0.875F*charWindowHeight - 6.0F*text.getCapHeight());
-				text.draw(batch, "Стоимость ракеты: " + price + " космокоинов", charWindowX + 0.05F*charWindowWidth, charWindowY + 0.875F*charWindowHeight - 7.5F*text.getCapHeight());
-			}
-			if(controller.isOn(backCharWindow1X, backCharWindow1Y, backCharWindow1Width, backCharWindow1Height)){
-				backCharWindowSpriteActive.draw(batch);
-			}else{
-				backCharWindowSpriteInactive.draw(batch);
 			}
 		}
 	}
@@ -494,142 +295,27 @@ public class ControlCentreScreen implements Screen{
 			panelInactiveSprite.draw(batch);
 		}
 	}
-	private void drawOrderWindow(){
-		//Отрисовка диалогового окна текущего заказа//
-		if(isOrderWindowDraw){
-			backZSprite.draw(batch);
-			orderWindowSprite.draw(batch);
-			if(!InfoAndStats.lngRussian){
-				text.draw(batch, "Current order", orderWindowX + 0.375F*orderWindowWidth, 0.5F*orderWindowY + orderWindowHeight);
-				text.draw(batch, "Order's name: " + InfoAndStats.currentOrder.getOrderName(), orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 1.5F*text.getCapHeight());
-				text.draw(batch, "Load's mass: " + InfoAndStats.currentOrder.getOrderMass(), orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 3.0F*text.getCapHeight());
-				text.draw(batch, "Destination: ", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 4.5F*text.getCapHeight());
-				switch(InfoAndStats.currentOrder.getOrderLevel()){
-					case 0:{
-						text.draw(batch, "Lower layers of the atmosphere", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 6.0F*text.getCapHeight());
-						break;
-					}
-					case 1:{
-						text.draw(batch, "Upper layers of the atmosphere", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 6.0F*text.getCapHeight());
-						break;
-					}
-					case 2:{
-						text.draw(batch, "Low earth orbit", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 6.0F*text.getCapHeight());
-						break;
-					}
-					case 3:{
-						text.draw(batch, "High earth orbit", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 6.0F*text.getCapHeight());
-						break;
-					}
-				}
-				text.draw(batch, "Reward: " + InfoAndStats.currentOrder.getOrderReward() + " cosmocoins", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 7.5F*text.getCapHeight());
-			}else{
-				text.draw(batch, "Текущий заказ", orderWindowX + 0.35F*orderWindowWidth, 0.5F*orderWindowY + orderWindowHeight);
-				text.draw(batch, "Название заказа: " + InfoAndStats.currentOrder.getOrderName(), orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 1.5F*text.getCapHeight());
-				text.draw(batch, "Масса груза: " + InfoAndStats.currentOrder.getOrderMass(), orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 3.0F*text.getCapHeight());
-				text.draw(batch, "Пункт назначения: ", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 4.5F*text.getCapHeight());
-				switch(InfoAndStats.currentOrder.getOrderLevel()){
-					case 0:{
-						text.draw(batch, "Нижние слои атмосферы", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 6.0F*text.getCapHeight());
-						break;
-					}
-					case 1:{
-						text.draw(batch, "Верхние слои атмосферы", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 6.0F*text.getCapHeight());
-						break;
-					}
-					case 2:{
-						text.draw(batch, "Низкая околоземная орбита", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 6.0F*text.getCapHeight());
-						break;
-					}
-					case 3:{
-						text.draw(batch, "Высокая околоземная орбита", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 6.0F*text.getCapHeight());
-						break;
-					}
-				}
-				text.draw(batch, "Награда: " + InfoAndStats.currentOrder.getOrderReward() + " космокоинов", orderWindowX + 0.05F*orderWindowWidth, orderWindowY + 0.875F*orderWindowHeight - 7.5F*text.getCapHeight());
-			}
-			if(controller.isOn(backOrderWindow1X, backOrderWindow1Y, backOrderWindow1Width, backOrderWindow1Height)){
-				backOrderWindowSpriteActive.draw(batch);
-			}else{
-				backOrderWindowSpriteInactive.draw(batch);
-			}
-		}
-	}
 	
 	private void btnListeners(){
 		//Слушатель нажатия на кнопку "Back"//
-		if(!isStartWindowDraw && !isOrderWindowDraw && !isCharWindowDraw){
+		if(!isStartWindowDraw){
 			if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
 				game.setScreen(new GameScreen(game));
 				this.dispose();
 			}
-		}
-		//Слушатель нажатия на командную панель//
-		if(!isStartWindowDraw && !isOrderWindowDraw && !isCharWindowDraw){
+			//Слушатель нажатия на командную панель//
 			if(controller.isClicked(panel1X, panel1Y, panel1Width, panel1Height)){
 				isStartWindowDraw = true;
 			}
 		}
 		//Слушатель нажатия на выход из панели управления//
-		if(isStartWindowDraw && !isOrderWindowDraw && !isCharWindowDraw){
+		if(isStartWindowDraw){
 			if(controller.isClicked(backStartWindow1X, backStartWindow1Y, backStartWindow1Width, backStartWindow1Height)){
 				isStartWindowDraw = false;
 			}
-		}
-		//Слушатель нажатия на вход в характеристики ракеты//
-		if(isStartWindowDraw && !isOrderWindowDraw){
-			if(controller.isClicked(inCharWindowX, inCharWindowY, inCharWindowWidth, inCharWindowHeight)){
-				isCharWindowDraw = true;
-				isStartWindowDraw = false;
-			}
-		}
-		//Слушатель нажатия на выход из характеристик ракеты//
-		if(isCharWindowDraw){
-			if(controller.isClicked(backCharWindow1X, backCharWindow1Y, backCharWindow1Width, backCharWindow1Height)){
-				isCharWindowDraw = false;
-				isStartWindowDraw = true;
-			}
-		}
-		//Слушатель нажатия на вход в текущий заказ//
-		if(isStartWindowDraw && !isCharWindowDraw && InfoAndStats.hasOrder){
-			if(controller.isClicked(inOrderWindowX, inOrderWindowY, inOrderWindowWidth, inOrderWindowHeight)){
-				isOrderWindowDraw = true;
-				isStartWindowDraw = false;
-			}
-		}
-		//Слушатель нажатия на выход из текущего заказа//
-		if(isOrderWindowDraw && !isCharWindowDraw){
-			if(controller.isClicked(backOrderWindow1X, backOrderWindow1Y, backOrderWindow1Width, backOrderWindow1Height)){
-				isOrderWindowDraw = false;
-				isStartWindowDraw = true;
-			}
-		}
-		//Слушатель нажатия на старт ракеты//
-		if(isStartWindowDraw){
+			//Слушатель нажатия на старт ракеты//
 			if(controller.isClicked(startButton1X, startButton1Y, startButton1Width, startButton1Height)){
-				if(!InfoAndStats.selectedFirst.equals("null")
-					&& !InfoAndStats.selectedSecond.equals("null")
-					&& !InfoAndStats.selectedThird.equals("null")
-					&& InfoAndStats.firstStage.getRocketDetailAmount() > 0
-					&& InfoAndStats.secondStage.getRocketDetailAmount() > 0
-					&& InfoAndStats.thirdStage.getRocketDetailAmount() > 0
-					&& InfoAndStats.hasOrder){
-					this.dispose();
-					game.setScreen(new GameScreen(game));
-					GameScreen.isLaunch = true;
-					AngarScreen.isBoundDraw1 = false;
-					AngarScreen.isBoundDraw2 = false;
-					AngarScreen.isBoundDraw3 = false;
-					AngarScreen.isLT_116Selected = false;
-					AngarScreen.isMT_0112Selected = false;
-					AngarScreen.isUT_1202Selected = false;
-					AngarScreen.isLM_087Selected = false;
-					AngarScreen.isMM_4Selected = false;
-					AngarScreen.isUM_1034Selected = false;
-					AngarScreen.isLF_15Selected = false;
-					AngarScreen.isMF_043Selected = false;
-					AngarScreen.isUF_02Selected = false;
-				}
+				/**TODO: Запуск ракеты*/
 			}
 		}
 	}
@@ -658,10 +344,6 @@ public class ControlCentreScreen implements Screen{
 		backgroundTexture.dispose();
 		panelInactive.dispose();
 		panelActive.dispose();
-		inCharWindowInactive.dispose();
-		inCharWindowActive.dispose();
-		inOrderWindowInactive.dispose();
-		inOrderWindowActive.dispose();
 		startButtonInactive.dispose();
 		startButtonActive.dispose();
 	}

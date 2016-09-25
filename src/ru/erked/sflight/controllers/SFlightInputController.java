@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 
-import ru.erked.sflight.game.FlightScreen;
 import ru.erked.sflight.game.GameScreen;
  
 public class SFlightInputController implements InputProcessor {
@@ -107,43 +106,10 @@ public class SFlightInputController implements InputProcessor {
 		}
 	}
 	
-	public boolean isOnGameStaticFlight(float x, float y, float width, float height){
-		if((touchDownXGame + (FlightScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) >= x && (SFlightInputController.touchDownXGame + (FlightScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) <= x + width){
-			if((Math.abs((-1)*SFlightInputController.touchDownYGame + SFlightInputController.height) + (FlightScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) >= y && (Math.abs((-1)*SFlightInputController.touchDownYGame + SFlightInputController.height) + (FlightScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) <= y + height){
-				return true;
-			}else{
-				return false;
-			}
-		}else{
-			return false;
-		}
-	}
-	
 	public boolean isClickedGame(float x, float y, float width, float height){
 		if(isOnGameStatic(x, y, width, height)){
 			if((touchUpX + (GameScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) >= x && (SFlightInputController.touchUpX + (GameScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) <= x + width){
 				if((Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (GameScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) >= y && (Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (GameScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) <= y + height){
-					touchUpX = 10000;
-					touchUpY = 10000;
-					clickSound.play(0.5F);
-					return true;
-				}else{
-					return false;
-				}
-			}else{
-				return false;
-			}
-		}else{
-			return false;
-		}
-	}
-	
-	public boolean isClickedFlight(float x, float y, float width, float height){
-		if(isOnGameStaticFlight(x, y, width, height)){
-			if((touchUpX + (FlightScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) >= x && (SFlightInputController.touchUpX + (FlightScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) <= x + width){
-				if((Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (FlightScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) >= y && (Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (FlightScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) <= y + height){
-					touchDownXGame = 0;
-					touchDownYGame = 0;
 					touchUpX = 10000;
 					touchUpY = 10000;
 					clickSound.play(0.5F);
