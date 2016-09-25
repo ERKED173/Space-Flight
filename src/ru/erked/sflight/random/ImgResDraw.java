@@ -25,8 +25,6 @@ public class ImgResDraw {
 	public static final Texture startGameButtonActiveRU = new Texture("btns/RU/button_start_game_active_RU.png");
 	public static final Texture mainMenuButtonInactiveRU = new Texture("btns/RU/button_main_menu_inactive_RU.png");
 	public static final Texture mainMenuButtonActiveRU = new Texture("btns/RU/button_main_menu_active_RU.png");
-	public static final Texture nextDayButtonInactiveRU = new Texture("btns/RU/button_next_day_inactive_RU.png");
-	public static final Texture nextDayButtonActiveRU = new Texture("btns/RU/button_next_day_active_RU.png");
 	public static final Texture creditsRU = new Texture("random/creditsRU.png");
 	public static final Texture resetButtonInactiveRU = new Texture("btns/RU/button_reset_the_game_inactive_RU.png");
 	public static final Texture resetButtonActiveRU = new Texture("btns/RU/button_reset_the_game_active_RU.png");

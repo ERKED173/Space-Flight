@@ -102,6 +102,10 @@ public class ControlCentreScreen implements Screen{
 	//Текст
 	private static BitmapFont text;
 	
+	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
+	private float alp = 1.0F;
+	private boolean isTransControl;
+	
 	public ControlCentreScreen(Game game){
 		this.game = game;
 	}
@@ -155,11 +159,23 @@ public class ControlCentreScreen implements Screen{
 		}
 		text.getData().setScale((float)(0.00075F*width));
 		
+		isTransControl = false;
+		blackAlpha.setBounds(0.0F, 0.0F, width, height);
+		blackAlpha.setAlpha(1.0F);
+		
 	}
 
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
+		
+		if(alp>0.0F && (!isTransControl)){
+			blackAlpha.setAlpha(alp);
+			alp-=0.05F;
+		}else if(!isTransControl){
+			blackAlpha.setAlpha(0.0F);
+			alp = 0.0F;
+		}
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -187,6 +203,8 @@ public class ControlCentreScreen implements Screen{
 		
 		drawPanel();
 		drawStartWindow();
+		
+		blackAlpha.draw(batch);
 		
 		batch.end();
 		

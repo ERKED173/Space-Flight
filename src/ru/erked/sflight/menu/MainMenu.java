@@ -105,6 +105,8 @@ public class MainMenu implements Screen {
 	@Override
 	public void show() {
 		
+		resourcesCheck();
+		
 		/**Установка слушателя контроллера*/
 		controller = new SFlightInputController();
 		Gdx.input.setInputProcessor(controller);
@@ -241,7 +243,7 @@ public class MainMenu implements Screen {
 		
 		if(alp>0.0F && (!isTransGame && !isTransAbout && !isTransOptions && !isTransExit)){
 			blackAlpha.setAlpha(alp);
-			alp-=0.033F;
+			alp-=0.05F;
 		}else if(!isTransGame && !isTransAbout && !isTransOptions && !isTransExit){
 			blackAlpha.setAlpha(0.0F);
 			alp = 0.0F;
@@ -308,7 +310,7 @@ public class MainMenu implements Screen {
 				Gdx.app.exit();
 			}else{
 				blackAlpha.setAlpha(alp);
-				alp+=0.033F;
+				alp+=0.05F;
 			}
 		}
 		if(controller.isClicked(aboutButtonX, aboutButtonY, aboutButtonWidth, aboutButtonHeight) || isTransAbout){
@@ -322,7 +324,7 @@ public class MainMenu implements Screen {
 				alp = 1.0F;
 			}else{
 				blackAlpha.setAlpha(alp);
-				alp+=0.033F;
+				alp+=0.05F;
 			}
 		}
 		if(controller.isClicked(startButtonX, startButtonY, startButtonWidth, startButtonHeight) || isTransGame){
@@ -336,7 +338,7 @@ public class MainMenu implements Screen {
 				alp = 1.0F;
 			}else{
 				blackAlpha.setAlpha(alp);
-				alp+=0.033F;
+				alp+=0.05F;
 			}
 		}
 		if(controller.isClicked(optionsButtonX, optionsButtonY, optionsButtonWidth, optionsButtonHeight) || isTransOptions){
@@ -350,10 +352,16 @@ public class MainMenu implements Screen {
 				alp = 1.0F;
 			}else{
 				blackAlpha.setAlpha(alp);
-				alp+=0.033F;
+				alp+=0.05F;
 			}
 		}
 		/**Проверка нажатий на кнопки*/
+	}
+	
+	private void resourcesCheck(){
+		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
+		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
+		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
 	}
 	
 	@Override

@@ -60,6 +60,10 @@ public class AnalyticCentreScreen implements Screen{
 	//Текст
 	private static BitmapFont text;
 	
+	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
+	private float alp = 1.0F;
+	private boolean isTransAnalytic;
+	
 	public AnalyticCentreScreen(Game game){
 		this.game = game;
 	}
@@ -96,6 +100,11 @@ public class AnalyticCentreScreen implements Screen{
 			text = genRU.generateFont(param);
 			text.getData().setScale((float)(0.0006F*width));
 		}
+		
+		isTransAnalytic = false;
+		blackAlpha.setBounds(0.0F, 0.0F, width, height);
+		blackAlpha.setAlpha(1.0F);
+		
 	}
 
 	private void backButtonInit(){
@@ -166,6 +175,14 @@ public class AnalyticCentreScreen implements Screen{
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
 		
+		if(alp>0.0F && (!isTransAnalytic)){
+			blackAlpha.setAlpha(alp);
+			alp-=0.05F;
+		}else if(!isTransAnalytic){
+			blackAlpha.setAlpha(0.0F);
+			alp = 0.0F;
+		}
+		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
@@ -181,6 +198,8 @@ public class AnalyticCentreScreen implements Screen{
 		
 		drawBackButton();
 		drawScoreboard();
+		
+		blackAlpha.draw(batch);
 		
 		batch.end();
 		

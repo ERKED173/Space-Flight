@@ -159,7 +159,6 @@ public class GameScreen implements Screen{
 	public static float backButtonTentionIndex; //Соотношение сторон кнопки
 	
 //Иконка КосмоКоинов
-	private Texture money;
 	private Sprite moneySprite;
 	private Sprite fuelSprite;
 	private Sprite metalSprite;
@@ -168,8 +167,16 @@ public class GameScreen implements Screen{
 	private float moneyWidth;
 	private float moneyHeight;
 	private static BitmapFont text;
+	private Sprite line;
+	private Sprite cosmocoinLine;
+	private Sprite fuelLine;
+	private Sprite metalLine;
 	
 	private Music launchSoundPath = Gdx.audio.newMusic(Gdx.files.internal("sounds/misc/WavLibraryNet_Sound6386.mp3"));
+	
+	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
+	private float alp = 1.0F;
+	private boolean isTransGame;
 	
 	public GameScreen(Game game){
 		this.game = game;
@@ -177,6 +184,8 @@ public class GameScreen implements Screen{
 	
 	@Override
 	public void show() {
+
+		resourcesCheck();
 		
 		batch = new SpriteBatch();
 		controller = new SFlightInputController();
@@ -190,7 +199,7 @@ public class GameScreen implements Screen{
 		
 //Камера\\
 		camera = new OrthographicCamera(width, height);
-		camera.position.set(new Vector3(backgroundSprite.getWidth()/2, backgroundSprite.getHeight()/2, 0));
+		camera.position.set(new Vector3(0.6F*backgroundSprite.getWidth(), 0.8F*backgroundSprite.getHeight(), 0));
 		
 //Обычный белый текст\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
@@ -208,7 +217,7 @@ public class GameScreen implements Screen{
 		}else{
 			text = genUS.generateFont(param);
 		}
-		text.getData().setScale((float)(0.00075F*width));
+		text.getData().setScale((float)(0.00045F*width));
 		
 		mainMenuButtonInit();
 		analyticInit();
@@ -217,11 +226,23 @@ public class GameScreen implements Screen{
 		cloudsInit();
 		moneyInit();
 		controlInit();
+		
+		isTransGame = false;
+		blackAlpha.setBounds(0.0F, 0.0F, backgroundSprite.getWidth(), backgroundSprite.getHeight());
+		blackAlpha.setAlpha(1.0F);
 	}
 
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
+		
+		if(alp>0.0F && (!isTransGame)){
+			blackAlpha.setAlpha(alp);
+			alp-=0.05F;
+		}else if(!isTransGame){
+			blackAlpha.setAlpha(0.0F);
+			alp = 0.0F;
+		}
 		
 //Необходимо для уничтожения эффекта следов*/
 		Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -246,13 +267,9 @@ public class GameScreen implements Screen{
 		drawBuildings();
 		drawClouds();
 		drawButtons();
-		
-		moneySprite.draw(batch);
-		fuelSprite.draw(batch);
-		metalSprite.draw(batch);
-		text.draw(batch, ": " + Long.toString((int)(InfoAndStats.money)), moneySprite.getX() + moneySprite.getWidth() + moneySprite.getWidth()*0.15F, moneySprite.getY() + moneySprite.getHeight() - text.getCapHeight()/2);
-		text.draw(batch, ": " + Long.toString((int)(InfoAndStats.fuel)), fuelSprite.getX() + fuelSprite.getWidth() + fuelSprite.getWidth()*0.15F, fuelSprite.getY() + fuelSprite.getHeight() - text.getCapHeight()/2);
-		text.draw(batch, ": " + Long.toString((int)(InfoAndStats.metal)), metalSprite.getX() + metalSprite.getWidth() + metalSprite.getWidth()*0.15F, metalSprite.getY() + metalSprite.getHeight() - text.getCapHeight()/2);
+		drawMoney();
+
+		blackAlpha.draw(batch);
 		
 		batch.end();
 		/**Отрисовка объектов*/
@@ -311,10 +328,38 @@ public class GameScreen implements Screen{
 		moneyY = camera.position.y - moneyHeight + (height/2 - 0.015F*height);
 		moneySprite.setX(moneyX);
 		moneySprite.setY(moneyY);
-		fuelSprite.setX(moneyX);
-		fuelSprite.setY(moneyY - 1.25F*moneyHeight);
-		metalSprite.setX(moneyX);
-		metalSprite.setY(moneyY - 2.5F*moneyHeight);
+		fuelSprite.setX(moneyX + 10.0F*moneyWidth);
+		fuelSprite.setY(moneyY);
+		metalSprite.setX(moneyX + 5.0F*moneyWidth);
+		metalSprite.setY(moneyY);
+		
+		cosmocoinLine.setBounds(
+				cosmocoinLine.getX(),
+				cosmocoinLine.getY(),
+				((float)InfoAndStats.money/(float)InfoAndStats.moneyFull)*0.8F*line.getWidth() + 0.005F*width,
+				cosmocoinLine.getHeight()
+				);
+		fuelLine.setBounds(
+				fuelLine.getX(),
+				fuelLine.getY(),
+				((float)InfoAndStats.fuel/(float)InfoAndStats.fuelFull)*0.8F*line.getWidth() + 0.005F*width,
+				fuelLine.getHeight()
+				);
+		metalLine.setBounds(
+				metalLine.getX(),
+				metalLine.getY(),
+				((float)InfoAndStats.metal/(float)InfoAndStats.metalFull)*0.8F*line.getWidth() + 0.005F*width,
+				metalLine.getHeight()
+				);
+		
+		line.setX(moneyX + 1.15F*moneyWidth);
+		line.setY(moneyY);
+		cosmocoinLine.setX(moneySprite.getX() + 1.5F*moneySprite.getWidth());
+		cosmocoinLine.setY(moneySprite.getY() + 0.25F*moneySprite.getHeight());
+		fuelLine.setX(fuelSprite.getX() + 1.5F*fuelSprite.getWidth());
+		fuelLine.setY(fuelSprite.getY() + 0.25F*fuelSprite.getHeight());
+		metalLine.setX(metalSprite.getX() + 1.5F*metalSprite.getWidth());
+		metalLine.setY(metalSprite.getY() + 0.25F*metalSprite.getHeight());
 	}	
 	
 	private void mainMenuButtonInit(){
@@ -442,19 +487,30 @@ public class GameScreen implements Screen{
 		analytic2Sprite.setBounds(analytic2X, analytic2Y, analytic2Width, analytic2Height);
 	}
 	private void moneyInit(){
-		//Иконка КосмоКоинов\\
-		money = new Texture("objects/cosmocoin.png");
-		moneySprite = new Sprite(money);
+		//Иконки ресурсов\\
+		moneySprite = new Sprite(new Texture("objects/cosmocoin.png"));
 		fuelSprite = new Sprite(new Texture("objects/fuel.png"));
 		metalSprite = new Sprite(new Texture("objects/metal.png"));
-		moneySprite = new Sprite(money);
+		
+		line = new Sprite(new Texture("objects/line.png"));
+		cosmocoinLine = new Sprite(new Texture("objects/cosmocoinLine.png"));
+		fuelLine = new Sprite(new Texture("objects/fuelLine.png"));
+		metalLine = new Sprite(new Texture("objects/metalLine.png"));
+		
 		moneyWidth = 0.05F*width;
 		moneyHeight = moneyWidth;
-		moneyX = camera.position.x - moneyWidth - (width/2 - 0.15F*width);
+		moneyX = camera.position.x - moneyWidth - (width/2 - 0.065F*width);
 		moneyY = camera.position.y - moneyHeight + (height/2 - 0.015F*height);
+		
 		moneySprite.setBounds(moneyX, moneyY, moneyWidth, moneyHeight);
-		fuelSprite.setBounds(moneyX, moneyY - 1.1F*moneyHeight, moneyWidth, moneyHeight);
-		metalSprite.setBounds(moneyX, moneyY - 2.1F*moneyHeight, moneyWidth, moneyHeight);
+		fuelSprite.setBounds(moneyX + moneyWidth, moneyY, moneyWidth, moneyHeight);
+		metalSprite.setBounds(moneyX + 2.0F*moneyWidth, moneyY, moneyWidth, moneyHeight);
+		
+		line.setBounds(moneyX + 1.1F*moneyWidth, moneyY - 2.1F*moneyHeight, moneyWidth/0.28125F, moneyWidth);
+		cosmocoinLine.setBounds(moneySprite.getX() + moneySprite.getWidth() + moneySprite.getWidth()*0.5F, moneySprite.getY() + moneySprite.getHeight(), 0.5F*moneyWidth, 0.5F*moneyHeight);
+		fuelLine.setBounds(fuelSprite.getX() + fuelSprite.getWidth() + fuelSprite.getWidth()*0.5F, fuelSprite.getY() + fuelSprite.getHeight(), 0.5F*moneyWidth, 0.5F*moneyHeight);
+		metalLine.setBounds(metalLine.getX() + metalLine.getWidth() + metalLine.getWidth()*0.5F, metalLine.getY() + metalLine.getHeight(), 0.5F*moneyWidth, 0.5F*moneyHeight);
+		
 	}
 	private void controlInit(){
 		//Диспетчерская_вышка_1\\
@@ -476,6 +532,12 @@ public class GameScreen implements Screen{
 		control2Sprite.setBounds(control2X, control2Y, control2Width, control2Height);
 	}	
 
+	private void resourcesCheck(){
+		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
+		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
+		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
+	}
+	
 	private void touchUpdate(){
 		/**Обработка нажатия aka прокрутки*/
 		if(prevDragX != 0.0F && SFlightInputController.touchDragX != 0.0F)
@@ -540,12 +602,34 @@ public class GameScreen implements Screen{
 			scienceCentre1Sprite.draw(batch);
 		}
 	}
+	private void drawMoney(){
+		for(float i=0.25F;i<3.25F;i+=1.0F){
+			line.setX(moneyX + (i*5.0F)*moneyWidth);
+			line.draw(batch);
+		}
+		moneySprite.draw(batch);
+		fuelSprite.draw(batch);
+		metalSprite.draw(batch);
+		cosmocoinLine.draw(batch);
+		fuelLine.draw(batch);
+		metalLine.draw(batch);
+		text.draw(batch, ":    " + Long.toString((int)(InfoAndStats.money)) + "/" + Long.toString((int)(InfoAndStats.moneyFull)), moneySprite.getX() + 1.05F*moneySprite.getWidth(), moneySprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
+		text.draw(batch, ":    " + Long.toString((int)(InfoAndStats.fuel)) + "/" + Long.toString((int)(InfoAndStats.fuelFull)), fuelSprite.getX() + 1.05F*fuelSprite.getWidth(), fuelSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
+		text.draw(batch, ":    " + Long.toString((int)(InfoAndStats.metal)) + "/" + Long.toString((int)(InfoAndStats.metalFull)), metalSprite.getX() + 1.05F*metalSprite.getWidth(), metalSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
+	}
 	
 	private void buttonListener(){
 		//Слушатель нажатия на кнопку "Main Menu"*/
-		if(controller.isClickedGame(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-			game.setScreen(new MainMenu(game));
-			this.dispose();
+		if(controller.isClickedGame(backButtonX, backButtonY, backButtonWidth, backButtonHeight) || isTransGame){
+			isTransGame = true;
+			if(alp>1.0F){
+				this.dispose();
+				game.setScreen(new MainMenu(game));
+				alp = 1.0F;
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.05F;
+			}
 		}
 		//Слушатель нажатия на ангар*/
 		if(controller.isClickedGame(angar1Sprite.getX(), angar1Sprite.getY(), angar1Width, angar1Height)){
@@ -604,7 +688,6 @@ public class GameScreen implements Screen{
 		cloud2Texture.dispose();
 		backButtonInactive.dispose();
 		backButtonActive.dispose();
-		money.dispose();
 	}
 	
 	@Override

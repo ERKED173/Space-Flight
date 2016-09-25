@@ -21,6 +21,9 @@ public class AndroidLauncher extends AndroidApplication {
 	public static final String MONEY = "money";
 	public static final String FUEL = "fuel";
 	public static final String METAL = "metal";
+	public static final String MONEY_FULL = "money_full";
+	public static final String FUEL_FULL = "fuel_full";
+	public static final String METAL_FULL = "metal_full";
 	
 	public static final String LNG = "lng";
 	

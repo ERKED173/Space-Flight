@@ -46,6 +46,10 @@ public class AngarScreen implements Screen{
 	//Текст
 	private static BitmapFont text;
 	
+	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
+	private float alp = 1.0F;
+	private boolean isTransAngar;
+	
 	public AngarScreen(Game game){
 		this.game = game;
 	}
@@ -53,6 +57,8 @@ public class AngarScreen implements Screen{
 	@Override
 	public void show() {
 
+		resourcesCheck();
+		
 		batch = new SpriteBatch();
 		controller = new SFlightInputController();
 
@@ -95,11 +101,23 @@ public class AngarScreen implements Screen{
 			text.getData().setScale((float)(0.0006F*width));
 		}
 		
+		isTransAngar = false;
+		blackAlpha.setBounds(0.0F, 0.0F, width, height);
+		blackAlpha.setAlpha(1.0F);
+		
 	}
 
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
+		
+		if(alp>0.0F && (!isTransAngar)){
+			blackAlpha.setAlpha(alp);
+			alp-=0.05F;
+		}else if(!isTransAngar){
+			blackAlpha.setAlpha(0.0F);
+			alp = 0.0F;
+		}
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -122,12 +140,20 @@ public class AngarScreen implements Screen{
 			text.draw(batch, "Ангар", 0.01F*width, 0.99F*height);
 		}
 		
+		blackAlpha.draw(batch);
+		
 		batch.end();
 		
 		buttonListeners();
 		
 	}
 
+	private void resourcesCheck(){
+		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
+		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
+		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
+	}
+	
 	private void buttonListeners(){
 		//Слушатель нажатия на кнопку "Back"//
 		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){

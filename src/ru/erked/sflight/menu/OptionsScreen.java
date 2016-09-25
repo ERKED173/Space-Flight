@@ -76,6 +76,10 @@ public class OptionsScreen implements Screen {
 	private float resetButtonHeight;
 	public static float resetButtonTentionIndex; //Соотношение сторон кнопки
 	
+	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
+	private float alp = 1.0F;
+	private boolean isTransOptions;
+	
 	public OptionsScreen(Game game) {
 		this.game = game;
 	}
@@ -163,11 +167,23 @@ public class OptionsScreen implements Screen {
 		
 		genRU.dispose();
 		genUS.dispose();
+		
+		blackAlpha.setBounds(0.0F, 0.0F, width, height);
+		blackAlpha.setAlpha(1.0F);
+		isTransOptions = false;
 	}
 
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
+		
+		if(alp>0.0F && !isTransOptions){
+			blackAlpha.setAlpha(alp);
+			alp-=0.05F;
+		}else if(!isTransOptions){
+			blackAlpha.setAlpha(0.0F);
+			alp = 0.0F;
+		}
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -225,6 +241,8 @@ public class OptionsScreen implements Screen {
 		else
 			text.draw(batch, "Язык:", 0.02F*width, 0.95F*height);
 		
+		blackAlpha.draw(batch);
+		
 		batch.end();
 		
 		//Запоминаем ротэйт//
@@ -233,9 +251,15 @@ public class OptionsScreen implements Screen {
 		planet2PrevRotation = MainMenu.planet2Sprite.getRotation();
 		
 		//Слушатель нажатия на кнопку "Back"//
-		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-			this.dispose();
-			game.setScreen(new MainMenu(game));
+		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight) || isTransOptions){
+			isTransOptions = true;
+			if(alp>1.0F){
+				this.dispose();
+				game.setScreen(new MainMenu(game));
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.05F;
+			}
 		}
 		//Слушатель нажатия на кнопку "RU"//
 		if(controller.isClicked(ruButtonX, ruButtonY, ruButtonWidth, ruButtonHeight)){
@@ -252,6 +276,7 @@ public class OptionsScreen implements Screen {
 		//Слушатель нажатия на кнопку "Reset"//
 		if(controller.isClicked(resetButtonX, resetButtonY, resetButtonWidth, resetButtonHeight)){
 			ResetTheGame.reset();
+			game.setScreen(new TechnicScreen(game, options, 0.1F));
 		}
 	}
 

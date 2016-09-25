@@ -44,6 +44,10 @@ public class AboutScreen implements Screen{
 	private float backButtonHeight;
 	public static float backButtonTentionIndex; //Соотношение сторон кнопки
 	
+	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
+	private float alp = 1.0F;
+	private boolean isTransAbout;
+	
 	//Для прокрутки
 	private static float prevDragY;
 	
@@ -56,6 +60,7 @@ public class AboutScreen implements Screen{
 		
 		batch = new SpriteBatch();
 		controller = new SFlightInputController();
+		isTransAbout = false;
 		
 		MainMenu.music.play();
 		
@@ -87,13 +92,21 @@ public class AboutScreen implements Screen{
 		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
 		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
 		
+		blackAlpha.setBounds(0.0F, 0.0F, width, height);
+		blackAlpha.setAlpha(1.0F);
 	}
 
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
-		//System.out.println("[About] " + creditsSprite.getY());
 		
+		if(alp>0.0F && !isTransAbout){
+			blackAlpha.setAlpha(alp);
+			alp-=0.05F;
+		}else if(!isTransAbout){
+			blackAlpha.setAlpha(0.0F);
+			alp = 0.0F;
+		}
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -143,6 +156,8 @@ public class AboutScreen implements Screen{
 		else
 			backButtonInactiveSprite.draw(batch);
 		
+		blackAlpha.draw(batch);
+		
 		batch.end();
 		
 		//Запоминаем ротэйт//
@@ -151,9 +166,15 @@ public class AboutScreen implements Screen{
 		planet2PrevRotation = MainMenu.planet2Sprite.getRotation();
 		
 		//Слушатель нажатия на кнопку "Back"//
-		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-			this.dispose();
-			game.setScreen(new MainMenu(game));
+		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight) || isTransAbout){
+			isTransAbout = true;
+			if(alp>1.0F){
+				this.dispose();
+				game.setScreen(new MainMenu(game));
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.05F;
+			}
 		}
 	}
 

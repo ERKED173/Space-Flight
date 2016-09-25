@@ -46,6 +46,10 @@ public class ScienceCentreScreen implements Screen{
 	//Текст
 	private static BitmapFont text;
 	
+	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
+	private float alp = 1.0F;
+	private boolean isTransScience;
+	
 	public ScienceCentreScreen(Game game){
 		this.game = game;
 	}
@@ -102,11 +106,23 @@ public class ScienceCentreScreen implements Screen{
 		}
 		text.getData().setScale((float)(0.0006F*width));
 		
+		isTransScience = false;
+		blackAlpha.setBounds(0.0F, 0.0F, width, height);
+		blackAlpha.setAlpha(1.0F);
+		
 	}
 	
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
+		
+		if(alp>0.0F && (!isTransScience)){
+			blackAlpha.setAlpha(alp);
+			alp-=0.05F;
+		}else if(!isTransScience){
+			blackAlpha.setAlpha(0.0F);
+			alp = 0.0F;
+		}
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -128,6 +144,8 @@ public class ScienceCentreScreen implements Screen{
 		}else{
 			text.draw(batch, "Научный центр", 0.01F*width, 0.99F*height);
 		}
+		
+		blackAlpha.draw(batch);
 		
 		batch.end();
 		

@@ -75,7 +75,7 @@ public class SplashScreen implements Screen {
 			splash.draw(batch);
 			batch.end();
 		}else{
-			alp+=0.025F;
+			alp+=0.05F;
 			batch.begin();
 			splash.draw(batch);
 			blackAlpha.draw(batch);
