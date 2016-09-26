@@ -131,12 +131,12 @@ public class AnalyticCentreScreen implements Screen{
 		scoreboardActiveSprite = new Sprite(scoreboardActive);
 		scoreboard1Width = 0.2F*width;
 		scoreboard1Height = scoreboard1Width;
-		scoreboard1X = 0.605F*backgroundSprite.getWidth();
-		scoreboard1Y = 0.55F*backgroundSprite.getHeight();
+		scoreboard1X = 0.6F*backgroundSprite.getWidth();
+		scoreboard1Y = backgroundSprite.getY() + 0.475F*backgroundSprite.getHeight();
 		scoreboard2Width = 0.34594594594594594594594594594595F*width;
 		scoreboard2Height = scoreboard2Width;
-		scoreboard2X = 0.605F*backgroundSprite.getWidth() - 0.2109375F*scoreboard2Width;
-		scoreboard2Y = 0.55F*backgroundSprite.getHeight() - 0.2109375F*scoreboard2Height;
+		scoreboard2X = 0.6F*backgroundSprite.getWidth() - 0.2109375F*scoreboard2Width;
+		scoreboard2Y = backgroundSprite.getY() + 0.475F*backgroundSprite.getHeight() - 0.2109375F*scoreboard2Height;
 		scoreboardInactiveSprite.setBounds(scoreboard1X, scoreboard1Y, scoreboard1Width, scoreboard1Height);
 		scoreboardActiveSprite.setBounds(scoreboard2X, scoreboard2Y, scoreboard2Width, scoreboard2Height);
 	}

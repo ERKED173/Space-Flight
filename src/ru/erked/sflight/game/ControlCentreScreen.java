@@ -222,11 +222,11 @@ public class ControlCentreScreen implements Screen{
 		panel1Width = 0.075F*width;
 		panel1Height = (float)panel1Width/panelAspectRatio;
 		panel1X = 0.55F*backgroundSprite.getWidth();
-		panel1Y = 0.625F*backgroundSprite.getHeight();
+		panel1Y = backgroundSprite.getY() + 0.35F*backgroundSprite.getHeight();
 		panel2Width = 0.14423076923076923076923076923077F*width;
 		panel2Height = (float)panel2Width/panelAspectRatio;
 		panel2X = 0.55F*backgroundSprite.getWidth() - 0.24F*panel2Width;
-		panel2Y = 0.625F*backgroundSprite.getHeight() - 0.24038461538461538461538461538462F*panel2Height;
+		panel2Y = backgroundSprite.getY() + 0.35F*backgroundSprite.getHeight() - 0.24038461538461538461538461538462F*panel2Height;
 		panelInactiveSprite.setBounds(panel1X, panel1Y, panel1Width, panel1Height);
 		panelActiveSprite.setBounds(panel2X, panel2Y, panel2Width, panel2Height);
 	}

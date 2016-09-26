@@ -4,10 +4,14 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.game.GameScreen;
@@ -16,6 +20,7 @@ import ru.erked.sflight.random.InfoAndStats;
 
 public class MainMenu implements Screen {
 	
+	final String FONT_CHARS_RU = "Р°Р±РІРіРґРµР¶Р·РёР№РєР»РјРЅРѕРїСЂСЃС‚СѓС„С…С†С‡С€С‰СЉС‹СЊСЌСЋСЏabcdefghijklmnopqrstuvwxyzРђР‘Р’Р“Р”Р•Р–Р—РР™РљР›РњРќРћРџР РЎРўРЈР¤РҐР¦Р§РЁР©РЄР«Р¬Р­Р®РЇABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"Вґ`'<>";
 	private static final float width = Gdx.graphics.getWidth();
 	private static final float height = Gdx.graphics.getHeight();
 	public static final float backgroundTentionIndex = width/256;
@@ -23,27 +28,28 @@ public class MainMenu implements Screen {
 	private Game game;
 	private SpriteBatch batch;
 	public static Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music/Deliberate Thought.mp3"));
-	
+	private static BitmapFont text;
+	private static BitmapFont textBlack;
 	
 	public static boolean isFirstScreen = true;
 	
-	private Texture backgroundTexture; //Текстура фона
-	public static Sprite backgroundSprite; //Спрайт фона
+	private Texture backgroundTexture; //РўРµРєСЃС‚СѓСЂР° С„РѕРЅР°
+	public static Sprite backgroundSprite; //РЎРїСЂР°Р№С‚ С„РѕРЅР°
 	private float backgroundX;
 	private float backgroundY;
 	
-	private Texture planet1Texture; //Текстура планеты
-	public static Sprite planet1Sprite; //Спрайт планеты
+	private Texture planet1Texture; //РўРµРєСЃС‚СѓСЂР° РїР»Р°РЅРµС‚С‹
+	public static Sprite planet1Sprite; //РЎРїСЂР°Р№С‚ РїР»Р°РЅРµС‚С‹
 	public static float planet1X;
 	public static float planet1Y;
 	
-	private Texture planet2Texture; //Текстура планеты
-	public static Sprite planet2Sprite; //Спрайт планеты
+	private Texture planet2Texture; //РўРµРєСЃС‚СѓСЂР° РїР»Р°РЅРµС‚С‹
+	public static Sprite planet2Sprite; //РЎРїСЂР°Р№С‚ РїР»Р°РЅРµС‚С‹
 	public static float planet2X;
 	public static float planet2Y;
 	
-	private Texture cometTexture; //Текстура кометы
-	public static Sprite cometSprite; //Спрайт кометы
+	private Texture cometTexture; //РўРµРєСЃС‚СѓСЂР° РєРѕРјРµС‚С‹
+	public static Sprite cometSprite; //РЎРїСЂР°Р№С‚ РєРѕРјРµС‚С‹
 	public static float cometX;
 	public static float cometY;
 	
@@ -55,7 +61,7 @@ public class MainMenu implements Screen {
 	private float startButtonY;
 	private float startButtonWidth;
 	private float startButtonHeight;
-	public static float startButtonTentionIndex; //Соотношение сторон кнопки
+	public static float startButtonTentionIndex; //РЎРѕРѕС‚РЅРѕС€РµРЅРёРµ СЃС‚РѕСЂРѕРЅ РєРЅРѕРїРєРё
 	
 	private Texture aboutButtonInactive;
 	private Texture aboutButtonActive;
@@ -65,7 +71,7 @@ public class MainMenu implements Screen {
 	private float aboutButtonY;
 	private float aboutButtonWidth;
 	private float aboutButtonHeight;
-	public static float aboutButtonTentionIndex; //Соотношение сторон кнопки
+	public static float aboutButtonTentionIndex; //РЎРѕРѕС‚РЅРѕС€РµРЅРёРµ СЃС‚РѕСЂРѕРЅ РєРЅРѕРїРєРё
 	
 	private Texture exitButtonInactive;
 	private Texture exitButtonActive;
@@ -75,7 +81,7 @@ public class MainMenu implements Screen {
 	private float exitButtonY;
 	private float exitButtonWidth;
 	private float exitButtonHeight;
-	public static float exitButtonTentionIndex; //Соотношение сторон кнопки
+	public static float exitButtonTentionIndex; //РЎРѕРѕС‚РЅРѕС€РµРЅРёРµ СЃС‚РѕСЂРѕРЅ РєРЅРѕРїРєРё
 	
 	private Texture optionsButtonInactive;
 	private Texture optionsButtonActive;
@@ -85,7 +91,7 @@ public class MainMenu implements Screen {
 	private float optionsButtonY;
 	private float optionsButtonWidth;
 	private float optionsButtonHeight;
-	public static float optionsButtonTentionIndex; //Соотношение сторон кнопки
+	public static float optionsButtonTentionIndex; //РЎРѕРѕС‚РЅРѕС€РµРЅРёРµ СЃС‚РѕСЂРѕРЅ РєРЅРѕРїРєРё
 
 	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
 	private float alp = 1.0F;
@@ -96,22 +102,22 @@ public class MainMenu implements Screen {
 	
 	private SFlightInputController controller;
 
-	/**Конструктор MainMenu*/
+	/**РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ MainMenu*/
 	public MainMenu(Game game){
 		this.game = game;
 	}
 	
-	/**Вызывается при ориентации на скрин MainMenu*/
+	/**Р’С‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё РѕСЂРёРµРЅС‚Р°С†РёРё РЅР° СЃРєСЂРёРЅ MainMenu*/
 	@Override
 	public void show() {
 		
 		resourcesCheck();
 		
-		/**Установка слушателя контроллера*/
+		/**РЈСЃС‚Р°РЅРѕРІРєР° СЃР»СѓС€Р°С‚РµР»СЏ РєРѕРЅС‚СЂРѕР»Р»РµСЂР°*/
 		controller = new SFlightInputController();
 		Gdx.input.setInputProcessor(controller);
 
-		/**Инициализация*/
+		/**РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ*/
 		batch = new SpriteBatch();
 		
 		music.setLooping(true);
@@ -123,13 +129,13 @@ public class MainMenu implements Screen {
 		isTransOptions = false;
 		isTransExit = false;
 		
-		//Фон//
+		//Р¤РѕРЅ//
 		backgroundTexture = new Texture("bckgrnd/menu_background.png");
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundX = 0.0F;
-		backgroundY = (-1)*(256*backgroundTentionIndex)/2 + height/2; //Выставляю относительно центра устройства по Y
+		backgroundY = (-1)*(256*backgroundTentionIndex)/2 + height/2; //Р’С‹СЃС‚Р°РІР»СЏСЋ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ С†РµРЅС‚СЂР° СѓСЃС‚СЂРѕР№СЃС‚РІР° РїРѕ Y
 		backgroundSprite.setBounds(backgroundX, backgroundY, width, 256*backgroundTentionIndex);
-		//Планета 1//
+		//РџР»Р°РЅРµС‚Р° 1//
 		planet1Texture = new Texture("objects/menu_planet_1.png");
 		planet1Sprite = new Sprite(planet1Texture);
 		if(isFirstScreen){
@@ -141,7 +147,7 @@ public class MainMenu implements Screen {
 			planet1Sprite.setBounds(planet1X, planet1Y, 2*width, 2*width);
 			planet1Sprite.setRotation(Math.max(OptionsScreen.planet1PrevRotation, AboutScreen.planet1PrevRotation));
 		}
-		//Планета 2//
+		//РџР»Р°РЅРµС‚Р° 2//
 		planet2Texture = new Texture("objects/menu_planet_2.png");
 		planet2Sprite = new Sprite(planet2Texture);
 		if(isFirstScreen){
@@ -152,7 +158,7 @@ public class MainMenu implements Screen {
 			planet2Sprite.setBounds(planet2X, planet2Y, 0.15F*width, 0.15F*width);
 			planet2Sprite.setRotation(Math.max(OptionsScreen.planet2PrevRotation, AboutScreen.planet2PrevRotation));
 		}
-		//Комета//
+		//РљРѕРјРµС‚Р°//
 		cometTexture = new Texture("objects/menu_comet.png");
 		cometSprite = new Sprite(cometTexture);
 		if(isFirstScreen){
@@ -164,7 +170,7 @@ public class MainMenu implements Screen {
 			cometSprite.setRotation(Math.max(OptionsScreen.cometPrevRotation, AboutScreen.cometPrevRotation));
 		}
 		
-		//Кнопка "Start Game"//
+		//РљРЅРѕРїРєР° "Start Game"//
 		startButtonInactive = new Texture("btns/button_start_game_inactive.png");
 		startButtonActive = new Texture("btns/button_start_game_active.png");
 		startButtonInactiveSprite = new Sprite(startButtonInactive);
@@ -181,7 +187,7 @@ public class MainMenu implements Screen {
 		startButtonInactiveSprite.setBounds(startButtonX, startButtonY, startButtonWidth, startButtonHeight);
 		startButtonActiveSprite.setBounds(startButtonX, startButtonY, startButtonWidth, startButtonHeight);
 		
-		//Кнопка "About"//
+		//РљРЅРѕРїРєР° "About"//
 		aboutButtonInactive = new Texture("btns/button_about_inactive.png");
 		aboutButtonActive = new Texture("btns/button_about_active.png");
 		aboutButtonInactiveSprite = new Sprite(aboutButtonInactive);
@@ -198,7 +204,7 @@ public class MainMenu implements Screen {
 		aboutButtonInactiveSprite.setBounds(aboutButtonX, aboutButtonY, aboutButtonWidth, aboutButtonHeight);
 		aboutButtonActiveSprite.setBounds(aboutButtonX, aboutButtonY, aboutButtonWidth, aboutButtonHeight);
 		
-		//Кнопка "Options"//
+		//РљРЅРѕРїРєР° "Options"//
 		optionsButtonInactive = new Texture("btns/button_options_inactive.png");
 		optionsButtonActive = new Texture("btns/button_options_active.png");
 		optionsButtonInactiveSprite = new Sprite(optionsButtonInactive);
@@ -215,7 +221,7 @@ public class MainMenu implements Screen {
 		optionsButtonInactiveSprite.setBounds(optionsButtonX, optionsButtonY, optionsButtonWidth, optionsButtonHeight);
 		optionsButtonActiveSprite.setBounds(optionsButtonX, optionsButtonY, optionsButtonWidth, optionsButtonHeight);
 		
-		//Кнопка "Exit"//
+		//РљРЅРѕРїРєР° "Exit"//
 		exitButtonInactive = new Texture("btns/button_exit_inactive.png");
 		exitButtonActive = new Texture("btns/button_exit_active.png");
 		exitButtonInactiveSprite = new Sprite(exitButtonInactive);
@@ -231,8 +237,30 @@ public class MainMenu implements Screen {
 		exitButtonY = height/2 - exitButtonHeight/2 - exitButtonHeight - optionsButtonHeight - 0.015F*height;
 		exitButtonInactiveSprite.setBounds(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight);
 		exitButtonActiveSprite.setBounds(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight);
-		/**Инициализация*/
+		/**РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ*/
 	
+		//РўРµРєСЃС‚ Р»РѕРіРѕ\\
+		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
+		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
+		FreeTypeFontParameter param = new FreeTypeFontParameter();
+		FreeTypeFontParameter paramBlack = new FreeTypeFontParameter();
+		param.color = Color.WHITE;
+		param.size = 150;
+		paramBlack.color = Color.BLACK;
+		paramBlack.size = 150;
+		if(InfoAndStats.lngRussian){
+			param.characters = FONT_CHARS_RU;
+			paramBlack.characters = FONT_CHARS_RU;
+			text = genRU.generateFont(param);
+			textBlack = genRU.generateFont(paramBlack);
+		}else{
+			text = genUS.generateFont(param);
+			textBlack = genUS.generateFont(paramBlack);
+		}
+		text.getData().setScale((float)(0.00075F*width));
+		textBlack.getData().setScale((float)(0.00075F*width));
+		
+		/**РџР»Р°РІРЅС‹Р№ РїРµСЂРµС…РѕРґ*/
 		blackAlpha.setBounds(0.0F, 0.0F, width, height);
 		blackAlpha.setAlpha(1.0F);
 	}
@@ -249,7 +277,7 @@ public class MainMenu implements Screen {
 			alp = 0.0F;
 		}
 		
-		/**Необходимо для уничтожения эффекта следов*/
+		/**РќРµРѕР±С…РѕРґРёРјРѕ РґР»СЏ СѓРЅРёС‡С‚РѕР¶РµРЅРёСЏ СЌС„С„РµРєС‚Р° СЃР»РµРґРѕРІ*/
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
@@ -275,32 +303,36 @@ public class MainMenu implements Screen {
 		planet2Sprite.draw(batch);
 		cometSprite.draw(batch);
 		
-		//Отрисовка кнопки "Start Game"//
+		//РћС‚СЂРёСЃРѕРІРєР° РєРЅРѕРїРєРё "Start Game"//
 		if(controller.isOn(startButtonX, startButtonY, startButtonWidth, startButtonHeight))
 			startButtonActiveSprite.draw(batch);
 		else
 			startButtonInactiveSprite.draw(batch);
-		//Отрисовка кнопки "About"//
+		//РћС‚СЂРёСЃРѕРІРєР° РєРЅРѕРїРєРё "About"//
 		if(controller.isOn(aboutButtonX, aboutButtonY, aboutButtonWidth, aboutButtonHeight))
 			aboutButtonActiveSprite.draw(batch);
 		else
 			aboutButtonInactiveSprite.draw(batch);
-		//Отрисовка кнопки "Options"//
+		//РћС‚СЂРёСЃРѕРІРєР° РєРЅРѕРїРєРё "Options"//
 		if(controller.isOn(optionsButtonX, optionsButtonY, optionsButtonWidth, optionsButtonHeight))
 			optionsButtonActiveSprite.draw(batch);
 		else
 			optionsButtonInactiveSprite.draw(batch);
-		//Отрисовка кнопки "Exit"//
+		//РћС‚СЂРёСЃРѕРІРєР° РєРЅРѕРїРєРё "Exit"//
 		if(controller.isOn(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight))
 			exitButtonActiveSprite.draw(batch);
 		else
 			exitButtonInactiveSprite.draw(batch);
 		
+		//Р›РѕРіРѕ РёРіСЂС‹ РІ РјРµРЅСЋ//
+		textBlack.draw(batch, "Space Flight", 0.204F*width, 0.97F*height);
+		text.draw(batch, "Space Flight", 0.2F*width, 0.975F*height);
+		
 		blackAlpha.draw(batch);
 		
 		batch.end();
 		
-		/**Проверка нажатий на кнопки*/
+		/**РџСЂРѕРІРµСЂРєР° РЅР°Р¶Р°С‚РёР№ РЅР° РєРЅРѕРїРєРё*/
 		if(controller.isClicked(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight) || isTransExit){
 			isTransExit = true;
 			isTransAbout = false;
@@ -355,7 +387,7 @@ public class MainMenu implements Screen {
 				alp+=0.05F;
 			}
 		}
-		/**Проверка нажатий на кнопки*/
+		/**РџСЂРѕРІРµСЂРєР° РЅР°Р¶Р°С‚РёР№ РЅР° РєРЅРѕРїРєРё*/
 	}
 	
 	private void resourcesCheck(){
