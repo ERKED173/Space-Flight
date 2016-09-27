@@ -20,7 +20,6 @@ import ru.erked.sflight.random.InfoAndStats;
 
 public class MainMenu implements Screen {
 	
-	final String FONT_CHARS_RU = "абвгдежзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
 	private static final float width = Gdx.graphics.getWidth();
 	private static final float height = Gdx.graphics.getHeight();
 	public static final float backgroundTentionIndex = width/256;
@@ -241,7 +240,6 @@ public class MainMenu implements Screen {
 	
 		//Текст лого\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
-		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
 		FreeTypeFontParameter param = new FreeTypeFontParameter();
 		FreeTypeFontParameter paramBlack = new FreeTypeFontParameter();
 		param.color = Color.WHITE;
@@ -249,10 +247,8 @@ public class MainMenu implements Screen {
 		paramBlack.color = Color.BLACK;
 		paramBlack.size = 150;
 		if(InfoAndStats.lngRussian){
-			param.characters = FONT_CHARS_RU;
-			paramBlack.characters = FONT_CHARS_RU;
-			text = genRU.generateFont(param);
-			textBlack = genRU.generateFont(paramBlack);
+			text = genUS.generateFont(param);
+			textBlack = genUS.generateFont(paramBlack);
 		}else{
 			text = genUS.generateFont(param);
 			textBlack = genUS.generateFont(paramBlack);
