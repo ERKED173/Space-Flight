@@ -91,7 +91,7 @@ public class GameScreen implements Screen{
 	private float control2X;
 	private float control2Y;
 	
-	//Ангар_1
+	//Научный_центр_1
 	private Texture scienceCentre1Texture;
 	public static Sprite scienceCentre1Sprite;
 	private float scienceCentre1Width;
@@ -99,13 +99,22 @@ public class GameScreen implements Screen{
 	private float scienceCentre1X;
 	private float scienceCentre1Y;
 	private float scienceCentre1TentionIndex;
-	//Ангар_2
+	//Научный_центр_2
 	private Texture scienceCentre2Texture;
 	public static Sprite scienceCentre2Sprite;
 	private float scienceCentre2Width;
 	private float scienceCentre2Height;
 	private float scienceCentre2X;
 	private float scienceCentre2Y;
+	
+	//Нефтедобыча
+	private Texture fuelFactoryTexture;
+	public static Sprite fuelFactorySprite;
+	private float fuelFactoryWidth;
+	private float fuelFactoryHeight;
+	private float fuelFactoryX;
+	private float fuelFactoryY;
+	private float fuelFactoryTentionIndex;
 	
 //Облако_1
 	private Texture cloud1Texture;
@@ -178,6 +187,8 @@ public class GameScreen implements Screen{
 	private float alp = 1.0F;
 	private boolean isTransGame;
 	
+	private static String sch;
+	
 	public GameScreen(Game game){
 		this.game = game;
 	}
@@ -226,6 +237,7 @@ public class GameScreen implements Screen{
 		cloudsInit();
 		moneyInit();
 		controlInit();
+		fuelFactoryInit();
 		
 		isTransGame = false;
 		blackAlpha.setBounds(0.0F, 0.0F, backgroundSprite.getWidth(), backgroundSprite.getHeight());
@@ -531,7 +543,19 @@ public class GameScreen implements Screen{
 		control2Y = 0.665F*backgroundSprite.getHeight() - 0.218F*control2Height;
 		control2Sprite.setBounds(control2X, control2Y, control2Width, control2Height);
 	}	
-
+	private void fuelFactoryInit(){
+		//Нефтедобыча\\
+		fuelFactoryTexture = new Texture("objects/fuelFactory_1.png");
+		fuelFactorySprite = new Sprite(fuelFactoryTexture);
+		fuelFactoryTentionIndex = (float)fuelFactorySprite.getWidth()/fuelFactorySprite.getHeight();
+		fuelFactoryWidth = 0.25F*width;
+		fuelFactoryHeight = (float)fuelFactoryWidth/fuelFactoryTentionIndex;
+		fuelFactoryX = 0.2F*backgroundSprite.getWidth();
+		fuelFactoryY = 0.325F*backgroundSprite.getHeight();
+		fuelFactorySprite.setBounds(fuelFactoryX, fuelFactoryY, fuelFactoryWidth, fuelFactoryHeight);
+		sch = "objects/fuelFactory_1.png";
+	}
+	
 	private void resourcesCheck(){
 		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
 		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
@@ -601,6 +625,14 @@ public class GameScreen implements Screen{
 		}else{
 			scienceCentre1Sprite.draw(batch);
 		}
+		/***/
+		if(InfoAndStats.elapsedTime % 45 == 0){
+			fuelFactorySprite.setTexture(new Texture(sch));
+			if(sch.equals("objects/fuelFactory_1.png")) sch = "objects/fuelFactory_2.png";
+			else sch = "objects/fuelFactory_1.png";
+		}
+		fuelFactorySprite.draw(batch);
+		/***/
 	}
 	private void drawMoney(){
 		for(float i=0.25F;i<3.25F;i+=1.0F){
