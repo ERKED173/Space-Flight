@@ -629,7 +629,9 @@ public class GameScreen implements Screen{
 		if(InfoAndStats.elapsedTime % 45 == 0){
 			fuelFactorySprite.setTexture(new Texture(sch));
 			if(sch.equals("objects/fuelFactory_1.png")) sch = "objects/fuelFactory_2.png";
-			else sch = "objects/fuelFactory_1.png";
+			else if(sch.equals("objects/fuelFactory_2.png")) sch = "objects/fuelFactory_3.png";
+			else if(sch.equals("objects/fuelFactory_3.png")) sch = "objects/fuelFactory_4.png";
+			else if(sch.equals("objects/fuelFactory_4.png")) sch = "objects/fuelFactory_1.png";
 		}
 		fuelFactorySprite.draw(batch);
 		/***/
