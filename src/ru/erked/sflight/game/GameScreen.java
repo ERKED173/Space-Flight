@@ -34,6 +34,10 @@ public class GameScreen implements Screen{
 	private SpriteBatch batch;
 	private SFlightInputController controller;
 	
+	private Music cash = Gdx.audio.newMusic(Gdx.files.internal("sounds/misc/cash.wav"));
+	private Music bubble = Gdx.audio.newMusic(Gdx.files.internal("sounds/misc/bubble.wav"));
+	private Music anvil = Gdx.audio.newMusic(Gdx.files.internal("sounds/misc/anvil.wav"));
+	
 	public static boolean isFromMenu = true;
 	
 //Фон
@@ -195,12 +199,15 @@ public class GameScreen implements Screen{
 	
 	@Override
 	public void show() {
-
-		resourcesCheck();
 		
 		batch = new SpriteBatch();
 		controller = new SFlightInputController();
 		MainMenu.music.play();
+		
+		cash.setVolume(1.0F);
+		bubble.setVolume(1.0F);
+		anvil.setVolume(1.0F);
+		
 //Фон\\
 		backgroundTexture = new Texture("bckgrnd/spaceport_4.png");
 		backgroundSprite = new Sprite(backgroundTexture);
@@ -247,6 +254,7 @@ public class GameScreen implements Screen{
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
+		resourcesCheck();
 		
 		if(alp>0.0F && (!isTransGame)){
 			blackAlpha.setAlpha(alp);
@@ -550,13 +558,25 @@ public class GameScreen implements Screen{
 		fuelFactoryTentionIndex = (float)fuelFactorySprite.getWidth()/fuelFactorySprite.getHeight();
 		fuelFactoryWidth = 0.25F*width;
 		fuelFactoryHeight = (float)fuelFactoryWidth/fuelFactoryTentionIndex;
-		fuelFactoryX = 0.2F*backgroundSprite.getWidth();
-		fuelFactoryY = 0.325F*backgroundSprite.getHeight();
+		fuelFactoryX = 0.058F*backgroundSprite.getWidth();
+		fuelFactoryY = 0.335F*backgroundSprite.getHeight();
 		fuelFactorySprite.setBounds(fuelFactoryX, fuelFactoryY, fuelFactoryWidth, fuelFactoryHeight);
 		sch = "objects/fuelFactory_1.png";
 	}
 	
 	private void resourcesCheck(){
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
+			if(InfoAndStats.money<InfoAndStats.moneyFull) cash.play();
+			InfoAndStats.money++;
+		}
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.fuelAmount) == 60){
+			if(InfoAndStats.fuel<InfoAndStats.fuelFull)bubble.play();
+			InfoAndStats.fuel++;
+		}
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.metalAmount) == 120){
+			if(InfoAndStats.metal<InfoAndStats.metalFull)anvil.play();
+			InfoAndStats.metal++;
+		}
 		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
 		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
 		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
@@ -633,7 +653,10 @@ public class GameScreen implements Screen{
 			else if(sch.equals("objects/fuelFactory_3.png")) sch = "objects/fuelFactory_4.png";
 			else if(sch.equals("objects/fuelFactory_4.png")) sch = "objects/fuelFactory_1.png";
 		}
-		fuelFactorySprite.draw(batch);
+		for(int i=0;i<(int)InfoAndStats.fuelAmount;i++){
+			fuelFactorySprite.setX(fuelFactoryX + (1.2F*i)*fuelFactoryWidth);
+			fuelFactorySprite.draw(batch);
+		}
 		/***/
 	}
 	private void drawMoney(){
@@ -731,6 +754,9 @@ public class GameScreen implements Screen{
 		launchSoundPath.dispose();
 		game.dispose();
 		textureDispose();
+		cash.dispose();
+		bubble.dispose();
+		anvil.dispose();
 		cloud1PrevX = cloud1Sprite.getX();
 		cloud1PrevY = cloud1Sprite.getY();
 		cloud2PrevX = cloud2Sprite.getX();

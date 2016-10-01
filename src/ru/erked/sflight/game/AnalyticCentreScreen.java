@@ -57,6 +57,19 @@ public class AnalyticCentreScreen implements Screen{
 	private float scoreboard2Y;
 	private float scoreboard2Width;
 	private float scoreboard2Height;
+	//Панель ресурсов
+	private Texture resourcePanelInactive;
+	private Texture resourcePanelActive;
+	private Sprite resourcePanelInactiveSprite;
+	private Sprite resourcePanelActiveSprite;
+	private float resourcePanel1X;
+	private float resourcePanel1Y;
+	private float resourcePanel1Width;
+	private float resourcePanel1Height;
+	private float resourcePanel2X;
+	private float resourcePanel2Y;
+	private float resourcePanel2Width;
+	private float resourcePanel2Height;
 	//Текст
 	private static BitmapFont text;
 	
@@ -85,6 +98,7 @@ public class AnalyticCentreScreen implements Screen{
 		
 		backButtonInit();
 		scoreboardInit();
+		resourcePanelInit();
 		
 		//Текст\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
@@ -140,6 +154,23 @@ public class AnalyticCentreScreen implements Screen{
 		scoreboardInactiveSprite.setBounds(scoreboard1X, scoreboard1Y, scoreboard1Width, scoreboard1Height);
 		scoreboardActiveSprite.setBounds(scoreboard2X, scoreboard2Y, scoreboard2Width, scoreboard2Height);
 	}
+	private void resourcePanelInit(){
+		//Панель ресурсов\\
+		resourcePanelInactive = new Texture("objects/resourcesPanelInactive.png");
+		resourcePanelActive = new Texture("objects/resourcesPanelActive.png");
+		resourcePanelInactiveSprite = new Sprite(resourcePanelInactive);
+		resourcePanelActiveSprite = new Sprite(resourcePanelActive);
+		resourcePanel1Width = 0.115F*width;
+		resourcePanel1Height = 1.4090909090909090909090909090909F*resourcePanel1Width;
+		resourcePanel1X = 0.415F*backgroundSprite.getWidth();
+		resourcePanel1Y = backgroundSprite.getY() + 0.385F*backgroundSprite.getHeight();
+		resourcePanel2Width = 2.5F*resourcePanel1Width;
+		resourcePanel2Height = 2.5F*resourcePanel1Height;
+		resourcePanel2X = 0.415F*backgroundSprite.getWidth() - 0.3F*resourcePanel2Width;
+		resourcePanel2Y = backgroundSprite.getY() + 0.385F*backgroundSprite.getHeight() - 0.3F*resourcePanel2Height;
+		resourcePanelInactiveSprite.setBounds(resourcePanel1X, resourcePanel1Y, resourcePanel1Width, resourcePanel1Height);
+		resourcePanelActiveSprite.setBounds(resourcePanel2X, resourcePanel2Y, resourcePanel2Width, resourcePanel2Height);
+	}
 	
 	private void btnListener(){
 		//Слушатель нажатия на кнопку "Back"//
@@ -150,6 +181,11 @@ public class AnalyticCentreScreen implements Screen{
 		//Слушатель нажатия на доску статистики//
 		if(controller.isClicked(scoreboard1X, scoreboard1Y, scoreboard1Width, scoreboard1Height)){
 			game.setScreen(new StatisticScreen(game));
+			this.dispose();
+		}
+		//Слушатель нажатия на панель ресурсов//
+		if(controller.isClicked(resourcePanel1X, resourcePanel1Y, resourcePanel1Width, resourcePanel1Height)){
+			game.setScreen(new ResourceScreen(game));
 			this.dispose();
 		}
 	}
@@ -168,6 +204,14 @@ public class AnalyticCentreScreen implements Screen{
 			scoreboardActiveSprite.draw(batch);
 		}else{
 			scoreboardInactiveSprite.draw(batch);
+		}
+	}
+	private void drawResourcePanel(){
+		//Отрисовка панели ресурсов//
+		if(controller.isOn(resourcePanel1X, resourcePanel1Y, resourcePanel1Width, resourcePanel1Height)){
+			resourcePanelActiveSprite.draw(batch);
+		}else{
+			resourcePanelInactiveSprite.draw(batch);
 		}
 	}
 
@@ -198,6 +242,7 @@ public class AnalyticCentreScreen implements Screen{
 		
 		drawBackButton();
 		drawScoreboard();
+		drawResourcePanel();
 		
 		blackAlpha.draw(batch);
 		

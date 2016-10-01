@@ -10,6 +10,9 @@ public class InfoAndStats {
 	public static long moneyFull;
 	public static long fuelFull;
 	public static long metalFull;
+	public static long moneyAmount;
+	public static long fuelAmount;
+	public static long metalAmount;
 	
 	public static boolean lngRussian = false;
 }

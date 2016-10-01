@@ -11,6 +11,9 @@ public class ResetTheGame {
 		InfoAndStats.moneyFull = 10;
 		InfoAndStats.fuelFull = 10;
 		InfoAndStats.metalFull = 10;
+		InfoAndStats.moneyAmount = 1;
+		InfoAndStats.fuelAmount = 5;
+		InfoAndStats.metalAmount = 1;
 	}
 	
 }
