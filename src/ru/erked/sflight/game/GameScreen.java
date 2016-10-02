@@ -119,6 +119,22 @@ public class GameScreen implements Screen{
 	private float fuelFactoryX;
 	private float fuelFactoryY;
 	private float fuelFactoryTentionIndex;
+	//Майнинг
+	private Texture coinFactoryTexture;
+	public static Sprite coinFactorySprite;
+	private float coinFactoryWidth;
+	private float coinFactoryHeight;
+	private float coinFactoryX;
+	private float coinFactoryY;
+	private float coinFactoryTentionIndex;
+	//Металодобыча
+	private Texture metalFactoryTexture;
+	public static Sprite metalFactorySprite;
+	private float metalFactoryWidth;
+	private float metalFactoryHeight;
+	private float metalFactoryX;
+	private float metalFactoryY;
+	private float metalFactoryTentionIndex;
 	
 //Облако_1
 	private Texture cloud1Texture;
@@ -191,7 +207,9 @@ public class GameScreen implements Screen{
 	private float alp = 1.0F;
 	private boolean isTransGame;
 	
-	private static String sch;
+	private static String schFuel;
+	private static String schCoin;
+	private static String schMetal;
 	
 	public GameScreen(Game game){
 		this.game = game;
@@ -245,6 +263,8 @@ public class GameScreen implements Screen{
 		moneyInit();
 		controlInit();
 		fuelFactoryInit();
+		coinFactoryInit();
+		metalFactoryInit();
 		
 		isTransGame = false;
 		blackAlpha.setBounds(0.0F, 0.0F, backgroundSprite.getWidth(), backgroundSprite.getHeight());
@@ -561,7 +581,31 @@ public class GameScreen implements Screen{
 		fuelFactoryX = 0.058F*backgroundSprite.getWidth();
 		fuelFactoryY = 0.335F*backgroundSprite.getHeight();
 		fuelFactorySprite.setBounds(fuelFactoryX, fuelFactoryY, fuelFactoryWidth, fuelFactoryHeight);
-		sch = "objects/fuelFactory_1.png";
+		schFuel = "objects/fuelFactory_1.png";
+	}
+	private void coinFactoryInit(){
+		//Нефтедобыча\\
+		coinFactoryTexture = new Texture("objects/coinFactory_1.png");
+		coinFactorySprite = new Sprite(coinFactoryTexture);
+		coinFactoryTentionIndex = (float)coinFactorySprite.getWidth()/coinFactorySprite.getHeight();
+		coinFactoryWidth = 0.25F*width;
+		coinFactoryHeight = (float)coinFactoryWidth/coinFactoryTentionIndex;
+		coinFactoryX = 0.058F*backgroundSprite.getWidth();
+		coinFactoryY = 0.245F*backgroundSprite.getHeight();
+		coinFactorySprite.setBounds(coinFactoryX, coinFactoryY, coinFactoryWidth, coinFactoryHeight);
+		schCoin = "objects/coinFactory_1.png";
+	}
+	private void metalFactoryInit(){
+		//Нефтедобыча\\
+		metalFactoryTexture = new Texture("objects/metalFactory/metalFactory_1.png");
+		metalFactorySprite = new Sprite(metalFactoryTexture);
+		metalFactoryTentionIndex = (float)metalFactorySprite.getWidth()/metalFactorySprite.getHeight();
+		metalFactoryWidth = 0.25F*width;
+		metalFactoryHeight = (float)metalFactoryWidth/metalFactoryTentionIndex;
+		metalFactoryX = 0.07F*backgroundSprite.getWidth();
+		metalFactoryY = 0.1665F*backgroundSprite.getHeight();
+		metalFactorySprite.setBounds(metalFactoryX, metalFactoryY, metalFactoryWidth, metalFactoryHeight);
+		schMetal = "objects/metalFactory/metalFactory_1.png";
 	}
 	
 	private void resourcesCheck(){
@@ -646,16 +690,57 @@ public class GameScreen implements Screen{
 			scienceCentre1Sprite.draw(batch);
 		}
 		/***/
-		if(InfoAndStats.elapsedTime % 45 == 0){
-			fuelFactorySprite.setTexture(new Texture(sch));
-			if(sch.equals("objects/fuelFactory_1.png")) sch = "objects/fuelFactory_2.png";
-			else if(sch.equals("objects/fuelFactory_2.png")) sch = "objects/fuelFactory_3.png";
-			else if(sch.equals("objects/fuelFactory_3.png")) sch = "objects/fuelFactory_4.png";
-			else if(sch.equals("objects/fuelFactory_4.png")) sch = "objects/fuelFactory_1.png";
+		if(InfoAndStats.elapsedTime % 30 == 0){
+			fuelFactorySprite.setTexture(new Texture(schFuel));
+			if(schFuel.equals("objects/fuelFactory_1.png")) schFuel = "objects/fuelFactory_2.png";
+			else if(schFuel.equals("objects/fuelFactory_2.png")) schFuel = "objects/fuelFactory_3.png";
+			else if(schFuel.equals("objects/fuelFactory_3.png")) schFuel = "objects/fuelFactory_4.png";
+			else if(schFuel.equals("objects/fuelFactory_4.png")) schFuel = "objects/fuelFactory_1.png";
 		}
 		for(int i=0;i<(int)InfoAndStats.fuelAmount;i++){
 			fuelFactorySprite.setX(fuelFactoryX + (1.2F*i)*fuelFactoryWidth);
 			fuelFactorySprite.draw(batch);
+		}
+		/***/
+		if(InfoAndStats.elapsedTime % 15 == 0){
+			coinFactorySprite.setTexture(new Texture(schCoin));
+			if(schCoin.equals("objects/coinFactory_1.png")) schCoin = "objects/coinFactory_2.png";
+			else if(schCoin.equals("objects/coinFactory_2.png")) schCoin = "objects/coinFactory_3.png";
+			else if(schCoin.equals("objects/coinFactory_3.png")) schCoin = "objects/coinFactory_1.png";
+		}
+		for(int i=0;i<(int)InfoAndStats.moneyAmount;i++){
+			coinFactorySprite.setX(coinFactoryX + (1.2F*i)*coinFactoryWidth);
+			coinFactorySprite.draw(batch);
+		}
+		/***/
+		if(InfoAndStats.elapsedTime % 6 == 0){
+			metalFactorySprite.setTexture(new Texture(schMetal));
+			if(schMetal.equals("objects/metalFactory/metalFactory_1.png")) schMetal = "objects/metalFactory/metalFactory_2.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_2.png")) schMetal = "objects/metalFactory/metalFactory_3.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_3.png")) schMetal = "objects/metalFactory/metalFactory_4.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_4.png")) schMetal = "objects/metalFactory/metalFactory_5.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_5.png")) schMetal = "objects/metalFactory/metalFactory_6.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_6.png")) schMetal = "objects/metalFactory/metalFactory_7.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_7.png")) schMetal = "objects/metalFactory/metalFactory_8.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_8.png")) schMetal = "objects/metalFactory/metalFactory_9.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_9.png")) schMetal = "objects/metalFactory/metalFactory_10.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_10.png")) schMetal = "objects/metalFactory/metalFactory_11.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_11.png")) schMetal = "objects/metalFactory/metalFactory_12.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_12.png")) schMetal = "objects/metalFactory/metalFactory_13.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_13.png")) schMetal = "objects/metalFactory/metalFactory_14.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_14.png")) schMetal = "objects/metalFactory/metalFactory_15.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_15.png")) schMetal = "objects/metalFactory/metalFactory_16.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_16.png")) schMetal = "objects/metalFactory/metalFactory_17.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_17.png")) schMetal = "objects/metalFactory/metalFactory_18.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_18.png")) schMetal = "objects/metalFactory/metalFactory_19.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_19.png")) schMetal = "objects/metalFactory/metalFactory_20.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_20.png")) schMetal = "objects/metalFactory/metalFactory_21.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_21.png")) schMetal = "objects/metalFactory/metalFactory_22.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_22.png")) schMetal = "objects/metalFactory/metalFactory_1.png";
+		}
+		for(int i=0;i<(int)InfoAndStats.metalAmount;i++){
+			metalFactorySprite.setX(metalFactoryX + (1.2F*i)*metalFactoryWidth);
+			metalFactorySprite.draw(batch);
 		}
 		/***/
 	}

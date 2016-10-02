@@ -139,17 +139,11 @@ public class StatisticScreen implements Screen{
 			header.draw(batch, statsUS, width/2 - (int)(0.055F*width)*2.5F, 0.9F*height);
 			text.draw(batch, elapsedTime, 0.075F*width, 0.75F*height);
 			text.draw(batch, "Rocket launches: " + Long.toString((int)(launches)), 0.075F*width, 0.7F*height);
-			text.draw(batch, "Cosmocoins: " + Long.toString((int)(InfoAndStats.money)), 0.075F*width, 0.65F*height);
-			text.draw(batch, "Fuel: " + Long.toString((int)(InfoAndStats.fuel)), 0.075F*width, 0.6F*height);
-			text.draw(batch, "Metal: " + Long.toString((int)(InfoAndStats.metal)), 0.075F*width, 0.55F*height);
 		}else{
 			elapsedTime = "Время в игре: " + Integer.toString((int) hours) + "ч " + Integer.toString((int) minutes%60) + "м " + Integer.toString((int) seconds%60) + "с";
 			header.draw(batch, statsRU, width/2 - (int)(0.185F*width), 0.9F*height);
 			text.draw(batch, elapsedTime, 0.075F*width, 0.75F*height);
 			text.draw(batch, "Запусков ракет: " + Long.toString((int)(launches)), 0.075F*width, 0.7F*height);
-			text.draw(batch, "Космокоины: " + Long.toString((int)(InfoAndStats.money)), 0.075F*width, 0.65F*height);
-			text.draw(batch, "Топливо: " + Long.toString((int)(InfoAndStats.fuel)), 0.075F*width, 0.6F*height);
-			text.draw(batch, "Метал: " + Long.toString((int)(InfoAndStats.metal)), 0.075F*width, 0.55F*height);
 		}
 		
 		batch.end();
@@ -159,8 +153,26 @@ public class StatisticScreen implements Screen{
 			game.setScreen(new AnalyticCentreScreen(game));
 			this.dispose();
 		}
+		
+		resourcesCheck();
+		
 	}
 
+	private void resourcesCheck(){
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
+			InfoAndStats.money++;
+		}
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.fuelAmount) == 60){
+			InfoAndStats.fuel++;
+		}
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.metalAmount) == 120){
+			InfoAndStats.metal++;
+		}
+		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
+		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
+		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
+	}
+	
 	@Override
 	public void resize(int width, int height) {
 

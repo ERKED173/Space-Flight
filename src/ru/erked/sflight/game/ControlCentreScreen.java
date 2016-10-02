@@ -209,7 +209,8 @@ public class ControlCentreScreen implements Screen{
 		batch.end();
 		
 		btnListeners();
-	
+		resourcesCheck();
+		
 	}
 
 	private void panelInit(){
@@ -336,6 +337,21 @@ public class ControlCentreScreen implements Screen{
 				/**TODO: Запуск ракеты*/
 			}
 		}
+	}
+	
+	private void resourcesCheck(){
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
+			InfoAndStats.money++;
+		}
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.fuelAmount) == 60){
+			InfoAndStats.fuel++;
+		}
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.metalAmount) == 120){
+			InfoAndStats.metal++;
+		}
+		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
+		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
+		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
 	}
 	
 	@Override

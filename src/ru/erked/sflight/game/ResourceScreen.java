@@ -39,6 +39,12 @@ public class ResourceScreen implements Screen{
 	private float backButtonWidth;
 	private float backButtonHeight;
 	public static float backButtonTentionIndex; //Соотношение сторон кнопки
+	private String schBack;
+	
+	//Иконка ресурсов
+	private Sprite moneySprite;
+	private Sprite fuelSprite;
+	private Sprite metalSprite;
 	
 	//Шрифты
 	private static BitmapFont header;
@@ -57,9 +63,10 @@ public class ResourceScreen implements Screen{
 		MainMenu.music.play();
 		
 		//Фон\\
-		backgroundTexture = new Texture("bckgrnd/resource.png");
+		backgroundTexture = new Texture("bckgrnd/resource/resource_1.png");
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundSprite.setBounds(0.0F, 0.0F, width, height);
+		schBack = "bckgrnd/resource/resource_1.png";
 		
 		//Кнопка "Back"\\
 		backButtonInactiveSprite = new Sprite(ImgResDraw.backButtonInactive);
@@ -75,7 +82,7 @@ public class ResourceScreen implements Screen{
 		backButtonY = 0 + 0.005F*height;
 		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
 		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-		
+
 		//Шрифты\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
@@ -101,6 +108,8 @@ public class ResourceScreen implements Screen{
 		header.getData().setScale((float)(0.0015F*width));
 		text.getData().setScale((float)(0.00075F*width));
 		
+		resourcesInit();
+		
 		genRU.dispose();
 		genUS.dispose();
 	}
@@ -111,6 +120,8 @@ public class ResourceScreen implements Screen{
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		drawBackground();
 		
 		batch.begin();
 		
@@ -123,10 +134,18 @@ public class ResourceScreen implements Screen{
 			backButtonInactiveSprite.draw(batch);
 
 		if(!InfoAndStats.lngRussian){
-			text.draw(batch, "Here will be information about resources: ", 0.075F*width, 0.55F*height);
+			text.draw(batch, "Information about resources", 0.315F*width, 0.965F*height);
+			text.draw(batch, InfoAndStats.money + "/" + InfoAndStats.moneyFull + " cosmocoins", 0.125F*width, 0.8F*height - 0.0F*text.getCapHeight());
+			text.draw(batch, "1 cosmocoin per " + 60/InfoAndStats.moneyAmount + " seconds", 0.125F*width, 0.8F*height - 1.5F*text.getCapHeight());
+			text.draw(batch, InfoAndStats.fuel + "/" + InfoAndStats.fuelFull + " fuel", 0.125F*width, 0.8F*height - 6.0F*text.getCapHeight());
+			text.draw(batch, "1 fuel per " + 60/InfoAndStats.fuelAmount + " seconds", 0.125F*width, 0.8F*height - 7.5F*text.getCapHeight());
+			text.draw(batch, InfoAndStats.metal + "/" + InfoAndStats.metalFull + " metal", 0.125F*width, 0.8F*height - 12.0F*text.getCapHeight());
+			text.draw(batch, "1 metal per " + 60/InfoAndStats.metalAmount + " seconds", 0.125F*width, 0.8F*height - 13.5F*text.getCapHeight());
 		}else{
-			text.draw(batch, "Тут будет инфа о ресах и апгрейды: ", 0.075F*width, 0.55F*height);
+			text.draw(batch, "Информация о ресурсах", 0.315F*width, 0.965F*height);
 		}
+		
+		drawResources();
 		
 		batch.end();
 		
@@ -135,23 +154,71 @@ public class ResourceScreen implements Screen{
 			game.setScreen(new AnalyticCentreScreen(game));
 			this.dispose();
 		}
+		
+		resourcesCheck();
+		
 	}
 
+	private void resourcesInit(){
+		moneySprite = new Sprite(new Texture("objects/cosmocoin.png"));
+		fuelSprite = new Sprite(new Texture("objects/fuel.png"));
+		metalSprite = new Sprite(new Texture("objects/metal.png"));
+		moneySprite.setBounds(0.025F*width, 0.8F*height - 3.0F*text.getCapHeight(), 0.08F*width, 0.08F*width);
+		fuelSprite.setBounds(0.025F*width, 0.8F*height - 9.0F*text.getCapHeight(), 0.08F*width, 0.08F*width);
+		metalSprite.setBounds(0.025F*width, 0.8F*height - 15.0F*text.getCapHeight(), 0.08F*width, 0.08F*width);
+	}
+	
+	private void drawBackground(){
+		if(InfoAndStats.elapsedTime % 15 == 0){
+			backgroundSprite.setTexture(new Texture(schBack));
+			if(schBack.equals("bckgrnd/resource/resource_1.png")) schBack = "bckgrnd/resource/resource_2.png";
+			else if(schBack.equals("bckgrnd/resource/resource_2.png")) schBack = "bckgrnd/resource/resource_3.png";
+			else if(schBack.equals("bckgrnd/resource/resource_3.png")) schBack = "bckgrnd/resource/resource_4.png";
+			else if(schBack.equals("bckgrnd/resource/resource_4.png")) schBack = "bckgrnd/resource/resource_5.png";
+			else if(schBack.equals("bckgrnd/resource/resource_5.png")) schBack = "bckgrnd/resource/resource_6.png";
+			else if(schBack.equals("bckgrnd/resource/resource_6.png")) schBack = "bckgrnd/resource/resource_7.png";
+			else if(schBack.equals("bckgrnd/resource/resource_7.png")) schBack = "bckgrnd/resource/resource_8.png";
+			else if(schBack.equals("bckgrnd/resource/resource_8.png")) schBack = "bckgrnd/resource/resource_9.png";
+			else if(schBack.equals("bckgrnd/resource/resource_9.png")) schBack = "bckgrnd/resource/resource_10.png";
+			else if(schBack.equals("bckgrnd/resource/resource_10.png")) schBack = "bckgrnd/resource/resource_11.png";
+			else if(schBack.equals("bckgrnd/resource/resource_11.png")) schBack = "bckgrnd/resource/resource_12.png";
+			else if(schBack.equals("bckgrnd/resource/resource_12.png")) schBack = "bckgrnd/resource/resource_13.png";
+			else if(schBack.equals("bckgrnd/resource/resource_13.png")) schBack = "bckgrnd/resource/resource_1.png";
+		}
+	}
+	private void drawResources(){
+		moneySprite.draw(batch);
+		fuelSprite.draw(batch);
+		metalSprite.draw(batch);
+	}
+	
+	private void resourcesCheck(){
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
+			InfoAndStats.money++;
+		}
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.fuelAmount) == 60){
+			InfoAndStats.fuel++;
+		}
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.metalAmount) == 120){
+			InfoAndStats.metal++;
+		}
+		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
+		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
+		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
+	}
+	
 	@Override
 	public void resize(int width, int height) {
 
 	}
-
 	@Override
 	public void pause() {
 
 	}
-
 	@Override
 	public void resume() {
 
 	}
-
 	@Override
 	public void hide() {
 

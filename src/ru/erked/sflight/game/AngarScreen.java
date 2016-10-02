@@ -56,8 +56,6 @@ public class AngarScreen implements Screen{
 	
 	@Override
 	public void show() {
-
-		resourcesCheck();
 		
 		batch = new SpriteBatch();
 		controller = new SFlightInputController();
@@ -145,10 +143,20 @@ public class AngarScreen implements Screen{
 		batch.end();
 		
 		buttonListeners();
+		resourcesCheck();
 		
 	}
 
 	private void resourcesCheck(){
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
+			InfoAndStats.money++;
+		}
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.fuelAmount) == 60){
+			InfoAndStats.fuel++;
+		}
+		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.metalAmount) == 120){
+			InfoAndStats.metal++;
+		}
 		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
 		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
 		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
