@@ -1,7 +1,5 @@
 package ru.erked.sflight.game;
 
-import java.util.Random;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -27,7 +25,6 @@ public class GameScreen implements Screen{
 	final String FONT_CHARS_RU = "абвгдежзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
 	private static final float width = Gdx.graphics.getWidth();
 	private static final float height = Gdx.graphics.getHeight();
-	private final Random rand = new Random();
 	
 	private Game game;
 	public static OrthographicCamera camera;
@@ -136,49 +133,11 @@ public class GameScreen implements Screen{
 	private float metalFactoryY;
 	private float metalFactoryTentionIndex;
 	
-//Облако_1
-	private Texture cloud1Texture;
-	public static Sprite cloud1Sprite;
-	private float cloud1Width;
-	private float cloud1Height;
-	private float cloud1X;
-	private static float cloud1PrevX;
-	private float cloud1Y;
-	private static float cloud1PrevY;
-	private float cloud1TentionIndex;
-//Облако_2
-	private Texture cloud2Texture;
-	public static Sprite cloud2Sprite;
-	private float cloud2Width;
-	private float cloud2Height;
-	private float cloud2X;
-	private static float cloud2PrevX;
-	private float cloud2Y;
-	private static float cloud2PrevY;
-	private float cloud2TentionIndex;
-//Ещё облака
-	public static Sprite cloud3Sprite;
-	private float cloud3X;
-	private static float cloud3PrevX;
-	private float cloud3Y;
-	private static float cloud3PrevY;
-	public static Sprite cloud4Sprite;
-	private float cloud4X;
-	private static float cloud4PrevX;
-	private float cloud4Y;
-	private static float cloud4PrevY;
-	private float speed1 = 0.01F*rand.nextInt(100);
-	private float speed2 = 0.01F*rand.nextInt(100);
-	private float speed3 = 0.01F*rand.nextInt(100);
-	private float speed4 = 0.01F*rand.nextInt(100);
-	
 //Для прокрутки
 	private static float prevDragX;
 	private static float prevDragY;
 	
 //Копка "Main Menu"
-	private Texture backButtonInactive;
-	private Texture backButtonActive;
 	private Sprite backButtonInactiveSprite;
 	private Sprite backButtonActiveSprite;
 	private float backButtonX;
@@ -196,6 +155,7 @@ public class GameScreen implements Screen{
 	private float moneyWidth;
 	private float moneyHeight;
 	private static BitmapFont text;
+	private static BitmapFont textBtn;
 	private Sprite line;
 	private Sprite cosmocoinLine;
 	private Sprite fuelLine;
@@ -244,16 +204,21 @@ public class GameScreen implements Screen{
 		FreeTypeFontParameter param2 = new FreeTypeFontParameter();
 		param.color = Color.WHITE;
 		param.size = 40;
-		param2.color = Color.RED;
+		param2.color = Color.WHITE;
 		param2.size = 60;
 		if(InfoAndStats.lngRussian){
 			param.characters = FONT_CHARS_RU;
 			param2.characters = FONT_CHARS_RU;
 			text = genRU.generateFont(param);
+			textBtn = genRU.generateFont(param2);
+			textBtn.getData().setScale((float)(0.00045F*width));
 		}else{
 			text = genUS.generateFont(param);
+			textBtn = genUS.generateFont(param2);
+			textBtn.getData().setScale((float)(0.0006F*width));
 		}
 		text.getData().setScale((float)(0.00045F*width));
+		
 		
 		mainMenuButtonInit();
 		analyticInit();
@@ -324,42 +289,12 @@ public class GameScreen implements Screen{
 		backButtonY = camera.position.y - (height/2 - 0.01F*height);
 		backButtonInactiveSprite.setX(backButtonX);
 		backButtonInactiveSprite.setY(backButtonY);
-		backButtonActiveSprite.setX(backButtonX);
-		backButtonActiveSprite.setY(backButtonY);
+		backButtonActiveSprite.setX(backButtonX - 0.5F*backButtonWidth);
+		backButtonActiveSprite.setY(backButtonY - 0.5F*backButtonHeight);
 	}	
 	private void cloudsCoords(float delta){
 		//Установка коодрдинат для облаков
-		if(cloud1Sprite.getX() > backgroundX + backgroundSprite.getWidth()){
-			cloud1Sprite.setX(0.0F - rand.nextInt((int)(width)) - cloud1Width);
-			cloud1Sprite.setY(0.0F + rand.nextInt((int)(backgroundSprite.getHeight() - cloud1Height)));
-			speed1 = delta*rand.nextInt(100);
-		}
-		else
-			cloud1Sprite.setX(cloud1Sprite.getX() + speed1);
-		/***/
-		if(cloud2Sprite.getX() > backgroundX + backgroundSprite.getWidth()){
-			cloud2Sprite.setX(0.0F - rand.nextInt((int)(width)) - cloud2Width);
-			cloud2Sprite.setY(0.0F + rand.nextInt((int)(backgroundSprite.getHeight() - cloud1Height)));
-			speed2 = delta*rand.nextInt(100);
-		}
-		else
-			cloud2Sprite.setX(cloud2Sprite.getX() + speed2);
-		/***/
-		if(cloud3Sprite.getX() > backgroundX + backgroundSprite.getWidth()){
-			cloud3Sprite.setX(0.0F - rand.nextInt((int)(width)) - cloud1Width);
-			cloud3Sprite.setY(0.0F + rand.nextInt((int)(backgroundSprite.getHeight() - cloud1Height)));
-			speed3 = delta*rand.nextInt(100);
-		}
-		else
-			cloud3Sprite.setX(cloud3Sprite.getX() + speed3);
-		/***/
-		if(cloud4Sprite.getX() > backgroundX + backgroundSprite.getWidth()){
-			cloud4Sprite.setX(0.0F - rand.nextInt((int)(width)) - cloud2Width);
-			cloud4Sprite.setY(0.0F + rand.nextInt((int)(backgroundSprite.getHeight() - cloud2Height)));
-			speed4 = delta*rand.nextInt(100);
-		}
-		else
-			cloud4Sprite.setX(cloud4Sprite.getX() + speed4);
+		/**TODO: Облащка 1*/
 		//Установка коодрдинат для облаков
 	}
 	private void moneyCoords(){
@@ -404,22 +339,16 @@ public class GameScreen implements Screen{
 	
 	private void mainMenuButtonInit(){
 		//Кнопка "Main Menu"\\
-				backButtonInactive = new Texture("btns/button_main_menu_inactive.png");
-				backButtonActive = new Texture("btns/button_main_menu_active.png");
-				backButtonInactiveSprite = new Sprite(backButtonInactive);
-				backButtonActiveSprite = new Sprite(backButtonActive);
-				if(InfoAndStats.lngRussian){
-					backButtonInactiveSprite.setTexture(ImgResDraw.mainMenuButtonInactiveRU);
-					backButtonActiveSprite.setTexture(ImgResDraw.mainMenuButtonActiveRU);
-				}
-				backButtonTentionIndex = (float)backButtonInactive.getWidth()/backButtonInactive.getHeight();
-				backButtonWidth = 0.132F*width;
-				backButtonHeight = backButtonWidth/backButtonTentionIndex;
-				backButtonX = camera.position.x - backButtonWidth + (width/2 - 0.01F*width);
-				backButtonY = camera.position.y - (height/2 - 0.01F*height);
-				backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-				backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-			}
+		backButtonInactiveSprite = new Sprite(ImgResDraw.buttonI);
+		backButtonActiveSprite = new Sprite(ImgResDraw.buttonA);
+		backButtonTentionIndex = (float)ImgResDraw.buttonI.getWidth()/ImgResDraw.buttonI.getHeight();
+		backButtonWidth = 0.132F*width;
+		backButtonHeight = backButtonWidth/backButtonTentionIndex;
+		backButtonX = camera.position.x - backButtonWidth + (width/2 - 0.01F*width);
+		backButtonY = camera.position.y - (height/2 - 0.01F*height);
+		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
+		backButtonActiveSprite.setBounds(backButtonX - 0.5F*backButtonWidth, backButtonY - 0.5F*backButtonHeight, 2.0F*backButtonWidth, 2.0F*backButtonHeight);
+	}
 	private void angarInit(){
 		//Ангар_1\\
 		angar1Texture = new Texture("objects/angar_1.png");
@@ -433,10 +362,10 @@ public class GameScreen implements Screen{
 		//Ангар_2\\
 		angar2Texture = new Texture("objects/angar_2.png");
 		angar2Sprite = new Sprite(angar2Texture);
-		angar2Width = 0.625F*width;
+		angar2Width = 0.65F*width;
 		angar2Height = (float)angar2Width/angar1TentionIndex;
-		angar2X = 0.150F*backgroundSprite.getWidth() - 0.1F*angar2Width;
-		angar2Y = 0.625F*backgroundSprite.getHeight() - 0.10035714285714285714285714285714F*angar2Height;
+		angar2X = angar1X - 0.115F*angar2Width;
+		angar2Y = angar1Y - 0.11566666666666666666666666666667F*angar2Height;
 		angar2Sprite.setBounds(angar2X, angar2Y, angar2Width, angar2Height);
 	}	
 	private void scienceCentreInit(){
@@ -459,53 +388,10 @@ public class GameScreen implements Screen{
 		scienceCentre2Sprite.setBounds(scienceCentre2X, scienceCentre2Y, scienceCentre2Width, scienceCentre2Height);
 	}	
 	private void cloudsInit(){
-		//Облако_1\\
-		cloud1Texture = new Texture("objects/cloud_1.png");
-		cloud1Sprite = new Sprite(cloud1Texture);
-		cloud1TentionIndex = (float)cloud1Sprite.getWidth()/cloud1Sprite.getHeight();
-		cloud1Width = 0.125F*width;
-		cloud1Height = (float)cloud1Width/cloud1TentionIndex;
-		if(isFromMenu){
-			cloud1X = 0.0F - rand.nextInt((int)(width)) - cloud1Width;
-			cloud1Y = 0.0F + rand.nextInt((int)(backgroundSprite.getHeight() - cloud1Height));
-		}else{
-			cloud1X = cloud1PrevX;
-			cloud1Y = cloud1PrevY;
-		}
-		cloud1Sprite.setBounds(cloud1X, cloud1Y, cloud1Width, cloud1Height);
-		//Облако_2\\
-		cloud2Texture = new Texture("objects/cloud_2.png");
-		cloud2Sprite = new Sprite(cloud2Texture);
-		cloud2TentionIndex = (float)cloud2Sprite.getWidth()/cloud2Sprite.getHeight();
-		cloud2Width = 0.150F*width;
-		cloud2Height = (float)cloud2Width/cloud2TentionIndex;
-		if(isFromMenu){
-			cloud2X = 0.0F - rand.nextInt((int)(width)) - cloud2Width;
-			cloud2Y = 0.0F + rand.nextInt((int)(backgroundSprite.getHeight() - cloud2Height));
-		}else{
-			cloud2X = cloud2PrevX;
-			cloud2Y = cloud2PrevY;
-		}
-		cloud2Sprite.setBounds(cloud2X, cloud2Y, cloud2Width, cloud2Height);
-		//Ещё облака\\
-		cloud3Sprite = new Sprite(cloud1Texture);
-		if(isFromMenu){
-			cloud3X = 0.0F - rand.nextInt((int)(width)) - cloud1Width;
-			cloud3Y = 0.0F + rand.nextInt((int)(backgroundSprite.getHeight() - cloud1Height));
-		}else{
-			cloud3X = cloud3PrevX;
-			cloud3Y = cloud3PrevY;
-		}
-		cloud3Sprite.setBounds(cloud3X, cloud3Y, cloud1Width, cloud1Height);
-		cloud4Sprite = new Sprite(cloud2Texture);
-		if(isFromMenu){
-			cloud4X = 0.0F - rand.nextInt((int)(width)) - cloud2Width;
-			cloud4Y = 0.0F + rand.nextInt((int)(backgroundSprite.getHeight() - cloud2Height));
-		}else{
-			cloud4X = cloud4PrevX;
-			cloud4Y = cloud4PrevY;
-		}
-		cloud4Sprite.setBounds(cloud4X, cloud4Y, cloud2Width, cloud2Height);	
+		//Облака\\
+//		cloudSprite = new Sprite(new Texture("objects/clouds/cloud_" + Integer.toString(rand.nextInt(5)) + ".png"));
+//		cloudSprite.setBounds(backgroundX, backgroundY, 0.0F, 0.0F);
+		/**TODO: Облащка 2*/
 	}
 	private void analyticInit(){
 		//Аналитический_центр_1\\
@@ -522,8 +408,8 @@ public class GameScreen implements Screen{
 		analytic2Sprite = new Sprite(analytic2Texture);
 		analytic2Width = 0.4F*width;
 		analytic2Height = (float)analytic2Width/analytic1TentionIndex;
-		analytic2X = 0.739F*backgroundSprite.getWidth() - 0.24909090909090909090909090909091F*analytic2Width;
-		analytic2Y = 0.785F*backgroundSprite.getHeight() - 0.2509090909090909090909090909091F*analytic2Height;
+		analytic2X = analytic1X - 0.24909090909090909090909090909091F*analytic2Width;
+		analytic2Y = analytic1Y - 0.2509090909090909090909090909091F*analytic2Height;
 		analytic2Sprite.setBounds(analytic2X, analytic2Y, analytic2Width, analytic2Height);
 	}
 	private void moneyInit(){
@@ -652,16 +538,27 @@ public class GameScreen implements Screen{
 		/**Границы прокрутки*/
 	}
 	private void drawClouds(){
-		cloud1Sprite.draw(batch);
-		cloud2Sprite.draw(batch);
-		cloud3Sprite.draw(batch);
-		cloud4Sprite.draw(batch);
+		/**TODO: Облащка 3*/
 	}
 	private void drawButtons(){
 		if(controller.isOnGameStatic(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
 			backButtonActiveSprite.draw(batch);
+			if(!InfoAndStats.lngRussian){
+				textBtn.draw(batch, "Main", backButtonX + 0.225F*backButtonWidth, backButtonY + backButtonHeight - 0.6F*textBtn.getCapHeight());
+				textBtn.draw(batch, "menu", backButtonX + 0.175F*backButtonWidth, backButtonY + backButtonHeight - 1.85F*textBtn.getCapHeight());
+			}else{
+				textBtn.draw(batch, "Главное", backButtonX + 0.075F*backButtonWidth, backButtonY + backButtonHeight - 1.1F*textBtn.getCapHeight());
+				textBtn.draw(batch, "меню", backButtonX + 0.2F*backButtonWidth, backButtonY + backButtonHeight - 2.6F*textBtn.getCapHeight());
+			}
 		}else{
 			backButtonInactiveSprite.draw(batch);
+			if(!InfoAndStats.lngRussian){
+				textBtn.draw(batch, "Main", backButtonX + 0.225F*backButtonWidth, backButtonY + backButtonHeight - 0.5F*textBtn.getCapHeight());
+				textBtn.draw(batch, "menu", backButtonX + 0.175F*backButtonWidth, backButtonY + backButtonHeight - 1.75F*textBtn.getCapHeight());
+			}else{
+				textBtn.draw(batch, "Главное", backButtonX + 0.075F*backButtonWidth, backButtonY + backButtonHeight - 1.0F*textBtn.getCapHeight());
+				textBtn.draw(batch, "меню", backButtonX + 0.2F*backButtonWidth, backButtonY + backButtonHeight - 2.5F*textBtn.getCapHeight());
+			}
 		}
 	}
 	private void drawBuildings(){
@@ -736,7 +633,9 @@ public class GameScreen implements Screen{
 			else if(schMetal.equals("objects/metalFactory/metalFactory_19.png")) schMetal = "objects/metalFactory/metalFactory_20.png";
 			else if(schMetal.equals("objects/metalFactory/metalFactory_20.png")) schMetal = "objects/metalFactory/metalFactory_21.png";
 			else if(schMetal.equals("objects/metalFactory/metalFactory_21.png")) schMetal = "objects/metalFactory/metalFactory_22.png";
-			else if(schMetal.equals("objects/metalFactory/metalFactory_22.png")) schMetal = "objects/metalFactory/metalFactory_1.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_22.png")) schMetal = "objects/metalFactory/metalFactory_23.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_23.png")) schMetal = "objects/metalFactory/metalFactory_24.png";
+			else if(schMetal.equals("objects/metalFactory/metalFactory_24.png")) schMetal = "objects/metalFactory/metalFactory_1.png";
 		}
 		for(int i=0;i<(int)InfoAndStats.metalAmount;i++){
 			metalFactorySprite.setX(metalFactoryX + (1.2F*i)*metalFactoryWidth);
@@ -826,10 +725,6 @@ public class GameScreen implements Screen{
 		control2Texture.dispose();
 		scienceCentre1Texture.dispose();
 		scienceCentre2Texture.dispose();
-		cloud1Texture.dispose();
-		cloud2Texture.dispose();
-		backButtonInactive.dispose();
-		backButtonActive.dispose();
 	}
 	
 	@Override
@@ -842,14 +737,6 @@ public class GameScreen implements Screen{
 		cash.dispose();
 		bubble.dispose();
 		anvil.dispose();
-		cloud1PrevX = cloud1Sprite.getX();
-		cloud1PrevY = cloud1Sprite.getY();
-		cloud2PrevX = cloud2Sprite.getX();
-		cloud2PrevY = cloud2Sprite.getY();
-		cloud3PrevX = cloud3Sprite.getX();
-		cloud3PrevY = cloud3Sprite.getY();
-		cloud4PrevX = cloud4Sprite.getX();
-		cloud4PrevY = cloud4Sprite.getY();
 	}
 
 }

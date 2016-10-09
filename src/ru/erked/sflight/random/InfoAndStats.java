@@ -13,6 +13,9 @@ public class InfoAndStats {
 	public static long moneyAmount;
 	public static long fuelAmount;
 	public static long metalAmount;
+	public static long moneyLevel;
+	public static long fuelLevel;
+	public static long metalLevel;
 	
 	public static boolean lngRussian = false;
 }

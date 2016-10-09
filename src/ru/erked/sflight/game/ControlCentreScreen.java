@@ -58,46 +58,8 @@ public class ControlCentreScreen implements Screen{
 	private float panel2Width;
 	private float panel2Height;
 	private float panelAspectRatio;
-	
-	//Окно панели управления
-	private Sprite startWindowSprite;
-	private float startWindowX;
-	private float startWindowY;
-	private float startWindowWidth;
-	private float startWindowHeight;
-	public static boolean isStartWindowDraw;
-	//Выход из окна панели управления
-	private Sprite backStartWindowSpriteInactive;
-	private Sprite backStartWindowSpriteActive;
-	private float backStartWindow1X;
-	private float backStartWindow1Y;
-	private float backStartWindow1Width;
-	private float backStartWindow1Height;
-	private float backStartWindow2X;
-	private float backStartWindow2Y;
-	private float backStartWindow2Width;
-	private float backStartWindow2Height;
-	//Монограмма
-	private Sprite monogrammSprite;
-	private float monogrammX;
-	private float monogrammY;
-	private float monogrammWidth;
-	private float monogrammHeight;
-	//Кнопка старта ракеты
-	private Texture startButtonInactive;
-	private Texture startButtonActive;
-	private Sprite startButtonInactiveSprite;
-	private Sprite startButtonActiveSprite;
-	private float startButton1X;
-	private float startButton1Y;
-	private float startButton1Width;
-	private float startButton1Height;
-	private float startButton2X;
-	private float startButton2Y;
-	private float startButton2Width;
-	private float startButton2Height;
-	//Заглушка
-	private Sprite backZSprite;
+	private static String schPanelI;
+	private static String schPanelA;
 	
 	//Текст
 	private static BitmapFont text;
@@ -142,8 +104,6 @@ public class ControlCentreScreen implements Screen{
 	
 		//Инициализация\\
 		panelInit();
-		startWindowInit();
-		startButtonInit();
 		
 		//Текст\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
@@ -192,17 +152,12 @@ public class ControlCentreScreen implements Screen{
 		
 		//Отрисовка кнопки "Back"//
 		if(controller.isOn(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-			if(!isStartWindowDraw){
-				backButtonActiveSprite.draw(batch);
-			}else{
-				backButtonInactiveSprite.draw(batch);
-			}
+			backButtonActiveSprite.draw(batch);
 		}else{
 			backButtonInactiveSprite.draw(batch);
 		}
 		
 		drawPanel();
-		drawStartWindow();
 		
 		blackAlpha.draw(batch);
 		
@@ -215,8 +170,8 @@ public class ControlCentreScreen implements Screen{
 
 	private void panelInit(){
 		//Панель управления\\
-		panelInactive = new Texture("objects/controlPanelInactive.png");
-		panelActive = new Texture("objects/controlPanelActive.png");
+		panelInactive = new Texture("objects/controlPanelInactive/controlPanelInactive_1.png");
+		panelActive = new Texture("objects/controlPanelActive/controlPanelActive_1.png");
 		panelInactiveSprite = new Sprite(panelInactive);
 		panelActiveSprite = new Sprite(panelActive);
 		panelAspectRatio = (float)panelInactive.getWidth()/panelInactive.getHeight();
@@ -230,112 +185,40 @@ public class ControlCentreScreen implements Screen{
 		panel2Y = backgroundSprite.getY() + 0.35F*backgroundSprite.getHeight() - 0.24038461538461538461538461538462F*panel2Height;
 		panelInactiveSprite.setBounds(panel1X, panel1Y, panel1Width, panel1Height);
 		panelActiveSprite.setBounds(panel2X, panel2Y, panel2Width, panel2Height);
-	}
-	private void startWindowInit(){
-		//Окно панели управления\\
-		startWindowSprite = new Sprite(ImgResDraw.dialogWindow);
-		startWindowWidth = 0.75F*width;
-		startWindowHeight = startWindowWidth/1.45F;
-		startWindowX = 0.5F*width - 0.5F*startWindowWidth;
-		startWindowY = 0.5F*height - 0.5F*startWindowHeight;
-		startWindowSprite.setBounds(startWindowX, startWindowY, startWindowWidth, startWindowHeight);
-		isStartWindowDraw = false;
-		monogrammSprite = new Sprite(new Texture("objects/monogramm.png"));
-		monogrammWidth = 0.4F*width;
-		monogrammHeight = monogrammWidth/2.0F;
-		monogrammX = startWindowX + 0.05F*startWindowWidth;
-		monogrammY = startWindowY + 0.4F*startWindowHeight;
-		monogrammSprite.setBounds(monogrammX, monogrammY, monogrammWidth, monogrammHeight);
-		backStartWindowSpriteInactive = new Sprite(ImgResDraw.backIconInactive);
-		backStartWindowSpriteActive = new Sprite(ImgResDraw.backIconActive);
-		backStartWindow1Width = 0.065F*width;
-		backStartWindow1Height = backStartWindow1Width;
-		backStartWindow1X = startWindowX + 0.95F*startWindowWidth - backStartWindow1Width;
-		backStartWindow1Y = startWindowY + 0.05F*startWindowHeight;
-		backStartWindowSpriteInactive.setBounds(backStartWindow1X, backStartWindow1Y, backStartWindow1Width, backStartWindow1Height);
-		backStartWindow2Width = 0.0975F*width;
-		backStartWindow2Height = backStartWindow2Width;
-		backStartWindow2X = startWindowX + 0.95F*startWindowWidth - backStartWindow1Width - 0.16666666666666666666666666666667F*backStartWindow2Width;
-		backStartWindow2Y = startWindowY + 0.05F*startWindowHeight - 0.16666666666666666666666666666667F*backStartWindow2Height;
-		backStartWindowSpriteActive.setBounds(backStartWindow2X, backStartWindow2Y, backStartWindow2Width, backStartWindow2Height);
-		backZSprite = new Sprite(new Texture("bckgrnd/backgroundGray.png"));
-		backZSprite.setBounds(0.0F, 0.0F, width, height);
-	}
-	private void startButtonInit(){
-		//Кнопка старта ракеты\\
-		startButtonInactive = new Texture("btns/startButtonInactive.png");
-		startButtonActive = new Texture("btns/startButtonActive.png");
-		startButtonInactiveSprite = new Sprite(startButtonInactive);
-		startButtonActiveSprite = new Sprite(startButtonActive);
-		startButton1Width = 0.2F*width;
-		startButton1Height = (float)startButton1Width;
-		startButton1X = startWindowX + 0.635F*startWindowWidth;
-		startButton1Y = monogrammY + monogrammHeight/2 - startButton1Height/2;
-		startButton2Width = 0.27659574468085106382978723404255F*width;
-		startButton2Height = (float)startButton2Width;
-		startButton2X = startWindowX + 0.635F*startWindowWidth - 0.13846153846153846153846153846154F*startButton2Width;
-		startButton2Y = monogrammY + monogrammHeight/2 - startButton1Height/2 - 0.13846153846153846153846153846154F*startButton2Height;
-		startButtonInactiveSprite.setBounds(startButton1X, startButton1Y, startButton1Width, startButton1Height);
-		startButtonActiveSprite.setBounds(startButton2X, startButton2Y, startButton2Width, startButton2Height);
-	}
-	
-	private void drawStartWindow(){
-		//Отрисовка диалогового окна панели управления//
-		if(isStartWindowDraw){
-			backZSprite.draw(batch);
-			startWindowSprite.draw(batch);
-			if(!InfoAndStats.lngRussian){
-				text.draw(batch, "Control panel", startWindowX + 0.385F*startWindowWidth, 0.5F*startWindowY + startWindowHeight);
-			}else{
-				text.draw(batch, "Панель управления", startWindowX + 0.315F*startWindowWidth, 0.5F*startWindowY + startWindowHeight);
-			}
-			if(controller.isOn(backStartWindow1X, backStartWindow1Y, backStartWindow1Width, backStartWindow1Height)){
-				backStartWindowSpriteActive.draw(batch);
-			}else{
-				backStartWindowSpriteInactive.draw(batch);
-			}
-			monogrammSprite.draw(batch);
-			if(controller.isOn(startButton1X, startButton1Y, startButton1Width, startButton1Height)){
-				startButtonActiveSprite.draw(batch);
-			}else{
-				startButtonInactiveSprite.draw(batch);
-			}
-		}
+		schPanelI = "objects/controlPanelInactive/controlPanelInactive_1.png";
+		schPanelA = "objects/controlPanelActive/controlPanelActive_1.png";
 	}
 	private void drawPanel(){
 		//Отрисовка панели управления//
 		if(controller.isOn(panel1X, panel1Y, panel1Width, panel1Height)){
-			if(!isStartWindowDraw){
-				panelActiveSprite.draw(batch);
-			}else{
-				panelInactiveSprite.draw(batch);
+			if(InfoAndStats.elapsedTime % 15 == 0){
+				panelActiveSprite.setTexture(new Texture(schPanelA));
+				if(schPanelA.equals("objects/controlPanelActive/controlPanelActive_1.png")) schPanelA = "objects/controlPanelActive/controlPanelActive_2.png";
+				else if(schPanelA.equals("objects/controlPanelActive/controlPanelActive_2.png")) schPanelA = "objects/controlPanelActive/controlPanelActive_3.png";
+				else if(schPanelA.equals("objects/controlPanelActive/controlPanelActive_3.png")) schPanelA = "objects/controlPanelActive/controlPanelActive_1.png";
 			}
+			panelActiveSprite.draw(batch);
 		}else{
+			if(InfoAndStats.elapsedTime % 15 == 0){
+				panelInactiveSprite.setTexture(new Texture(schPanelI));
+				if(schPanelI.equals("objects/controlPanelInactive/controlPanelInactive_1.png")) schPanelI = "objects/controlPanelInactive/controlPanelInactive_2.png";
+				else if(schPanelI.equals("objects/controlPanelInactive/controlPanelInactive_2.png")) schPanelI = "objects/controlPanelInactive/controlPanelInactive_3.png";
+				else if(schPanelI.equals("objects/controlPanelInactive/controlPanelInactive_3.png")) schPanelI = "objects/controlPanelInactive/controlPanelInactive_1.png";
+			}
 			panelInactiveSprite.draw(batch);
 		}
 	}
 	
 	private void btnListeners(){
 		//Слушатель нажатия на кнопку "Back"//
-		if(!isStartWindowDraw){
-			if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-				game.setScreen(new GameScreen(game));
-				this.dispose();
-			}
-			//Слушатель нажатия на командную панель//
-			if(controller.isClicked(panel1X, panel1Y, panel1Width, panel1Height)){
-				isStartWindowDraw = true;
-			}
+		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
+			game.setScreen(new GameScreen(game));
+			this.dispose();
 		}
-		//Слушатель нажатия на выход из панели управления//
-		if(isStartWindowDraw){
-			if(controller.isClicked(backStartWindow1X, backStartWindow1Y, backStartWindow1Width, backStartWindow1Height)){
-				isStartWindowDraw = false;
-			}
-			//Слушатель нажатия на старт ракеты//
-			if(controller.isClicked(startButton1X, startButton1Y, startButton1Width, startButton1Height)){
-				/**TODO: Запуск ракеты*/
-			}
+		//Слушатель нажатия на командную панель//
+		if(controller.isClicked(panel1X, panel1Y, panel1Width, panel1Height)){
+			game.setScreen(new StartPanelScreen(game));
+			this.dispose();
 		}
 	}
 	
@@ -378,8 +261,6 @@ public class ControlCentreScreen implements Screen{
 		backgroundTexture.dispose();
 		panelInactive.dispose();
 		panelActive.dispose();
-		startButtonInactive.dispose();
-		startButtonActive.dispose();
 	}
 	
 	@Override

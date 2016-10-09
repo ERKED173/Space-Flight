@@ -27,6 +27,9 @@ public class AndroidLauncher extends AndroidApplication {
 	public static final String MONEY_AMOUNT = "money_amount";
 	public static final String FUEL_AMOUNT = "fuel_amount";
 	public static final String METAL_AMOUNT = "metal_amount";
+	public static final String MONEY_LEVEL = "money_level";
+	public static final String FUEL_LEVEL = "fuel_level";
+	public static final String METAL_LEVEL = "metal_level";
 	
 	public static final String LNG = "lng";
 	
@@ -56,6 +59,9 @@ public class AndroidLauncher extends AndroidApplication {
 	    ed.putLong(MONEY_AMOUNT, InfoAndStats.moneyAmount);
 	    ed.putLong(FUEL_AMOUNT, InfoAndStats.fuelAmount);
 	    ed.putLong(METAL_AMOUNT, InfoAndStats.metalAmount);
+	    ed.putLong(MONEY_LEVEL, InfoAndStats.moneyLevel);
+	    ed.putLong(FUEL_LEVEL, InfoAndStats.fuelLevel);
+	    ed.putLong(METAL_LEVEL, InfoAndStats.metalLevel);
 	    
 	    ed.putBoolean(LNG, InfoAndStats.lngRussian);
 	    
@@ -76,6 +82,9 @@ public class AndroidLauncher extends AndroidApplication {
 	    InfoAndStats.moneyAmount = stats.getLong(MONEY_AMOUNT, 1);
 	    InfoAndStats.fuelAmount = stats.getLong(FUEL_AMOUNT, 1);
 	    InfoAndStats.metalAmount = stats.getLong(METAL_AMOUNT, 1);
+	    InfoAndStats.moneyLevel = stats.getLong(MONEY_LEVEL, 0);
+	    InfoAndStats.fuelLevel = stats.getLong(FUEL_LEVEL, 0);
+	    InfoAndStats.metalLevel = stats.getLong(METAL_LEVEL, 0);
 	    
 	    InfoAndStats.lngRussian = stats.getBoolean(LNG, false);
 

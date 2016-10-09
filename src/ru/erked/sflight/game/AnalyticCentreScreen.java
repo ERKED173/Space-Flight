@@ -70,6 +70,8 @@ public class AnalyticCentreScreen implements Screen{
 	private float resourcePanel2Y;
 	private float resourcePanel2Width;
 	private float resourcePanel2Height;
+	private static String schResI;
+	private static String schResA;
 	//Текст
 	private static BitmapFont text;
 	
@@ -156,8 +158,8 @@ public class AnalyticCentreScreen implements Screen{
 	}
 	private void resourcePanelInit(){
 		//Панель ресурсов\\
-		resourcePanelInactive = new Texture("objects/resourcesPanelInactive.png");
-		resourcePanelActive = new Texture("objects/resourcesPanelActive.png");
+		resourcePanelInactive = new Texture("objects/resourcesPanelInactive/resourcesPanelInactive_1.png");
+		resourcePanelActive = new Texture("objects/resourcesPanelActive/resourcesPanelActive_1.png");
 		resourcePanelInactiveSprite = new Sprite(resourcePanelInactive);
 		resourcePanelActiveSprite = new Sprite(resourcePanelActive);
 		resourcePanel1Width = 0.115F*width;
@@ -170,6 +172,8 @@ public class AnalyticCentreScreen implements Screen{
 		resourcePanel2Y = backgroundSprite.getY() + 0.385F*backgroundSprite.getHeight() - 0.3F*resourcePanel2Height;
 		resourcePanelInactiveSprite.setBounds(resourcePanel1X, resourcePanel1Y, resourcePanel1Width, resourcePanel1Height);
 		resourcePanelActiveSprite.setBounds(resourcePanel2X, resourcePanel2Y, resourcePanel2Width, resourcePanel2Height);
+		schResI = "objects/resourcesPanelInactive/resourcesPanelInactive_1.png";
+		schResA = "objects/resourcesPanelActive/resourcesPanelActive_1.png";
 	}
 	
 	private void btnListener(){
@@ -209,8 +213,20 @@ public class AnalyticCentreScreen implements Screen{
 	private void drawResourcePanel(){
 		//Отрисовка панели ресурсов//
 		if(controller.isOn(resourcePanel1X, resourcePanel1Y, resourcePanel1Width, resourcePanel1Height)){
+			if(InfoAndStats.elapsedTime % 15 == 0){
+				resourcePanelActiveSprite.setTexture(new Texture(schResA));
+				if(schResA.equals("objects/resourcesPanelActive/resourcesPanelActive_1.png")) schResA = "objects/resourcesPanelActive/resourcesPanelActive_2.png";
+				else if(schResA.equals("objects/resourcesPanelActive/resourcesPanelActive_2.png")) schResA = "objects/resourcesPanelActive/resourcesPanelActive_3.png";
+				else if(schResA.equals("objects/resourcesPanelActive/resourcesPanelActive_3.png")) schResA = "objects/resourcesPanelActive/resourcesPanelActive_1.png";
+			}
 			resourcePanelActiveSprite.draw(batch);
 		}else{
+			if(InfoAndStats.elapsedTime % 15 == 0){
+				resourcePanelInactiveSprite.setTexture(new Texture(schResI));
+				if(schResI.equals("objects/resourcesPanelInactive/resourcesPanelInactive_1.png")) schResI = "objects/resourcesPanelInactive/resourcesPanelInactive_2.png";
+				else if(schResI.equals("objects/resourcesPanelInactive/resourcesPanelInactive_2.png")) schResI = "objects/resourcesPanelInactive/resourcesPanelInactive_3.png";
+				else if(schResI.equals("objects/resourcesPanelInactive/resourcesPanelInactive_3.png")) schResI = "objects/resourcesPanelInactive/resourcesPanelInactive_1.png";
+			}
 			resourcePanelInactiveSprite.draw(batch);
 		}
 	}
