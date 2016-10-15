@@ -27,14 +27,14 @@ public class AngarScreen implements Screen{
 	private SpriteBatch batch;
 	private SFlightInputController controller;
 	
-	//Фон
+	//Background
 	private Texture backgroundTexture; //Текстура фона
 	public static Sprite backgroundSprite; //Спрайт фона
 	private float backgroundX;
 	private float backgroundY;
 	public static final float backgroundTentionIndex = (float)width/800.0F;
 	
-	//Копка "Back"
+	//"Back" button
 	private Sprite backButtonInactiveSprite;
 	private Sprite backButtonActiveSprite;
 	private float backButtonX;
@@ -43,7 +43,7 @@ public class AngarScreen implements Screen{
 	private float backButtonHeight;
 	public static float backButtonTentionIndex; //Соотношение сторон кнопки
 	
-	//Текст
+	//Text
 	private static BitmapFont text;
 	
 	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
@@ -62,14 +62,12 @@ public class AngarScreen implements Screen{
 
 		MainMenu.music.play();
 		
-		//Фон\\
 		backgroundTexture = new Texture("bckgrnd/angar_inside.png");
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundX = 0.0F;
 		backgroundY = (-1)*(450*backgroundTentionIndex)/2 + height/2;
 		backgroundSprite.setBounds(backgroundX, backgroundY, width, backgroundTentionIndex*450.0F);
 		
-		//Кнопка "Back"\\
 		backButtonInactiveSprite = new Sprite(ImgResDraw.backButtonInactive);
 		backButtonActiveSprite = new Sprite(ImgResDraw.backButtonActive);
 		if(InfoAndStats.lngRussian){
@@ -84,7 +82,6 @@ public class AngarScreen implements Screen{
 		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
 		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
 		
-		//Текст\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
 		FreeTypeFontParameter param = new FreeTypeFontParameter();
@@ -124,14 +121,12 @@ public class AngarScreen implements Screen{
 		
 		backgroundSprite.draw(batch);
 		
-		//Отрисовка кнопки "Back"//
 		if(controller.isOn(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
 			backButtonActiveSprite.draw(batch);
 		}else{
 			backButtonInactiveSprite.draw(batch);
 		}
 		
-		//Отрисовка текста в ангаре//
 		if(!InfoAndStats.lngRussian){
 			text.draw(batch, "Hangar", 0.01F*width, 0.99F*height);
 		}else{
@@ -163,7 +158,6 @@ public class AngarScreen implements Screen{
 	}
 	
 	private void buttonListeners(){
-		//Слушатель нажатия на кнопку "Back"//
 		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
 			game.setScreen(new GameScreen(game));
 			this.dispose();

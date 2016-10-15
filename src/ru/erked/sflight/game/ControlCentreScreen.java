@@ -16,7 +16,6 @@ import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
 import ru.erked.sflight.random.ImgResDraw;
 import ru.erked.sflight.random.InfoAndStats;
-import ru.erked.sflight.random.RocketDetailStats;
 
 public class ControlCentreScreen implements Screen{
 
@@ -28,23 +27,23 @@ public class ControlCentreScreen implements Screen{
 	private SpriteBatch batch;
 	private SFlightInputController controller;
 	
-	//Фон
-	private Texture backgroundTexture; //Текстура фона
-	public static Sprite backgroundSprite; //Спрайт фона
+	//Background
+	private Texture backgroundTexture;
+	public static Sprite backgroundSprite;
 	private float backgroundX;
 	private float backgroundY;
 	public static final float backgroundTentionIndex = (float)width/185.0F;
 	
-	//Копка "Back"
+	//"Back" button
 	private Sprite backButtonInactiveSprite;
 	private Sprite backButtonActiveSprite;
 	private float backButtonX;
 	private float backButtonY;
 	private float backButtonWidth;
 	private float backButtonHeight;
-	public static float backButtonTentionIndex; //Соотношение сторон кнопки
+	public static float backButtonTentionIndex;
 	
-	//Панель управления
+	//Control panel
 	private Texture panelInactive;
 	private Texture panelActive;
 	private Sprite panelInactiveSprite;
@@ -61,7 +60,7 @@ public class ControlCentreScreen implements Screen{
 	private static String schPanelI;
 	private static String schPanelA;
 	
-	//Текст
+	//Text
 	private static BitmapFont text;
 	
 	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
@@ -80,14 +79,12 @@ public class ControlCentreScreen implements Screen{
 
 		MainMenu.music.play();
 		
-		//Фон\\
 		backgroundTexture = new Texture("bckgrnd/control_inside.png");
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundX = 0.0F;
 		backgroundY = (-1)*(74*backgroundTentionIndex)/2 + height/2;
 		backgroundSprite.setBounds(backgroundX, backgroundY, width, backgroundTentionIndex*74.0F);
 		
-		//Кнопка "Back"\\
 		backButtonInactiveSprite = new Sprite(ImgResDraw.backButtonInactive);
 		backButtonActiveSprite = new Sprite(ImgResDraw.backButtonActive);
 		if(InfoAndStats.lngRussian){
@@ -102,10 +99,8 @@ public class ControlCentreScreen implements Screen{
 		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
 		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
 	
-		//Инициализация\\
 		panelInit();
 		
-		//Текст\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
 		FreeTypeFontParameter param = new FreeTypeFontParameter();
@@ -150,7 +145,6 @@ public class ControlCentreScreen implements Screen{
 			text.draw(batch, "Диспетчерская вышка", 0.01F*width, 0.99F*height);
 		}
 		
-		//Отрисовка кнопки "Back"//
 		if(controller.isOn(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
 			backButtonActiveSprite.draw(batch);
 		}else{
@@ -169,7 +163,6 @@ public class ControlCentreScreen implements Screen{
 	}
 
 	private void panelInit(){
-		//Панель управления\\
 		panelInactive = new Texture("objects/controlPanelInactive/controlPanelInactive_1.png");
 		panelActive = new Texture("objects/controlPanelActive/controlPanelActive_1.png");
 		panelInactiveSprite = new Sprite(panelInactive);
@@ -189,7 +182,6 @@ public class ControlCentreScreen implements Screen{
 		schPanelA = "objects/controlPanelActive/controlPanelActive_1.png";
 	}
 	private void drawPanel(){
-		//Отрисовка панели управления//
 		if(controller.isOn(panel1X, panel1Y, panel1Width, panel1Height)){
 			if(InfoAndStats.elapsedTime % 15 == 0){
 				panelActiveSprite.setTexture(new Texture(schPanelA));
@@ -210,12 +202,10 @@ public class ControlCentreScreen implements Screen{
 	}
 	
 	private void btnListeners(){
-		//Слушатель нажатия на кнопку "Back"//
 		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
 			game.setScreen(new GameScreen(game));
 			this.dispose();
 		}
-		//Слушатель нажатия на командную панель//
 		if(controller.isClicked(panel1X, panel1Y, panel1Width, panel1Height)){
 			game.setScreen(new StartPanelScreen(game));
 			this.dispose();
@@ -270,7 +260,6 @@ public class ControlCentreScreen implements Screen{
 		text.dispose();
 		textureDispose();
 		GameScreen.isFromMenu = false;
-		RocketDetailStats.totalName = "";
 	}
 
 }

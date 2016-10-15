@@ -12,15 +12,15 @@ public class SFlightInputController implements InputProcessor {
 	public static final float height = Gdx.graphics.getHeight();
 	private Sound clickSound = Gdx.audio.newSound(Gdx.files.internal("sounds/misc/click.wav"));
 	
-	/**Текущие координаты курсора*/
+	/**Current cursor coordinates*/
 	public static int cursorX;
 	public static int cursorY;
 	
-	/**Текущие координаты курсора при драге*/
+	/**Current cursor coordinates in drag*/
 	public static int touchDragX;
 	public static int touchDragY;
 	
-	/**Текущие координаты, откуда начался драг*/
+	/**Current cursor coordinates from start drag*/
 	public static int touchDownX;
 	public static int touchDownY;
 	public static int touchDownXGame;
@@ -28,7 +28,7 @@ public class SFlightInputController implements InputProcessor {
 	public static int touchDownXNo;
 	public static int touchDownYNo;
 	
-	/**Текущие координаты, где закончился драг*/
+	/**Current cursor coordinates where finished drag*/
 	public static int touchUpX;
 	public static int touchUpY;
 	
@@ -77,7 +77,7 @@ public class SFlightInputController implements InputProcessor {
 		}
 	}
 	
-	/**Супер-магия*/
+	/**Magic*/
 	public boolean isOnGame(float x, float y, float width, float height){
 		if(touchDownX != 0 && touchDownY != 0){
 			if((touchDownX + (GameScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) >= x && (SFlightInputController.touchDownX + (GameScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) <= x + width){
@@ -124,7 +124,7 @@ public class SFlightInputController implements InputProcessor {
 			return false;
 		}
 	}
-	/**Супер-магия*/
+	/**Magic*/
 	
 	@Override
 	public boolean keyDown(int keycode) {

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import ru.erked.sflight.menu.MainMenu;
 import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.random.ResetTheGame;
 
 public class SplashScreen implements Screen {
 
@@ -56,6 +57,9 @@ public class SplashScreen implements Screen {
 		blackAlpha = new Sprite(new Texture("objects/black.png"));
 		blackAlpha.setBounds(0.0F, 0.0F, width, height);
 		blackAlpha.setAlpha(0.0F);
+		
+		ResetTheGame.reset();
+		
 	}
 
 	/**Вызывается при показе скрина Splash*/

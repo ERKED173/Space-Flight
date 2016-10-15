@@ -17,8 +17,9 @@ import com.badlogic.gdx.math.Vector3;
 
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.ImgResDraw;
 import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.tech.SFButtonA;
+import ru.erked.sflight.tech.SFButtonS;
 
 public class GameScreen implements Screen{
 
@@ -37,60 +38,19 @@ public class GameScreen implements Screen{
 	
 	public static boolean isFromMenu = true;
 	
-//Фон
+//Background
 	private Texture backgroundTexture; //Текстура фона
 	public static Sprite backgroundSprite; //Спрайт фона
 	private float backgroundX;
 	private float backgroundY;
 	public static final float backgroundTentionIndex = (float)2*width/2560.0F;
 	
-//Ангар_1
-	private Texture angar1Texture;
-	public static Sprite angar1Sprite;
-	private float angar1Width;
-	private float angar1Height;
-	private float angar1X;
-	private float angar1Y;
-	private float angar1TentionIndex;
-//Ангар_2
-	private Texture angar2Texture;
-	public static Sprite angar2Sprite;
-	private float angar2Width;
-	private float angar2Height;
-	private float angar2X;
-	private float angar2Y;
-	
-//Аналитический_центр_1
-	private Texture analytic1Texture;
-	public static Sprite analytic1Sprite;
-	private float analytic1Width;
-	private float analytic1Height;
-	private float analytic1X;
-	private float analytic1Y;
-	private float analytic1TentionIndex;
-//Аналитический_центр_2
-	private Texture analytic2Texture;
-	public static Sprite analytic2Sprite;
-	private float analytic2Width;
-	private float analytic2Height;
-	private float analytic2X;
-	private float analytic2Y;
-	
-	//Диспетчерская_вышка_1
-	private Texture control1Texture;
-	public static Sprite control1Sprite;
-	private float control1Width;
-	private float control1Height;
-	private float control1X;
-	private float control1Y;
-	private float control1TentionIndex;
-	//Диспетчерская_вышка_2
-	private Texture control2Texture;
-	public static Sprite control2Sprite;
-	private float control2Width;
-	private float control2Height;
-	private float control2X;
-	private float control2Y;
+//Hangar
+	private SFButtonS hangar;
+//Analytic centre
+	private SFButtonS analytic;	
+//Control tower
+	private SFButtonS control;	
 	
 	//Научный_центр_1
 	private Texture scienceCentre1Texture;
@@ -138,13 +98,7 @@ public class GameScreen implements Screen{
 	private static float prevDragY;
 	
 //Копка "Main Menu"
-	private Sprite backButtonInactiveSprite;
-	private Sprite backButtonActiveSprite;
-	private float backButtonX;
-	private float backButtonY;
-	private float backButtonWidth;
-	private float backButtonHeight;
-	public static float backButtonTentionIndex; //Соотношение сторон кнопки
+	private SFButtonA btnMN;
 	
 //Иконка КосмоКоинов
 	private Sprite moneySprite;
@@ -186,18 +140,15 @@ public class GameScreen implements Screen{
 		bubble.setVolume(1.0F);
 		anvil.setVolume(1.0F);
 		
-//Фон\\
 		backgroundTexture = new Texture("bckgrnd/spaceport_4.png");
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundX = 0.0F;
 		backgroundY = 0.0F;
 		backgroundSprite.setBounds(backgroundX, backgroundY, width*2, backgroundTentionIndex*2560.0F);
 		
-//Камера\\
 		camera = new OrthographicCamera(width, height);
 		camera.position.set(new Vector3(0.6F*backgroundSprite.getWidth(), 0.8F*backgroundSprite.getHeight(), 0));
 		
-//Обычный белый текст\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
 		FreeTypeFontParameter param = new FreeTypeFontParameter();
@@ -219,17 +170,16 @@ public class GameScreen implements Screen{
 		}
 		text.getData().setScale((float)(0.00045F*width));
 		
-		
-		mainMenuButtonInit();
-		analyticInit();
-		angarInit();
 		scienceCentreInit();
-		cloudsInit();
 		moneyInit();
-		controlInit();
 		fuelFactoryInit();
 		coinFactoryInit();
 		metalFactoryInit();
+		
+		btnMN = new SFButtonA("btns/button", 0.132F*width, width - 0.14F*width, 0.01F*height, camera);
+		hangar = new SFButtonS("objects/angar", 0.5F*width, 0.150F*backgroundSprite.getWidth(), 0.625F*backgroundSprite.getHeight());		
+		analytic = new SFButtonS("objects/analytic", 0.2F*width, 0.739F*backgroundSprite.getWidth(), 0.785F*backgroundSprite.getHeight());		
+		control = new SFButtonS("objects/control", 0.125F*width, 0.469F*backgroundSprite.getWidth(), 0.665F*backgroundSprite.getHeight());		
 		
 		isTransGame = false;
 		blackAlpha.setBounds(0.0F, 0.0F, backgroundSprite.getWidth(), backgroundSprite.getHeight());
@@ -249,22 +199,18 @@ public class GameScreen implements Screen{
 			alp = 0.0F;
 		}
 		
-//Необходимо для уничтожения эффекта следов*/
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		touchUpdate();
 		
-		mainMenuButtonCoords();
 		cloudsCoords(delta);
 		moneyCoords();
 		
-//Апдейт камеры обязательно после всех манипуляций с ней*/
-//И именно в таком порядке*/
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		
-		/**Отрисовка объектов*/
+		/**Drawing objects*/
 		batch.begin();
 		
 		backgroundSprite.draw(batch);
@@ -273,25 +219,16 @@ public class GameScreen implements Screen{
 		drawClouds();
 		drawButtons();
 		drawMoney();
-
+		
 		blackAlpha.draw(batch);
 		
 		batch.end();
-		/**Отрисовка объектов*/
+		/**Drawing objects*/
 		
 		buttonListener();
 		
 	}
 	
-	private void mainMenuButtonCoords(){
-//Установка координат кнопки "Main Menu"*/
-		backButtonX = camera.position.x - backButtonWidth + (width/2 - 0.01F*width);
-		backButtonY = camera.position.y - (height/2 - 0.01F*height);
-		backButtonInactiveSprite.setX(backButtonX);
-		backButtonInactiveSprite.setY(backButtonY);
-		backButtonActiveSprite.setX(backButtonX - 0.5F*backButtonWidth);
-		backButtonActiveSprite.setY(backButtonY - 0.5F*backButtonHeight);
-	}	
 	private void cloudsCoords(float delta){
 		//Установка коодрдинат для облаков
 		/**TODO: Облащка 1*/
@@ -336,38 +273,7 @@ public class GameScreen implements Screen{
 		metalLine.setX(metalSprite.getX() + 1.5F*metalSprite.getWidth());
 		metalLine.setY(metalSprite.getY() + 0.25F*metalSprite.getHeight());
 	}	
-	
-	private void mainMenuButtonInit(){
-		//Кнопка "Main Menu"\\
-		backButtonInactiveSprite = new Sprite(ImgResDraw.buttonI);
-		backButtonActiveSprite = new Sprite(ImgResDraw.buttonA);
-		backButtonTentionIndex = (float)ImgResDraw.buttonI.getWidth()/ImgResDraw.buttonI.getHeight();
-		backButtonWidth = 0.132F*width;
-		backButtonHeight = backButtonWidth/backButtonTentionIndex;
-		backButtonX = camera.position.x - backButtonWidth + (width/2 - 0.01F*width);
-		backButtonY = camera.position.y - (height/2 - 0.01F*height);
-		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-		backButtonActiveSprite.setBounds(backButtonX - 0.5F*backButtonWidth, backButtonY - 0.5F*backButtonHeight, 2.0F*backButtonWidth, 2.0F*backButtonHeight);
-	}
-	private void angarInit(){
-		//Ангар_1\\
-		angar1Texture = new Texture("objects/angar_1.png");
-		angar1Sprite = new Sprite(angar1Texture);
-		angar1TentionIndex = (float)angar1Sprite.getWidth()/angar1Sprite.getHeight();
-		angar1Width = 0.5F*width;
-		angar1Height = (float)angar1Width/angar1TentionIndex;
-		angar1X = 0.150F*backgroundSprite.getWidth();
-		angar1Y = 0.625F*backgroundSprite.getHeight();
-		angar1Sprite.setBounds(angar1X, angar1Y, angar1Width, angar1Height);
-		//Ангар_2\\
-		angar2Texture = new Texture("objects/angar_2.png");
-		angar2Sprite = new Sprite(angar2Texture);
-		angar2Width = 0.65F*width;
-		angar2Height = (float)angar2Width/angar1TentionIndex;
-		angar2X = angar1X - 0.115F*angar2Width;
-		angar2Y = angar1Y - 0.11566666666666666666666666666667F*angar2Height;
-		angar2Sprite.setBounds(angar2X, angar2Y, angar2Width, angar2Height);
-	}	
+
 	private void scienceCentreInit(){
 		//Научный_Центр_1\\
 		scienceCentre1Texture = new Texture("objects/scienceCentre1.png");
@@ -387,31 +293,6 @@ public class GameScreen implements Screen{
 		scienceCentre2Y = 0.45F*backgroundSprite.getHeight() - 0.16153846153846153846153846153846F*scienceCentre2Height;
 		scienceCentre2Sprite.setBounds(scienceCentre2X, scienceCentre2Y, scienceCentre2Width, scienceCentre2Height);
 	}	
-	private void cloudsInit(){
-		//Облака\\
-//		cloudSprite = new Sprite(new Texture("objects/clouds/cloud_" + Integer.toString(rand.nextInt(5)) + ".png"));
-//		cloudSprite.setBounds(backgroundX, backgroundY, 0.0F, 0.0F);
-		/**TODO: Облащка 2*/
-	}
-	private void analyticInit(){
-		//Аналитический_центр_1\\
-		analytic1Texture = new Texture("objects/analytic_1.png");
-		analytic1Sprite = new Sprite(analytic1Texture);
-		analytic1TentionIndex = (float)analytic1Sprite.getWidth()/analytic1Sprite.getHeight();
-		analytic1Width = 0.2F*width;
-		analytic1Height = (float)analytic1Width/analytic1TentionIndex;
-		analytic1X = 0.739F*backgroundSprite.getWidth();
-		analytic1Y = 0.785F*backgroundSprite.getHeight();
-		analytic1Sprite.setBounds(analytic1X, analytic1Y, analytic1Width, analytic1Height);
-		//Аналитический_центр_2\\
-		analytic2Texture = new Texture("objects/analytic_2.png");
-		analytic2Sprite = new Sprite(analytic2Texture);
-		analytic2Width = 0.4F*width;
-		analytic2Height = (float)analytic2Width/analytic1TentionIndex;
-		analytic2X = analytic1X - 0.24909090909090909090909090909091F*analytic2Width;
-		analytic2Y = analytic1Y - 0.2509090909090909090909090909091F*analytic2Height;
-		analytic2Sprite.setBounds(analytic2X, analytic2Y, analytic2Width, analytic2Height);
-	}
 	private void moneyInit(){
 		//Иконки ресурсов\\
 		moneySprite = new Sprite(new Texture("objects/cosmocoin.png"));
@@ -438,25 +319,7 @@ public class GameScreen implements Screen{
 		metalLine.setBounds(metalLine.getX() + metalLine.getWidth() + metalLine.getWidth()*0.5F, metalLine.getY() + metalLine.getHeight(), 0.5F*moneyWidth, 0.5F*moneyHeight);
 		
 	}
-	private void controlInit(){
-		//Диспетчерская_вышка_1\\
-		control1Texture = new Texture("objects/control_1.png");
-		control1Sprite = new Sprite(control1Texture);
-		control1TentionIndex = (float)control1Sprite.getWidth()/control1Sprite.getHeight();
-		control1Width = 0.125F*width;
-		control1Height = (float)control1Width/control1TentionIndex;
-		control1X = 0.469F*backgroundSprite.getWidth();
-		control1Y = 0.665F*backgroundSprite.getHeight();
-		control1Sprite.setBounds(control1X, control1Y, control1Width, control1Height);
-		//Диспетчерская_вышка_2\\
-		control2Texture = new Texture("objects/control_2.png");
-		control2Sprite = new Sprite(control2Texture);
-		control2Width = 0.22163120567375886524822695035461F*width;
-		control2Height = (float)control2Width/control1TentionIndex;
-		control2X = 0.469F*backgroundSprite.getWidth() - 0.21568627450980392156862745098039F*control2Width;
-		control2Y = 0.665F*backgroundSprite.getHeight() - 0.218F*control2Height;
-		control2Sprite.setBounds(control2X, control2Y, control2Width, control2Height);
-	}	
+
 	private void fuelFactoryInit(){
 		//Нефтедобыча\\
 		fuelFactoryTexture = new Texture("objects/fuelFactory_1.png");
@@ -541,45 +404,50 @@ public class GameScreen implements Screen{
 		/**TODO: Облащка 3*/
 	}
 	private void drawButtons(){
-		if(controller.isOnGameStatic(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-			backButtonActiveSprite.draw(batch);
+		btnMN.setCoordinates();
+		btnMN.getSprite().draw(batch);
+		if(controller.isOnGameStatic(btnMN.getX(), btnMN.getY(), btnMN.getWidth(), btnMN.getHeight())){
+			btnMN.setMode(true);
 			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Main", backButtonX + 0.225F*backButtonWidth, backButtonY + backButtonHeight - 0.6F*textBtn.getCapHeight());
-				textBtn.draw(batch, "menu", backButtonX + 0.175F*backButtonWidth, backButtonY + backButtonHeight - 1.85F*textBtn.getCapHeight());
+				textBtn.draw(batch, "Main", btnMN.getX() + 0.225F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 0.6F*textBtn.getCapHeight());
+				textBtn.draw(batch, "menu", btnMN.getX() + 0.175F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 1.85F*textBtn.getCapHeight());
 			}else{
-				textBtn.draw(batch, "Главное", backButtonX + 0.075F*backButtonWidth, backButtonY + backButtonHeight - 1.1F*textBtn.getCapHeight());
-				textBtn.draw(batch, "меню", backButtonX + 0.2F*backButtonWidth, backButtonY + backButtonHeight - 2.6F*textBtn.getCapHeight());
+				textBtn.draw(batch, "Главное", btnMN.getX() + 0.075F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 1.1F*textBtn.getCapHeight());
+				textBtn.draw(batch, "меню", btnMN.getX() + 0.2F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 2.6F*textBtn.getCapHeight());
 			}
 		}else{
-			backButtonInactiveSprite.draw(batch);
+			btnMN.setMode(false);
 			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Main", backButtonX + 0.225F*backButtonWidth, backButtonY + backButtonHeight - 0.5F*textBtn.getCapHeight());
-				textBtn.draw(batch, "menu", backButtonX + 0.175F*backButtonWidth, backButtonY + backButtonHeight - 1.75F*textBtn.getCapHeight());
+				textBtn.draw(batch, "Main", btnMN.getX() + 0.225F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 0.5F*textBtn.getCapHeight());
+				textBtn.draw(batch, "menu", btnMN.getX() + 0.175F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 1.75F*textBtn.getCapHeight());
 			}else{
-				textBtn.draw(batch, "Главное", backButtonX + 0.075F*backButtonWidth, backButtonY + backButtonHeight - 1.0F*textBtn.getCapHeight());
-				textBtn.draw(batch, "меню", backButtonX + 0.2F*backButtonWidth, backButtonY + backButtonHeight - 2.5F*textBtn.getCapHeight());
+				textBtn.draw(batch, "Главное", btnMN.getX() + 0.075F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 1.0F*textBtn.getCapHeight());
+				textBtn.draw(batch, "меню", btnMN.getX() + 0.2F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 2.5F*textBtn.getCapHeight());
 			}
 		}
 	}
 	private void drawBuildings(){
-		//Ангар
-		if(controller.isOnGame(angar1Sprite.getX(), angar1Sprite.getY(), angar1Width, angar1Height)){
-			angar2Sprite.draw(batch);
+		//Hangar
+		if(controller.isOnGame(hangar.getX(), hangar.getY(), hangar.getWidth(), hangar.getHeight())){
+			hangar.setMode(true);
 		}else{
-			angar1Sprite.draw(batch);
+			hangar.setMode(false);
 		}
-		//Аналитический центр
-		if(controller.isOnGame(analytic1Sprite.getX(), analytic1Sprite.getY(), analytic1Width, analytic1Height)){
-			analytic2Sprite.draw(batch);
+		hangar.getSprite().draw(batch);
+		//Analytic centre
+		if(controller.isOnGame(analytic.getX(), analytic.getY(), analytic.getWidth(), analytic.getHeight())){
+			analytic.setMode(true);
 		}else{
-			analytic1Sprite.draw(batch);
+			analytic.setMode(false);
 		}
-		//Диспетчерская вышка
-		if(controller.isOnGame(control1Sprite.getX(), control1Sprite.getY(), control1Width, control1Height)){
-			control2Sprite.draw(batch);
+		analytic.getSprite().draw(batch);
+		//Control tower
+		if(controller.isOnGame(control.getX(), control.getY(), control.getWidth(), control.getHeight())){
+			control.setMode(true);
 		}else{
-			control1Sprite.draw(batch);
+			control.setMode(false);
 		}
+		control.getSprite().draw(batch);
 		//Научный центр
 		if(controller.isOnGame(scienceCentre1Sprite.getX(), scienceCentre1Sprite.getY(), scienceCentre1Width, scienceCentre1Height)){
 			scienceCentre2Sprite.draw(batch);
@@ -658,10 +526,10 @@ public class GameScreen implements Screen{
 		text.draw(batch, ":    " + Long.toString((int)(InfoAndStats.fuel)) + "/" + Long.toString((int)(InfoAndStats.fuelFull)), fuelSprite.getX() + 1.05F*fuelSprite.getWidth(), fuelSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
 		text.draw(batch, ":    " + Long.toString((int)(InfoAndStats.metal)) + "/" + Long.toString((int)(InfoAndStats.metalFull)), metalSprite.getX() + 1.05F*metalSprite.getWidth(), metalSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
 	}
-	
+
 	private void buttonListener(){
 		//Слушатель нажатия на кнопку "Main Menu"*/
-		if(controller.isClickedGame(backButtonX, backButtonY, backButtonWidth, backButtonHeight) || isTransGame){
+		if(controller.isClickedGame(btnMN.getX(), btnMN.getY(), btnMN.getWidth(), btnMN.getHeight()) || isTransGame){
 			isTransGame = true;
 			if(alp>1.0F){
 				this.dispose();
@@ -673,17 +541,17 @@ public class GameScreen implements Screen{
 			}
 		}
 		//Слушатель нажатия на ангар*/
-		if(controller.isClickedGame(angar1Sprite.getX(), angar1Sprite.getY(), angar1Width, angar1Height)){
+		if(controller.isClickedGame(hangar.getX(), hangar.getY(), hangar.getWidth(), hangar.getHeight())){
 				game.setScreen(new AngarScreen(game));
 				this.dispose();
 		}
 		//Слушатель нажатия на аналитический центр*/
-		if(controller.isClickedGame(analytic1Sprite.getX(), analytic1Sprite.getY(), analytic1Width, analytic1Height)){
+		if(controller.isClickedGame(analytic.getX(), analytic.getY(), analytic.getWidth(), analytic.getHeight())){
 			game.setScreen(new AnalyticCentreScreen(game));
 			this.dispose();
 		}
 		//Слушатель нажатия на диспетчерскую вышку*/
-		if(controller.isClickedGame(control1Sprite.getX(), control1Sprite.getY(), control1Width, control1Height)){
+		if(controller.isClickedGame(control.getX(), control.getY(), control.getWidth(), control.getHeight())){
 			game.setScreen(new ControlCentreScreen(game));
 			this.dispose();
 		}
@@ -693,7 +561,6 @@ public class GameScreen implements Screen{
 			this.dispose();
 		}
 	}
-	
 	
 	@Override
 	public void resize(int width, int height) {
@@ -717,12 +584,6 @@ public class GameScreen implements Screen{
 
 	private void textureDispose(){
 		backgroundTexture.dispose();
-		angar1Texture.dispose();
-		angar2Texture.dispose();
-		analytic1Texture.dispose();
-		analytic2Texture.dispose();
-		control1Texture.dispose();
-		control2Texture.dispose();
 		scienceCentre1Texture.dispose();
 		scienceCentre2Texture.dispose();
 	}

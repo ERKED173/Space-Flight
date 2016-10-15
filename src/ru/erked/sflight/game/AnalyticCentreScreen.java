@@ -28,14 +28,14 @@ public class AnalyticCentreScreen implements Screen{
 	private SFlightInputController controller;
 	public static float prevDay = (-1.0F)*1.0F;
 	
-	//Фон
+	//Background
 	private Texture backgroundTexture; //Текстура фона
 	public static Sprite backgroundSprite; //Спрайт фона
 	private float backgroundX;
 	private float backgroundY;
 	public static final float backgroundTentionIndex = (float)width/400.0F;
 	
-	//Копка "Back"
+	//"Back" Button
 	private Sprite backButtonInactiveSprite;
 	private Sprite backButtonActiveSprite;
 	private float backButtonX;
@@ -44,7 +44,7 @@ public class AnalyticCentreScreen implements Screen{
 	private float backButtonHeight;
 	public static float backButtonTentionIndex; //Соотношение сторон кнопки
 	
-	//Доска статистики
+	//Statistics' board
 	private Texture scoreboardInactive;
 	private Texture scoreboardActive;
 	private Sprite scoreboardInactiveSprite;
@@ -57,7 +57,7 @@ public class AnalyticCentreScreen implements Screen{
 	private float scoreboard2Y;
 	private float scoreboard2Width;
 	private float scoreboard2Height;
-	//Панель ресурсов
+	//Resource panel
 	private Texture resourcePanelInactive;
 	private Texture resourcePanelActive;
 	private Sprite resourcePanelInactiveSprite;
@@ -72,7 +72,7 @@ public class AnalyticCentreScreen implements Screen{
 	private float resourcePanel2Height;
 	private static String schResI;
 	private static String schResA;
-	//Текст
+	//Text
 	private static BitmapFont text;
 	
 	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
@@ -91,7 +91,6 @@ public class AnalyticCentreScreen implements Screen{
 		batch = new SpriteBatch();
 		controller = new SFlightInputController();
 		
-		//Фон\\
 		backgroundTexture = new Texture("bckgrnd/analytic_inside.png");
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundX = 0.0F;
@@ -102,7 +101,6 @@ public class AnalyticCentreScreen implements Screen{
 		scoreboardInit();
 		resourcePanelInit();
 		
-		//Текст\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
 		FreeTypeFontParameter param = new FreeTypeFontParameter();
@@ -124,7 +122,6 @@ public class AnalyticCentreScreen implements Screen{
 	}
 
 	private void backButtonInit(){
-//Кнопка "Back"\\
 		backButtonInactiveSprite = new Sprite(ImgResDraw.backButtonInactive);
 		backButtonActiveSprite = new Sprite(ImgResDraw.backButtonActive);
 		if(InfoAndStats.lngRussian){
@@ -140,7 +137,6 @@ public class AnalyticCentreScreen implements Screen{
 		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
 	}
 	private void scoreboardInit(){
-	//Доска статистики\\
 		scoreboardInactive = new Texture("objects/graph_board_inactive.png");
 		scoreboardActive = new Texture("objects/graph_board_active.png");
 		scoreboardInactiveSprite = new Sprite(scoreboardInactive);
@@ -157,7 +153,6 @@ public class AnalyticCentreScreen implements Screen{
 		scoreboardActiveSprite.setBounds(scoreboard2X, scoreboard2Y, scoreboard2Width, scoreboard2Height);
 	}
 	private void resourcePanelInit(){
-		//Панель ресурсов\\
 		resourcePanelInactive = new Texture("objects/resourcesPanelInactive/resourcesPanelInactive_1.png");
 		resourcePanelActive = new Texture("objects/resourcesPanelActive/resourcesPanelActive_1.png");
 		resourcePanelInactiveSprite = new Sprite(resourcePanelInactive);
@@ -177,17 +172,14 @@ public class AnalyticCentreScreen implements Screen{
 	}
 	
 	private void btnListener(){
-		//Слушатель нажатия на кнопку "Back"//
 		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
 			game.setScreen(new GameScreen(game));
 			this.dispose();
 		}
-		//Слушатель нажатия на доску статистики//
 		if(controller.isClicked(scoreboard1X, scoreboard1Y, scoreboard1Width, scoreboard1Height)){
 			game.setScreen(new StatisticScreen(game));
 			this.dispose();
 		}
-		//Слушатель нажатия на панель ресурсов//
 		if(controller.isClicked(resourcePanel1X, resourcePanel1Y, resourcePanel1Width, resourcePanel1Height)){
 			game.setScreen(new ResourceScreen(game));
 			this.dispose();
@@ -195,7 +187,6 @@ public class AnalyticCentreScreen implements Screen{
 	}
 	
 	private void drawBackButton(){
-		//Отрисовка кнопки "Back"//
 		if(controller.isOn(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
 			backButtonActiveSprite.draw(batch);
 		}else{
@@ -203,7 +194,6 @@ public class AnalyticCentreScreen implements Screen{
 		}
 	}
 	private void drawScoreboard(){
-		//Отрисовка доски статистики//
 		if(controller.isOn(scoreboard1X, scoreboard1Y, scoreboard1Width, scoreboard1Height)){
 			scoreboardActiveSprite.draw(batch);
 		}else{
@@ -211,7 +201,6 @@ public class AnalyticCentreScreen implements Screen{
 		}
 	}
 	private void drawResourcePanel(){
-		//Отрисовка панели ресурсов//
 		if(controller.isOn(resourcePanel1X, resourcePanel1Y, resourcePanel1Width, resourcePanel1Height)){
 			if(InfoAndStats.elapsedTime % 15 == 0){
 				resourcePanelActiveSprite.setTexture(new Texture(schResA));
