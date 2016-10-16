@@ -1,7 +1,5 @@
 package ru.erked.sflight.tech;
 
-import com.badlogic.gdx.graphics.Texture;
-
 public class Rocket {
 
 	private String nameUS;
@@ -11,9 +9,8 @@ public class Rocket {
 	private int speedF;
 	private int speedM;
 	private int cost;
-	private Texture texture;
 	
-	public Rocket(String nameUS, String nameRU, int hp, int speedC, int speedF, int speedM, int cost, String texture){
+	public Rocket(String nameUS, String nameRU, int hp, int speedC, int speedF, int speedM, int cost){
 		this.setNameUS(nameUS);
 		this.setNameRU(nameRU);
 		this.setHp(hp);
@@ -21,7 +18,6 @@ public class Rocket {
 		this.setSpeedF(speedF);
 		this.setSpeedM(speedM);
 		this.setCost(cost);
-		this.setTexture(new Texture(texture + "I.png"));
 	}
 
 	public String getNameUS() {
@@ -79,15 +75,5 @@ public class Rocket {
 	public void setCost(int cost) {
 		this.cost = cost;
 	}
-
-	public Texture getTexture() {
-		return texture;
-	}
-
-	public void setTexture(Texture texture) {
-		this.texture = texture;
-	}
-	
-	
 	
 }
