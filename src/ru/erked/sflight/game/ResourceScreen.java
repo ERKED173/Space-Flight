@@ -14,8 +14,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.ImgResDraw;
 import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.tech.SFButtonS;
 
 public class ResourceScreen implements Screen{
 
@@ -27,34 +27,25 @@ public class ResourceScreen implements Screen{
 	private SpriteBatch batch;
 	private SFlightInputController controller;
 	
-	//Фон
+	//Background
 	private Texture backgroundTexture; //Текстура фона
 	public static Sprite backgroundSprite; //Спрайт фона
 	
-	//Копка "Back"
-	private Sprite backButtonInactiveSprite;
-	private Sprite backButtonActiveSprite;
-	private float backButtonX;
-	private float backButtonY;
-	private float backButtonWidth;
-	private float backButtonHeight;
-	public static float backButtonTentionIndex; //Соотношение сторон кнопки
+	//"Back" Button
+	private SFButtonS back;
 	private String schBack;
 	
-	//Копки Апгрейда
-	private Sprite upSprI1;
-	private Sprite upSprA1;
-	private Sprite upSprI2;
-	private Sprite upSprA2;
-	private Sprite upSprI3;
-	private Sprite upSprA3;
+	//Upgrade buttons
+	private SFButtonS upC;
+	private SFButtonS upF;
+	private SFButtonS upM;
 	
-	//Иконка ресурсов
+	//Resources
 	private Sprite moneySprite;
 	private Sprite fuelSprite;
 	private Sprite metalSprite;
 	
-	//Шрифты
+	//Fonts
 	private static BitmapFont text;
 	private static BitmapFont textBtn;
 	
@@ -70,28 +61,13 @@ public class ResourceScreen implements Screen{
 		
 		MainMenu.music.play();
 		
-		//Фон\\
 		backgroundTexture = new Texture("bckgrnd/resource/resource_1.png");
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundSprite.setBounds(0.0F, 0.0F, width, height);
 		schBack = "bckgrnd/resource/resource_1.png";
 		
-		//Кнопка "Back"\\
-		backButtonInactiveSprite = new Sprite(ImgResDraw.backButtonInactive);
-		backButtonActiveSprite = new Sprite(ImgResDraw.backButtonActive);
-		if(InfoAndStats.lngRussian){
-			backButtonInactiveSprite.setTexture(ImgResDraw.backButtonInactiveRU);
-			backButtonActiveSprite.setTexture(ImgResDraw.backButtonActiveRU);
-		}
-		backButtonTentionIndex = (float)ImgResDraw.backButtonInactive.getWidth()/ImgResDraw.backButtonInactive.getHeight();
-		backButtonWidth = 0.132F*width;
-		backButtonHeight = backButtonWidth/backButtonTentionIndex;
-		backButtonX = width - 0.015F*width - backButtonWidth;
-		backButtonY = 0 + 0.005F*height;
-		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
+		back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height);
 
-		//Шрифты\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
 		FreeTypeFontParameter param = new FreeTypeFontParameter();
@@ -114,7 +90,13 @@ public class ResourceScreen implements Screen{
 		text.getData().setScale((float)(0.00075F*width));
 		
 		resourcesInit();
-		upgradeButtonsInit();
+		
+		upC = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.675F*height);
+		upC.getSprite().setColor(Color.TEAL);
+		upF = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.475F*height);
+		upF.getSprite().setColor(Color.TEAL);
+		upM = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.275F*height);
+		upM.getSprite().setColor(Color.TEAL);
 		
 		genRU.dispose();
 		genUS.dispose();
@@ -133,28 +115,29 @@ public class ResourceScreen implements Screen{
 		
 		backgroundSprite.draw(batch);
 		
-		//Отрисовка кнопки "Back"//
-		if(controller.isOn(backButtonX, backButtonY, backButtonWidth, backButtonHeight))
-			backButtonActiveSprite.draw(batch);
-		else
-			backButtonInactiveSprite.draw(batch);
+		if(controller.isOn(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
+			back.setMode(true);
+		}else{
+			back.setMode(false);
+		}
+		back.getSprite().draw(batch);
 
 		if(!InfoAndStats.lngRussian){
 			text.draw(batch, "Information about resources", 0.315F*width, 0.965F*height);
 			text.draw(batch, InfoAndStats.money + "/" + InfoAndStats.moneyFull + " cosmocoins", 0.125F*width, 0.8F*height - 0.0F*text.getCapHeight());
-			text.draw(batch, "1 cosmocoin per " + 60/InfoAndStats.moneyAmount + " seconds", 0.125F*width, 0.8F*height - 1.5F*text.getCapHeight());
+			text.draw(batch, 60/(60/InfoAndStats.moneyAmount) + " cosmocoins per 60 sec", 0.125F*width, 0.8F*height - 1.5F*text.getCapHeight());
 			text.draw(batch, InfoAndStats.fuel + "/" + InfoAndStats.fuelFull + " fuel", 0.125F*width, 0.8F*height - 6.0F*text.getCapHeight());
-			text.draw(batch, "1 fuel per " + 60/InfoAndStats.fuelAmount + " seconds", 0.125F*width, 0.8F*height - 7.5F*text.getCapHeight());
+			text.draw(batch, 60/(60/InfoAndStats.fuelAmount) + " fuel per 60 sec", 0.125F*width, 0.8F*height - 7.5F*text.getCapHeight());
 			text.draw(batch, InfoAndStats.metal + "/" + InfoAndStats.metalFull + " metal", 0.125F*width, 0.8F*height - 12.0F*text.getCapHeight());
-			text.draw(batch, "1 metal per " + 60/InfoAndStats.metalAmount + " seconds", 0.125F*width, 0.8F*height - 13.5F*text.getCapHeight());
+			text.draw(batch, 60/(60/InfoAndStats.metalAmount) + " metal per 60 sec", 0.125F*width, 0.8F*height - 13.5F*text.getCapHeight());
 		}else{
 			text.draw(batch, "Информация о ресурсах", 0.315F*width, 0.965F*height);
 			text.draw(batch, InfoAndStats.money + "/" + InfoAndStats.moneyFull + " космокоинов", 0.125F*width, 0.8F*height - 0.0F*text.getCapHeight());
-			text.draw(batch, "1 космокоин за " + 60/InfoAndStats.moneyAmount + " секунд", 0.125F*width, 0.8F*height - 1.5F*text.getCapHeight());
+			text.draw(batch, 60/(60/InfoAndStats.moneyAmount) + " космокоинов за 60 сек", 0.125F*width, 0.8F*height - 1.5F*text.getCapHeight());
 			text.draw(batch, InfoAndStats.fuel + "/" + InfoAndStats.fuelFull + " топлива", 0.125F*width, 0.8F*height - 6.0F*text.getCapHeight());
-			text.draw(batch, "1 топливо за " + 60/InfoAndStats.fuelAmount + " секунд", 0.125F*width, 0.8F*height - 7.5F*text.getCapHeight());
+			text.draw(batch, 60/(60/InfoAndStats.fuelAmount) + " топлива за 60 сек", 0.125F*width, 0.8F*height - 7.5F*text.getCapHeight());
 			text.draw(batch, InfoAndStats.metal + "/" + InfoAndStats.metalFull + " металла", 0.125F*width, 0.8F*height - 12.0F*text.getCapHeight());
-			text.draw(batch, "1 метал за " + 60/InfoAndStats.metalAmount + " секунд", 0.125F*width, 0.8F*height - 13.5F*text.getCapHeight());
+			text.draw(batch, 60/(60/InfoAndStats.metalAmount) + " металла за 60 сек", 0.125F*width, 0.8F*height - 13.5F*text.getCapHeight());
 		}
 		
 		drawResources();
@@ -175,20 +158,7 @@ public class ResourceScreen implements Screen{
 		fuelSprite.setBounds(0.025F*width, 0.8F*height - 9.0F*text.getCapHeight(), 0.08F*width, 0.08F*width);
 		metalSprite.setBounds(0.025F*width, 0.8F*height - 15.0F*text.getCapHeight(), 0.08F*width, 0.08F*width);
 	}
-	private void upgradeButtonsInit(){
-		upSprI1 = new Sprite(ImgResDraw.buttonI);
-		upSprI1.setBounds(0.55F*width, 0.675F*height, 0.15F*width, 0.1F*width);
-		upSprA1 = new Sprite(ImgResDraw.buttonA);
-		upSprA1.setBounds(0.55F*width - 0.5F*upSprI1.getWidth(), 0.675F*height - 0.5F*upSprI1.getHeight(), 0.3F*width, 0.2F*width);
-		upSprI2 = new Sprite(ImgResDraw.buttonI);
-		upSprI2.setBounds(0.55F*width, 0.475F*height, 0.15F*width, 0.1F*width);
-		upSprA2 = new Sprite(ImgResDraw.buttonA);
-		upSprA2.setBounds(0.55F*width - 0.5F*upSprI1.getWidth(), 0.475F*height - 0.5F*upSprI1.getHeight(), 0.3F*width, 0.2F*width);
-		upSprI3 = new Sprite(ImgResDraw.buttonI);
-		upSprI3.setBounds(0.55F*width, 0.275F*height, 0.15F*width, 0.1F*width);
-		upSprA3 = new Sprite(ImgResDraw.buttonA);
-		upSprA3.setBounds(0.55F*width - 0.5F*upSprI1.getWidth(), 0.275F*height - 0.5F*upSprI1.getHeight(), 0.3F*width, 0.2F*width);
-	}
+
 	
 	private void drawBackground(){
 		if(InfoAndStats.elapsedTime % 15 == 0){
@@ -215,49 +185,52 @@ public class ResourceScreen implements Screen{
 	}
 	private void drawUpBtns(){
 		/***/
-		if(controller.isOn(upSprI1.getX(), upSprI1.getY(), upSprI1.getWidth(), upSprI1.getHeight())){
-			upSprA1.draw(batch);
+		upC.getSprite().draw(batch);
+		if(controller.isOn(upC.getX(), upC.getY(), upC.getWidth(), upC.getHeight()) && !(upC.getSprite().getColor().equals(Color.TEAL))){
+			upC.setMode(true);
 			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upSprI1.getX() + 0.125F*upSprI1.getWidth(), upSprI1.getY() + 0.575F*upSprI1.getHeight());
+				textBtn.draw(batch, "Upgrade", upC.getX() + 0.125F*upC.getWidth(), upC.getY() + 0.575F*upC.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upSprI1.getX() + 0.115F*upSprI1.getWidth(), upSprI1.getY() + 0.575F*upSprI1.getHeight());
+				textBtn.draw(batch, "Улучшить", upC.getX() + 0.115F*upC.getWidth(), upC.getY() + 0.575F*upC.getHeight());
 			}
 		}else{
-			upSprI1.draw(batch);
+			upC.setMode(false);
 			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upSprI1.getX() + 0.125F*upSprI1.getWidth(), upSprI1.getY() + 0.6F*upSprI1.getHeight());
+				textBtn.draw(batch, "Upgrade", upC.getX() + 0.125F*upC.getWidth(), upC.getY() + 0.6F*upC.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upSprI1.getX() + 0.115F*upSprI1.getWidth(), upSprI1.getY() + 0.6F*upSprI1.getHeight());
+				textBtn.draw(batch, "Улучшить", upC.getX() + 0.115F*upC.getWidth(), upC.getY() + 0.6F*upC.getHeight());
 			}
 		}
-		if(controller.isOn(upSprI2.getX(), upSprI2.getY(), upSprI2.getWidth(), upSprI2.getHeight())){
-			upSprA2.draw(batch);
+		upF.getSprite().draw(batch);
+		if(controller.isOn(upF.getX(), upF.getY(), upF.getWidth(), upF.getHeight()) && !(upF.getSprite().getColor().equals(Color.TEAL))){
+			upF.setMode(true);
 			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upSprI2.getX() + 0.125F*upSprI2.getWidth(), upSprI2.getY() + 0.575F*upSprI2.getHeight());
+				textBtn.draw(batch, "Upgrade", upF.getX() + 0.125F*upF.getWidth(), upF.getY() + 0.575F*upF.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upSprI2.getX() + 0.115F*upSprI2.getWidth(), upSprI2.getY() + 0.575F*upSprI2.getHeight());
+				textBtn.draw(batch, "Улучшить", upF.getX() + 0.115F*upF.getWidth(), upF.getY() + 0.575F*upF.getHeight());
 			}
 		}else{
-			upSprI2.draw(batch);
+			upF.setMode(false);
 			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upSprI2.getX() + 0.125F*upSprI2.getWidth(), upSprI2.getY() + 0.6F*upSprI2.getHeight());
+				textBtn.draw(batch, "Upgrade", upF.getX() + 0.125F*upF.getWidth(), upF.getY() + 0.6F*upF.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upSprI2.getX() + 0.115F*upSprI2.getWidth(), upSprI2.getY() + 0.6F*upSprI2.getHeight());
+				textBtn.draw(batch, "Улучшить", upF.getX() + 0.115F*upM.getWidth(), upF.getY() + 0.6F*upF.getHeight());
 			}
 		}
-		if(controller.isOn(upSprI3.getX(), upSprI3.getY(), upSprI3.getWidth(), upSprI3.getHeight())){
-			upSprA3.draw(batch);
+		upM.getSprite().draw(batch);
+		if(controller.isOn(upM.getX(), upM.getY(), upM.getWidth(), upM.getHeight()) && !(upM.getSprite().getColor().equals(Color.TEAL))){
+			upM.setMode(true);
 			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upSprI3.getX() + 0.125F*upSprI3.getWidth(), upSprI3.getY() + 0.575F*upSprI3.getHeight());
+				textBtn.draw(batch, "Upgrade", upM.getX() + 0.125F*upM.getWidth(), upM.getY() + 0.575F*upM.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upSprI3.getX() + 0.115F*upSprI3.getWidth(), upSprI3.getY() + 0.575F*upSprI3.getHeight());
+				textBtn.draw(batch, "Улучшить", upM.getX() + 0.115F*upM.getWidth(), upM.getY() + 0.575F*upM.getHeight());
 			}
 		}else{
-			upSprI3.draw(batch);
+			upM.setMode(false);
 			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upSprI3.getX() + 0.125F*upSprI3.getWidth(), upSprI3.getY() + 0.6F*upSprI3.getHeight());
+				textBtn.draw(batch, "Upgrade", upM.getX() + 0.125F*upM.getWidth(), upM.getY() + 0.6F*upM.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upSprI3.getX() + 0.115F*upSprI3.getWidth(), upSprI3.getY() + 0.6F*upSprI3.getHeight());
+				textBtn.draw(batch, "Улучшить", upM.getX() + 0.115F*upM.getWidth(), upM.getY() + 0.6F*upM.getHeight());
 			}
 		}
 		/***/
@@ -267,305 +240,245 @@ public class ResourceScreen implements Screen{
 	private void drawUpInfo(){
 		/***/
 		if(!InfoAndStats.lngRussian){
-			text.draw(batch, "Cost:", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.95F*upSprI1.getHeight());
+			text.draw(batch, "Cost:", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.95F*upC.getHeight());
 			if(InfoAndStats.moneyLevel == 0){
 				if(InfoAndStats.fuel < 10 || InfoAndStats.metal < 10){
-					upSprI1.setColor(Color.LIGHT_GRAY);
-					upSprA1.setColor(Color.LIGHT_GRAY);
+					upC.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI1.setColor(Color.WHITE);
-					upSprA1.setColor(Color.WHITE);
+					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 metal", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.65F*upSprI1.getHeight());
-				text.draw(batch, "10 fuel", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.35F*upSprI1.getHeight());
+				text.draw(batch, "10 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(batch, "10 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
 			}else if(InfoAndStats.moneyLevel == 1){
 				if(InfoAndStats.fuel < 25 || InfoAndStats.metal < 25){
-					upSprI1.setColor(Color.LIGHT_GRAY);
-					upSprA1.setColor(Color.LIGHT_GRAY);
+					upC.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI1.setColor(Color.WHITE);
-					upSprA1.setColor(Color.WHITE);
+					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 metal", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.65F*upSprI1.getHeight());
-				text.draw(batch, "25 fuel", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.35F*upSprI1.getHeight());
+				text.draw(batch, "25 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(batch, "25 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
 			}else if(InfoAndStats.moneyLevel == 2){
 				if(InfoAndStats.fuel < 50 || InfoAndStats.metal < 50){
-					upSprI1.setColor(Color.LIGHT_GRAY);
-					upSprA1.setColor(Color.LIGHT_GRAY);
+					upC.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI1.setColor(Color.WHITE);
-					upSprA1.setColor(Color.WHITE);
+					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 metal", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.65F*upSprI1.getHeight());
-				text.draw(batch, "50 fuel", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.35F*upSprI1.getHeight());
+				text.draw(batch, "50 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(batch, "50 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
 			}else if(InfoAndStats.moneyLevel == 3){
 				if(InfoAndStats.fuel < 75 || InfoAndStats.metal < 75){
-					upSprI1.setColor(Color.LIGHT_GRAY);
-					upSprA1.setColor(Color.LIGHT_GRAY);
+					upC.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI1.setColor(Color.WHITE);
-					upSprA1.setColor(Color.WHITE);
+					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 metal", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.65F*upSprI1.getHeight());
-				text.draw(batch, "75 fuel", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.35F*upSprI1.getHeight());
+				text.draw(batch, "75 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(batch, "75 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
 			}else if(InfoAndStats.moneyLevel == 4){
-				text.draw(batch, "MAX level", upSprI3.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.65F*upSprI1.getHeight());
-				upSprI1.setColor(Color.LIGHT_GRAY);
-				upSprA1.setColor(Color.LIGHT_GRAY);
+				text.draw(batch, "MAX level", upM.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				upC.getSprite().setColor(Color.TEAL);
 			}else{
-				upSprI1.setColor(Color.WHITE);
-				upSprA1.setColor(Color.WHITE);
+				upC.getSprite().setColor(Color.CYAN);
 			}
 			////
-			text.draw(batch, "Cost:", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.95F*upSprI2.getHeight());
+			text.draw(batch, "Cost:", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.95F*upF.getHeight());
 			if(InfoAndStats.fuelLevel == 0){
 				if(InfoAndStats.money < 10 || InfoAndStats.metal < 10){
-					upSprI2.setColor(Color.LIGHT_GRAY);
-					upSprA2.setColor(Color.LIGHT_GRAY);
+					upF.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI2.setColor(Color.WHITE);
-					upSprA2.setColor(Color.WHITE);
+					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 cosmocoins", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.65F*upSprI2.getHeight());
-				text.draw(batch, "10 metal", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.35F*upSprI2.getHeight());
+				text.draw(batch, "10 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(batch, "10 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
 			}else if(InfoAndStats.fuelLevel == 1){
 				if(InfoAndStats.money < 25 || InfoAndStats.metal < 25){
-					upSprI2.setColor(Color.LIGHT_GRAY);
-					upSprA2.setColor(Color.LIGHT_GRAY);
+					upF.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI2.setColor(Color.WHITE);
-					upSprA2.setColor(Color.WHITE);
+					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 cosmocoins", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.65F*upSprI2.getHeight());
-				text.draw(batch, "25 metal", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.35F*upSprI2.getHeight());
+				text.draw(batch, "25 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(batch, "25 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
 			}else if(InfoAndStats.fuelLevel == 2){
 				if(InfoAndStats.money < 50 || InfoAndStats.metal < 50){
-					upSprI2.setColor(Color.LIGHT_GRAY);
-					upSprA2.setColor(Color.LIGHT_GRAY);
+					upF.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI2.setColor(Color.WHITE);
-					upSprA2.setColor(Color.WHITE);
+					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 cosmocoins", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.65F*upSprI2.getHeight());
-				text.draw(batch, "50 metal", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.35F*upSprI2.getHeight());
+				text.draw(batch, "50 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(batch, "50 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
 			}else if(InfoAndStats.fuelLevel == 3){
 				if(InfoAndStats.money < 75 || InfoAndStats.metal < 75){
-					upSprI2.setColor(Color.LIGHT_GRAY);
-					upSprA2.setColor(Color.LIGHT_GRAY);
+					upF.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI2.setColor(Color.WHITE);
-					upSprA2.setColor(Color.WHITE);
+					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 cosmocoins", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.65F*upSprI2.getHeight());
-				text.draw(batch, "75 metal", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.35F*upSprI2.getHeight());
+				text.draw(batch, "75 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(batch, "75 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
 			}else if(InfoAndStats.fuelLevel == 4){
-				text.draw(batch, "MAX level", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.65F*upSprI2.getHeight());
-				upSprI2.setColor(Color.LIGHT_GRAY);
-				upSprA2.setColor(Color.LIGHT_GRAY);
+				text.draw(batch, "MAX level", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				upF.getSprite().setColor(Color.TEAL);
 			}else{
-				upSprI2.setColor(Color.WHITE);
-				upSprA2.setColor(Color.WHITE);
+				upF.getSprite().setColor(Color.CYAN);
 			}
 			////
-			text.draw(batch, "Cost:", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.95F*upSprI3.getHeight());
+			text.draw(batch, "Cost:", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.95F*upM.getHeight());
 			if(InfoAndStats.metalLevel == 0){
 				if(InfoAndStats.money < 10 || InfoAndStats.fuel < 10){
-					upSprI3.setColor(Color.LIGHT_GRAY);
-					upSprA3.setColor(Color.LIGHT_GRAY);
+					upM.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI3.setColor(Color.WHITE);
-					upSprA3.setColor(Color.WHITE);
+					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 cosmocoins", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.65F*upSprI3.getHeight());
-				text.draw(batch, "10 fuel", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.35F*upSprI3.getHeight());
+				text.draw(batch, "10 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(batch, "10 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
 			}else if(InfoAndStats.metalLevel == 1){
 				if(InfoAndStats.money < 25 || InfoAndStats.fuel < 25){
-					upSprI3.setColor(Color.LIGHT_GRAY);
-					upSprA3.setColor(Color.LIGHT_GRAY);
+					upM.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI3.setColor(Color.WHITE);
-					upSprA3.setColor(Color.WHITE);
+					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 cosmocoins", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.65F*upSprI3.getHeight());
-				text.draw(batch, "25 fuel", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.35F*upSprI3.getHeight());
+				text.draw(batch, "25 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(batch, "25 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
 			}else if(InfoAndStats.metalLevel == 2){
 				if(InfoAndStats.money < 50 || InfoAndStats.fuel < 50){
-					upSprI3.setColor(Color.LIGHT_GRAY);
-					upSprA3.setColor(Color.LIGHT_GRAY);
+					upM.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI3.setColor(Color.WHITE);
-					upSprA3.setColor(Color.WHITE);
+					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 cosmocoins", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.65F*upSprI3.getHeight());
-				text.draw(batch, "50 fuel", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.35F*upSprI3.getHeight());
+				text.draw(batch, "50 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(batch, "50 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
 			}else if(InfoAndStats.metalLevel == 3){
 				if(InfoAndStats.money < 75 || InfoAndStats.fuel < 75){
-					upSprI3.setColor(Color.LIGHT_GRAY);
-					upSprA3.setColor(Color.LIGHT_GRAY);
+					upM.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI3.setColor(Color.WHITE);
-					upSprA3.setColor(Color.WHITE);
+					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 cosmocoins", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.65F*upSprI3.getHeight());
-				text.draw(batch, "75 fuel", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.35F*upSprI3.getHeight());
+				text.draw(batch, "75 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(batch, "75 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
 			}else if(InfoAndStats.metalLevel == 4){
-				text.draw(batch, "MAX level", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.65F*upSprI3.getHeight());
-				upSprI3.setColor(Color.LIGHT_GRAY);
-				upSprA3.setColor(Color.LIGHT_GRAY);
+				text.draw(batch, "MAX level", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				upM.getSprite().setColor(Color.TEAL);
 			}else{
-				upSprI3.setColor(Color.WHITE);
-				upSprA3.setColor(Color.WHITE);
+				upM.getSprite().setColor(Color.CYAN);
 			}
 			////
 		}else{
-			text.draw(batch, "Цена:", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.95F*upSprI1.getHeight());
+			text.draw(batch, "Цена:", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.95F*upC.getHeight());
 			if(InfoAndStats.moneyLevel == 0){
 				if(InfoAndStats.fuel < 10 || InfoAndStats.metal < 10){
-					upSprI1.setColor(Color.LIGHT_GRAY);
-					upSprA1.setColor(Color.LIGHT_GRAY);
+					upC.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI1.setColor(Color.WHITE);
-					upSprA1.setColor(Color.WHITE);
+					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 металла", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.65F*upSprI1.getHeight());
-				text.draw(batch, "10 топлива", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.35F*upSprI1.getHeight());
+				text.draw(batch, "10 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(batch, "10 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
 			}else if(InfoAndStats.moneyLevel == 1){
 				if(InfoAndStats.fuel < 25 || InfoAndStats.metal < 25){
-					upSprI1.setColor(Color.LIGHT_GRAY);
-					upSprA1.setColor(Color.LIGHT_GRAY);
+					upC.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI1.setColor(Color.WHITE);
-					upSprA1.setColor(Color.WHITE);
+					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 металла", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.65F*upSprI1.getHeight());
-				text.draw(batch, "25 топлива", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.35F*upSprI1.getHeight());
+				text.draw(batch, "25 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(batch, "25 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
 			}else if(InfoAndStats.moneyLevel == 2){
 				if(InfoAndStats.fuel < 50 || InfoAndStats.metal < 50){
-					upSprI1.setColor(Color.LIGHT_GRAY);
-					upSprA1.setColor(Color.LIGHT_GRAY);
+					upC.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI1.setColor(Color.WHITE);
-					upSprA1.setColor(Color.WHITE);
+					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 металла", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.65F*upSprI1.getHeight());
-				text.draw(batch, "50 топлива", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.35F*upSprI1.getHeight());
+				text.draw(batch, "50 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(batch, "50 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
 			}else if(InfoAndStats.moneyLevel == 3){
 				if(InfoAndStats.fuel < 75 || InfoAndStats.metal < 75){
-					upSprI1.setColor(Color.LIGHT_GRAY);
-					upSprA1.setColor(Color.LIGHT_GRAY);
+					upC.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI1.setColor(Color.WHITE);
-					upSprA1.setColor(Color.WHITE);
+					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 металла", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.65F*upSprI1.getHeight());
-				text.draw(batch, "75 топлива", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.35F*upSprI1.getHeight());
+				text.draw(batch, "75 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(batch, "75 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
 			}else if(InfoAndStats.moneyLevel == 4){
-				text.draw(batch, "Макс. уровень", upSprI1.getX() + 1.1F*upSprI1.getWidth(), upSprI1.getY() + 0.65F*upSprI1.getHeight());
-				upSprI1.setColor(Color.LIGHT_GRAY);
-				upSprA1.setColor(Color.LIGHT_GRAY);
+				text.draw(batch, "Макс. уровень", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				upC.getSprite().setColor(Color.TEAL);
 			}else{
-				upSprI1.setColor(Color.WHITE);
-				upSprA1.setColor(Color.WHITE);
+				upC.getSprite().setColor(Color.CYAN);
 			}
 			////
-			text.draw(batch, "Цена:", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.95F*upSprI2.getHeight());
+			text.draw(batch, "Цена:", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.95F*upF.getHeight());
 			if(InfoAndStats.fuelLevel == 0){
 				if(InfoAndStats.money < 10 || InfoAndStats.metal < 10){
-					upSprI2.setColor(Color.LIGHT_GRAY);
-					upSprA2.setColor(Color.LIGHT_GRAY);
+					upF.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI2.setColor(Color.WHITE);
-					upSprA2.setColor(Color.WHITE);
+					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 космокоинов", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.65F*upSprI2.getHeight());
-				text.draw(batch, "10 металла", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.35F*upSprI2.getHeight());
+				text.draw(batch, "10 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(batch, "10 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
 			}else if(InfoAndStats.fuelLevel == 1){
 				if(InfoAndStats.money < 25 || InfoAndStats.metal < 25){
-					upSprI2.setColor(Color.LIGHT_GRAY);
-					upSprA2.setColor(Color.LIGHT_GRAY);
+					upF.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI2.setColor(Color.WHITE);
-					upSprA2.setColor(Color.WHITE);
+					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 космокоинов", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.65F*upSprI2.getHeight());
-				text.draw(batch, "25 металла", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.35F*upSprI2.getHeight());
+				text.draw(batch, "25 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(batch, "25 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
 			}else if(InfoAndStats.fuelLevel == 2){
 				if(InfoAndStats.money < 50 || InfoAndStats.metal < 50){
-					upSprI2.setColor(Color.LIGHT_GRAY);
-					upSprA2.setColor(Color.LIGHT_GRAY);
+					upF.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI2.setColor(Color.WHITE);
-					upSprA2.setColor(Color.WHITE);
+					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 космокоинов", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.65F*upSprI2.getHeight());
-				text.draw(batch, "50 металла", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.35F*upSprI2.getHeight());
+				text.draw(batch, "50 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(batch, "50 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
 			}else if(InfoAndStats.fuelLevel == 3){
 				if(InfoAndStats.money < 75 || InfoAndStats.metal < 75){
-					upSprI2.setColor(Color.LIGHT_GRAY);
-					upSprA2.setColor(Color.LIGHT_GRAY);
+					upF.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI2.setColor(Color.WHITE);
-					upSprA2.setColor(Color.WHITE);
+					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 космокоинов", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.65F*upSprI2.getHeight());
-				text.draw(batch, "75 металла", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.35F*upSprI2.getHeight());
+				text.draw(batch, "75 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(batch, "75 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
 			}else if(InfoAndStats.fuelLevel == 4){
-				text.draw(batch, "Макс. уровень", upSprI2.getX() + 1.1F*upSprI2.getWidth(), upSprI2.getY() + 0.65F*upSprI2.getHeight());
-				upSprI2.setColor(Color.LIGHT_GRAY);
-				upSprA2.setColor(Color.LIGHT_GRAY);
+				text.draw(batch, "Макс. уровень", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				upF.getSprite().setColor(Color.TEAL);
 			}else{
-				upSprI2.setColor(Color.WHITE);
-				upSprA2.setColor(Color.WHITE);
+				upF.getSprite().setColor(Color.CYAN);
 			}
 			////
-			text.draw(batch, "Цена:", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.95F*upSprI3.getHeight());
+			text.draw(batch, "Цена:", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.95F*upM.getHeight());
 			if(InfoAndStats.metalLevel == 0){
 				if(InfoAndStats.money < 10 || InfoAndStats.fuel < 10){
-					upSprI3.setColor(Color.LIGHT_GRAY);
-					upSprA3.setColor(Color.LIGHT_GRAY);
+					upM.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI3.setColor(Color.WHITE);
-					upSprA3.setColor(Color.WHITE);
+					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 космокоинов", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.65F*upSprI3.getHeight());
-				text.draw(batch, "10 топлива", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.35F*upSprI3.getHeight());
+				text.draw(batch, "10 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(batch, "10 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
 			}else if(InfoAndStats.metalLevel == 1){
 				if(InfoAndStats.money < 25 || InfoAndStats.fuel < 25){
-					upSprI3.setColor(Color.LIGHT_GRAY);
-					upSprA3.setColor(Color.LIGHT_GRAY);
+					upM.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI3.setColor(Color.WHITE);
-					upSprA3.setColor(Color.WHITE);
+					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 космокоинов", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.65F*upSprI3.getHeight());
-				text.draw(batch, "25 топлива", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.35F*upSprI3.getHeight());
+				text.draw(batch, "25 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(batch, "25 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
 			}else if(InfoAndStats.metalLevel == 2){
 				if(InfoAndStats.money < 50 || InfoAndStats.fuel < 50){
-					upSprI3.setColor(Color.LIGHT_GRAY);
-					upSprA3.setColor(Color.LIGHT_GRAY);
+					upM.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI3.setColor(Color.WHITE);
-					upSprA3.setColor(Color.WHITE);
+					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 космокоинов", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.65F*upSprI3.getHeight());
-				text.draw(batch, "50 топлива", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.35F*upSprI3.getHeight());
+				text.draw(batch, "50 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(batch, "50 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
 			}else if(InfoAndStats.metalLevel == 3){
 				if(InfoAndStats.money < 75 || InfoAndStats.fuel < 75){
-					upSprI3.setColor(Color.LIGHT_GRAY);
-					upSprA3.setColor(Color.LIGHT_GRAY);
+					upM.getSprite().setColor(Color.TEAL);
 				}else{
-					upSprI3.setColor(Color.WHITE);
-					upSprA3.setColor(Color.WHITE);
+					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 космокоинов", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.65F*upSprI3.getHeight());
-				text.draw(batch, "75 топлива", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.35F*upSprI3.getHeight());
+				text.draw(batch, "75 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(batch, "75 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
 			}else if(InfoAndStats.metalLevel == 4){
-				text.draw(batch, "Макс. уровень", upSprI3.getX() + 1.1F*upSprI3.getWidth(), upSprI3.getY() + 0.65F*upSprI3.getHeight());
-				upSprI3.setColor(Color.LIGHT_GRAY);
-				upSprA3.setColor(Color.LIGHT_GRAY);
+				text.draw(batch, "Макс. уровень", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				upM.getSprite().setColor(Color.TEAL);
 			}else{
-				upSprI3.setColor(Color.WHITE);
-				upSprA3.setColor(Color.WHITE);
+				upM.getSprite().setColor(Color.CYAN);
 			}
 			////
 		}
@@ -574,12 +487,12 @@ public class ResourceScreen implements Screen{
 	
 	private void btnListener(){
 		//Слушатель нажатия на кнопку "Back"//
-		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
+		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
 			game.setScreen(new AnalyticCentreScreen(game));
 			this.dispose();
 		}
 		//Слушатель нажатия на коноку апгрейда космокоинов//
-		if(controller.isClicked(upSprI1.getX(), upSprI1.getY(), upSprI1.getWidth(), upSprI1.getHeight())){
+		if(controller.isClicked(upC.getX(), upC.getY(), upC.getWidth(), upC.getHeight())){
 			switch((int)InfoAndStats.moneyLevel){
 			case 0:{
 				if(InfoAndStats.fuel >= 10 && InfoAndStats.metal >= 10){
@@ -625,7 +538,7 @@ public class ResourceScreen implements Screen{
 		}
 		//---//
 		//Слушатель нажатия на коноку апгрейда топлива//
-		if(controller.isClicked(upSprI2.getX(), upSprI2.getY(), upSprI2.getWidth(), upSprI2.getHeight())){
+		if(controller.isClicked(upF.getX(), upF.getY(), upF.getWidth(), upF.getHeight())){
 			switch((int)InfoAndStats.fuelLevel){
 			case 0:{
 				if(InfoAndStats.money >= 10 && InfoAndStats.metal >= 10){
@@ -671,7 +584,7 @@ public class ResourceScreen implements Screen{
 		}
 		//---//
 		//Слушатель нажатия на коноку апгрейда металла//
-		if(controller.isClicked(upSprI3.getX(), upSprI3.getY(), upSprI3.getWidth(), upSprI3.getHeight())){
+		if(controller.isClicked(upM.getX(), upM.getY(), upM.getWidth(), upM.getHeight())){
 			switch((int)InfoAndStats.metalLevel){
 			case 0:{
 				if(InfoAndStats.fuel >= 10 && InfoAndStats.money >= 10){

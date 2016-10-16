@@ -14,8 +14,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.ImgResDraw;
 import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.tech.SFButtonS;
 
 public class ControlCentreScreen implements Screen{
 
@@ -34,14 +34,8 @@ public class ControlCentreScreen implements Screen{
 	private float backgroundY;
 	public static final float backgroundTentionIndex = (float)width/185.0F;
 	
-	//"Back" button
-	private Sprite backButtonInactiveSprite;
-	private Sprite backButtonActiveSprite;
-	private float backButtonX;
-	private float backButtonY;
-	private float backButtonWidth;
-	private float backButtonHeight;
-	public static float backButtonTentionIndex;
+	//"Back" Button
+	private SFButtonS back;
 	
 	//Control panel
 	private Texture panelInactive;
@@ -85,19 +79,7 @@ public class ControlCentreScreen implements Screen{
 		backgroundY = (-1)*(74*backgroundTentionIndex)/2 + height/2;
 		backgroundSprite.setBounds(backgroundX, backgroundY, width, backgroundTentionIndex*74.0F);
 		
-		backButtonInactiveSprite = new Sprite(ImgResDraw.backButtonInactive);
-		backButtonActiveSprite = new Sprite(ImgResDraw.backButtonActive);
-		if(InfoAndStats.lngRussian){
-			backButtonInactiveSprite.setTexture(ImgResDraw.backButtonInactiveRU);
-			backButtonActiveSprite.setTexture(ImgResDraw.backButtonActiveRU);
-		}
-		backButtonTentionIndex = (float)ImgResDraw.backButtonInactive.getWidth()/ImgResDraw.backButtonInactive.getHeight();
-		backButtonWidth = 0.132F*width;
-		backButtonHeight = backButtonWidth/backButtonTentionIndex;
-		backButtonX = width - 0.015F*width - backButtonWidth;
-		backButtonY = 0 + 0.005F*height;
-		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
+		back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height);
 	
 		panelInit();
 		
@@ -145,11 +127,12 @@ public class ControlCentreScreen implements Screen{
 			text.draw(batch, "Диспетчерская вышка", 0.01F*width, 0.99F*height);
 		}
 		
-		if(controller.isOn(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-			backButtonActiveSprite.draw(batch);
+		if(controller.isOn(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
+			back.setMode(true);
 		}else{
-			backButtonInactiveSprite.draw(batch);
+			back.setMode(false);
 		}
+		back.getSprite().draw(batch);
 		
 		drawPanel();
 		
@@ -202,7 +185,7 @@ public class ControlCentreScreen implements Screen{
 	}
 	
 	private void btnListeners(){
-		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
+		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
 			game.setScreen(new GameScreen(game));
 			this.dispose();
 		}

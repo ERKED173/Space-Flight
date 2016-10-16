@@ -14,8 +14,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.ImgResDraw;
 import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.tech.SFButtonS;
 
 public class AngarScreen implements Screen{
 
@@ -28,20 +28,30 @@ public class AngarScreen implements Screen{
 	private SFlightInputController controller;
 	
 	//Background
-	private Texture backgroundTexture; //Текстура фона
-	public static Sprite backgroundSprite; //Спрайт фона
+	private Texture backgroundTexture;
+	public static Sprite backgroundSprite;
 	private float backgroundX;
 	private float backgroundY;
-	public static final float backgroundTentionIndex = (float)width/800.0F;
+	public static final float backgroundTentionIndex = (float)width/150.0F;
 	
-	//"Back" button
-	private Sprite backButtonInactiveSprite;
-	private Sprite backButtonActiveSprite;
-	private float backButtonX;
-	private float backButtonY;
-	private float backButtonWidth;
-	private float backButtonHeight;
-	public static float backButtonTentionIndex; //Соотношение сторон кнопки
+	//"Back" Button
+	private SFButtonS back;
+	
+	//Hangar panel
+	private Texture panelInactive;
+	private Texture panelActive;
+	private Sprite panelInactiveSprite;
+	private Sprite panelActiveSprite;
+	private float panel1X;
+	private float panel1Y;
+	private float panel1Width;
+	private float panel1Height;
+	private float panel2X;
+	private float panel2Y;
+	private float panel2Width;
+	private float panel2Height;
+	private static String schResI;
+	private static String schResA;
 	
 	//Text
 	private static BitmapFont text;
@@ -62,25 +72,15 @@ public class AngarScreen implements Screen{
 
 		MainMenu.music.play();
 		
-		backgroundTexture = new Texture("bckgrnd/angar_inside.png");
+		backgroundTexture = new Texture("bckgrnd/angarInside.png");
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundX = 0.0F;
-		backgroundY = (-1)*(450*backgroundTentionIndex)/2 + height/2;
-		backgroundSprite.setBounds(backgroundX, backgroundY, width, backgroundTentionIndex*450.0F);
+		backgroundY = (height - width/1.6129032258064516129032258064516F)/2.0F;
+		backgroundSprite.setBounds(backgroundX, backgroundY, width, width/1.6129032258064516129032258064516F);
 		
-		backButtonInactiveSprite = new Sprite(ImgResDraw.backButtonInactive);
-		backButtonActiveSprite = new Sprite(ImgResDraw.backButtonActive);
-		if(InfoAndStats.lngRussian){
-			backButtonInactiveSprite.setTexture(ImgResDraw.backButtonInactiveRU);
-			backButtonActiveSprite.setTexture(ImgResDraw.backButtonActiveRU);
-		}
-		backButtonTentionIndex = (float)ImgResDraw.backButtonInactive.getWidth()/ImgResDraw.backButtonInactive.getHeight();
-		backButtonWidth = 0.132F*width;
-		backButtonHeight = backButtonWidth/backButtonTentionIndex;
-		backButtonX = width - 0.015F*width - backButtonWidth;
-		backButtonY = 0 + 0.005F*height;
-		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
+		back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height);
+		
+		panelInit();
 		
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
@@ -121,17 +121,14 @@ public class AngarScreen implements Screen{
 		
 		backgroundSprite.draw(batch);
 		
-		if(controller.isOn(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-			backButtonActiveSprite.draw(batch);
-		}else{
-			backButtonInactiveSprite.draw(batch);
-		}
-		
 		if(!InfoAndStats.lngRussian){
 			text.draw(batch, "Hangar", 0.01F*width, 0.99F*height);
 		}else{
 			text.draw(batch, "Ангар", 0.01F*width, 0.99F*height);
 		}
+		
+		drawPanel();
+		drawBackButton();
 		
 		blackAlpha.draw(batch);
 		
@@ -142,6 +139,51 @@ public class AngarScreen implements Screen{
 		
 	}
 
+	private void panelInit(){
+		panelInactive = new Texture("objects/hangarPanel/hangarPanelInactive_1.png");
+		panelActive = new Texture("objects/hangarPanel/hangarPanelActive_1.png");
+		panelInactiveSprite = new Sprite(panelInactive);
+		panelActiveSprite = new Sprite(panelActive);
+		panel1Width = 0.2F*width;
+		panel1Height = 1.0253164556962025316455696202532F*panel1Width;
+		panel1X = 0.125F*backgroundSprite.getWidth();
+		panel1Y = backgroundSprite.getY() + 0.165F*backgroundSprite.getHeight();
+		panel2Width = 1.6455696202531645569620253164557F*panel1Width;
+		panel2Height = 1.641975308641975308641975308642F*panel1Height;
+		panel2X = 0.125F*backgroundSprite.getWidth() - 0.19230769230769230769230769230769F*panel2Width;
+		panel2Y = backgroundSprite.getY() + 0.165F*backgroundSprite.getHeight() - 0.19548872180451127819548872180451F*panel2Height;
+		panelInactiveSprite.setBounds(panel1X, panel1Y, panel1Width, panel1Height);
+		panelActiveSprite.setBounds(panel2X, panel2Y, panel2Width, panel2Height);
+		schResI = "objects/hangarPanel/hangarPanelInactive_1.png";
+		schResA = "objects/hangarPanel/hangarPanelActive_1.png";
+	}
+
+	private void drawBackButton(){
+		if(controller.isOn(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
+			back.setMode(true);
+		}else{
+			back.setMode(false);
+		}
+		back.getSprite().draw(batch);
+	}
+	private void drawPanel(){
+		if(controller.isOn(panel1X, panel1Y, panel1Width, panel1Height)){
+			if(InfoAndStats.elapsedTime % 15 == 0){
+				panelActiveSprite.setTexture(new Texture(schResA));
+				if(schResA.equals("objects/hangarPanel/hangarPanelActive_1.png")) schResA = "objects/hangarPanel/hangarPanelActive_2.png";
+				else if(schResA.equals("objects/hangarPanel/hangarPanelActive_2.png")) schResA = "objects/hangarPanel/hangarPanelActive_1.png";
+			}
+			panelActiveSprite.draw(batch);
+		}else{
+			if(InfoAndStats.elapsedTime % 15 == 0){
+				panelInactiveSprite.setTexture(new Texture(schResI));
+				if(schResI.equals("objects/hangarPanel/hangarPanelInactive_1.png")) schResI = "objects/hangarPanel/hangarPanelInactive_2.png";
+				else if(schResI.equals("objects/hangarPanel/hangarPanelInactive_2.png")) schResI = "objects/hangarPanel/hangarPanelInactive_1.png";
+			}
+			panelInactiveSprite.draw(batch);
+		}
+	}
+	
 	private void resourcesCheck(){
 		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
 			InfoAndStats.money++;
@@ -158,7 +200,11 @@ public class AngarScreen implements Screen{
 	}
 	
 	private void buttonListeners(){
-		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
+		if(controller.isClicked(panel1X, panel1Y, panel1Width, panel1Height)){
+			game.setScreen(new HangarPanelScreen(game));
+			this.dispose();
+		}
+		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
 			game.setScreen(new GameScreen(game));
 			this.dispose();
 		}

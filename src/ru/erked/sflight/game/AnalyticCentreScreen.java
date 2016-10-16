@@ -14,8 +14,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.ImgResDraw;
 import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.tech.SFButtonS;
 
 public class AnalyticCentreScreen implements Screen{
 
@@ -29,34 +29,15 @@ public class AnalyticCentreScreen implements Screen{
 	public static float prevDay = (-1.0F)*1.0F;
 	
 	//Background
-	private Texture backgroundTexture; //Текстура фона
-	public static Sprite backgroundSprite; //Спрайт фона
+	private Texture backgroundTexture;
+	public static Sprite backgroundSprite;
 	private float backgroundX;
 	private float backgroundY;
 	public static final float backgroundTentionIndex = (float)width/400.0F;
-	
 	//"Back" Button
-	private Sprite backButtonInactiveSprite;
-	private Sprite backButtonActiveSprite;
-	private float backButtonX;
-	private float backButtonY;
-	private float backButtonWidth;
-	private float backButtonHeight;
-	public static float backButtonTentionIndex; //Соотношение сторон кнопки
-	
+	private SFButtonS back;
 	//Statistics' board
-	private Texture scoreboardInactive;
-	private Texture scoreboardActive;
-	private Sprite scoreboardInactiveSprite;
-	private Sprite scoreboardActiveSprite;
-	private float scoreboard1X;
-	private float scoreboard1Y;
-	private float scoreboard1Width;
-	private float scoreboard1Height;
-	private float scoreboard2X;
-	private float scoreboard2Y;
-	private float scoreboard2Width;
-	private float scoreboard2Height;
+	private SFButtonS board;
 	//Resource panel
 	private Texture resourcePanelInactive;
 	private Texture resourcePanelActive;
@@ -96,9 +77,7 @@ public class AnalyticCentreScreen implements Screen{
 		backgroundX = 0.0F;
 		backgroundY = (-1)*(230*backgroundTentionIndex)/2 + height/2;
 		backgroundSprite.setBounds(backgroundX, backgroundY, width, backgroundTentionIndex*230.0F);
-		
-		backButtonInit();
-		scoreboardInit();
+
 		resourcePanelInit();
 		
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
@@ -115,43 +94,15 @@ public class AnalyticCentreScreen implements Screen{
 			text.getData().setScale((float)(0.0006F*width));
 		}
 		
+		board = new SFButtonS("objects/board", 0.2F*width, 0.6F*backgroundSprite.getWidth(), backgroundSprite.getY() + 0.475F*backgroundSprite.getHeight());
+		back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height);
+		
 		isTransAnalytic = false;
 		blackAlpha.setBounds(0.0F, 0.0F, width, height);
 		blackAlpha.setAlpha(1.0F);
 		
 	}
 
-	private void backButtonInit(){
-		backButtonInactiveSprite = new Sprite(ImgResDraw.backButtonInactive);
-		backButtonActiveSprite = new Sprite(ImgResDraw.backButtonActive);
-		if(InfoAndStats.lngRussian){
-			backButtonInactiveSprite.setTexture(ImgResDraw.backButtonInactiveRU);
-			backButtonActiveSprite.setTexture(ImgResDraw.backButtonActiveRU);
-		}
-		backButtonTentionIndex = (float)ImgResDraw.backButtonInactive.getWidth()/ImgResDraw.backButtonInactive.getHeight();
-		backButtonWidth = 0.132F*width;
-		backButtonHeight = backButtonWidth/backButtonTentionIndex;
-		backButtonX = width - 0.015F*width - backButtonWidth;
-		backButtonY = 0 + 0.005F*height;
-		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-	}
-	private void scoreboardInit(){
-		scoreboardInactive = new Texture("objects/graph_board_inactive.png");
-		scoreboardActive = new Texture("objects/graph_board_active.png");
-		scoreboardInactiveSprite = new Sprite(scoreboardInactive);
-		scoreboardActiveSprite = new Sprite(scoreboardActive);
-		scoreboard1Width = 0.2F*width;
-		scoreboard1Height = scoreboard1Width;
-		scoreboard1X = 0.6F*backgroundSprite.getWidth();
-		scoreboard1Y = backgroundSprite.getY() + 0.475F*backgroundSprite.getHeight();
-		scoreboard2Width = 0.34594594594594594594594594594595F*width;
-		scoreboard2Height = scoreboard2Width;
-		scoreboard2X = 0.6F*backgroundSprite.getWidth() - 0.2109375F*scoreboard2Width;
-		scoreboard2Y = backgroundSprite.getY() + 0.475F*backgroundSprite.getHeight() - 0.2109375F*scoreboard2Height;
-		scoreboardInactiveSprite.setBounds(scoreboard1X, scoreboard1Y, scoreboard1Width, scoreboard1Height);
-		scoreboardActiveSprite.setBounds(scoreboard2X, scoreboard2Y, scoreboard2Width, scoreboard2Height);
-	}
 	private void resourcePanelInit(){
 		resourcePanelInactive = new Texture("objects/resourcesPanelInactive/resourcesPanelInactive_1.png");
 		resourcePanelActive = new Texture("objects/resourcesPanelActive/resourcesPanelActive_1.png");
@@ -172,11 +123,11 @@ public class AnalyticCentreScreen implements Screen{
 	}
 	
 	private void btnListener(){
-		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
+		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
 			game.setScreen(new GameScreen(game));
 			this.dispose();
 		}
-		if(controller.isClicked(scoreboard1X, scoreboard1Y, scoreboard1Width, scoreboard1Height)){
+		if(controller.isClicked(board.getX(), board.getY(), board.getWidth(), board.getHeight())){
 			game.setScreen(new StatisticScreen(game));
 			this.dispose();
 		}
@@ -187,18 +138,20 @@ public class AnalyticCentreScreen implements Screen{
 	}
 	
 	private void drawBackButton(){
-		if(controller.isOn(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-			backButtonActiveSprite.draw(batch);
+		if(controller.isOn(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
+			back.setMode(true);
 		}else{
-			backButtonInactiveSprite.draw(batch);
+			back.setMode(false);
 		}
+		back.getSprite().draw(batch);
 	}
 	private void drawScoreboard(){
-		if(controller.isOn(scoreboard1X, scoreboard1Y, scoreboard1Width, scoreboard1Height)){
-			scoreboardActiveSprite.draw(batch);
+		if(controller.isOn(board.getX(), board.getY(), board.getWidth(), board.getHeight())){
+			board.setMode(true);
 		}else{
-			scoreboardInactiveSprite.draw(batch);
+			board.setMode(false);
 		}
+		board.getSprite().draw(batch);
 	}
 	private void drawResourcePanel(){
 		if(controller.isOn(resourcePanel1X, resourcePanel1Y, resourcePanel1Width, resourcePanel1Height)){
@@ -295,8 +248,7 @@ public class AnalyticCentreScreen implements Screen{
 
 	private void textureDispose(){
 		backgroundTexture.dispose();
-		scoreboardInactive.dispose();
-		scoreboardActive.dispose();
+		board.getTexture().dispose();
 	}
 	
 	@Override

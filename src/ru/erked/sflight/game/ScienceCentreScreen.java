@@ -14,8 +14,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.ImgResDraw;
 import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.tech.SFButtonS;
 
 public class ScienceCentreScreen implements Screen{
 	
@@ -27,23 +27,17 @@ public class ScienceCentreScreen implements Screen{
 	private SpriteBatch batch;
 	private SFlightInputController controller;
 	
-	//Фон
-	private Texture backgroundTexture; //Текстура фона
-	public static Sprite backgroundSprite; //Спрайт фона
+	//Background
+	private Texture backgroundTexture;
+	public static Sprite backgroundSprite;
 	private float backgroundX;
 	private float backgroundY;
 	public static final float backgroundTentionIndex = (float)width/600.0F;
 	
-	//Копка "Back"
-	private Sprite backButtonInactiveSprite;
-	private Sprite backButtonActiveSprite;
-	private float backButtonX;
-	private float backButtonY;
-	private float backButtonWidth;
-	private float backButtonHeight;
-	public static float backButtonTentionIndex; //Соотношение сторон кнопки
+	//"Back" Button
+	private SFButtonS back;
 	
-	//Текст
+	//Text
 	private static BitmapFont text;
 	
 	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
@@ -61,29 +55,14 @@ public class ScienceCentreScreen implements Screen{
 
 		MainMenu.music.play();
 		
-		//Фон\\
 		backgroundTexture = new Texture("bckgrnd/scienceCentreInside.png");
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundX = 0.0F;
 		backgroundY = (-1)*(337*backgroundTentionIndex)/2 + height/2;
 		backgroundSprite.setBounds(backgroundX, backgroundY, width, backgroundTentionIndex*337.0F);
 		
-		//Кнопка "Back"\\
-		backButtonInactiveSprite = new Sprite(ImgResDraw.backButtonInactive);
-		backButtonActiveSprite = new Sprite(ImgResDraw.backButtonActive);
-		if(InfoAndStats.lngRussian){
-			backButtonInactiveSprite.setTexture(ImgResDraw.backButtonInactiveRU);
-			backButtonActiveSprite.setTexture(ImgResDraw.backButtonActiveRU);
-		}
-		backButtonTentionIndex = (float)ImgResDraw.backButtonInactive.getWidth()/ImgResDraw.backButtonInactive.getHeight();
-		backButtonWidth = 0.132F*width;
-		backButtonHeight = backButtonWidth/backButtonTentionIndex;
-		backButtonX = width - 0.015F*width - backButtonWidth;
-		backButtonY = 0 + 0.005F*height;
-		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
+		back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height);
 		
-		//Текста\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
 		FreeTypeFontParameter param = new FreeTypeFontParameter();
@@ -131,14 +110,13 @@ public class ScienceCentreScreen implements Screen{
 		
 		backgroundSprite.draw(batch);
 		
-		//Отрисовка кнопки "Back"//
-		if(controller.isOn(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-			backButtonActiveSprite.draw(batch);
+		if(controller.isOn(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
+			back.setMode(true);
 		}else{
-			backButtonInactiveSprite.draw(batch);
+			back.setMode(false);
 		}
+		back.getSprite().draw(batch);
 		
-		//Отрисовка текста в научном центре//
 		if(!InfoAndStats.lngRussian){
 			text.draw(batch, "Science centre", 0.01F*width, 0.99F*height);
 		}else{
@@ -155,7 +133,7 @@ public class ScienceCentreScreen implements Screen{
 	}
 	
 	private void btnListeners(){
-		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
+		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
 			game.setScreen(new GameScreen(game));
 			this.dispose();
 		}

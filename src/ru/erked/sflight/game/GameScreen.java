@@ -51,22 +51,8 @@ public class GameScreen implements Screen{
 	private SFButtonS analytic;	
 //Control tower
 	private SFButtonS control;	
-	
-	//Научный_центр_1
-	private Texture scienceCentre1Texture;
-	public static Sprite scienceCentre1Sprite;
-	private float scienceCentre1Width;
-	private float scienceCentre1Height;
-	private float scienceCentre1X;
-	private float scienceCentre1Y;
-	private float scienceCentre1TentionIndex;
-	//Научный_центр_2
-	private Texture scienceCentre2Texture;
-	public static Sprite scienceCentre2Sprite;
-	private float scienceCentre2Width;
-	private float scienceCentre2Height;
-	private float scienceCentre2X;
-	private float scienceCentre2Y;
+//Science centre
+	private SFButtonS science;	
 	
 	//Нефтедобыча
 	private Texture fuelFactoryTexture;
@@ -99,6 +85,7 @@ public class GameScreen implements Screen{
 	
 //Копка "Main Menu"
 	private SFButtonA btnMN;
+	private SFButtonA btnPlus;
 	
 //Иконка КосмоКоинов
 	private Sprite moneySprite;
@@ -170,16 +157,19 @@ public class GameScreen implements Screen{
 		}
 		text.getData().setScale((float)(0.00045F*width));
 		
-		scienceCentreInit();
 		moneyInit();
 		fuelFactoryInit();
 		coinFactoryInit();
 		metalFactoryInit();
 		
 		btnMN = new SFButtonA("btns/button", 0.132F*width, width - 0.14F*width, 0.01F*height, camera);
+		btnMN.getSprite().setColor(Color.CYAN);
+		btnPlus = new SFButtonA("btns/button", 0.132F*width, width - 0.14F*width, 0.01F*height + 1.1F*btnMN.getHeight(), camera);
+		btnPlus.getSprite().setColor(Color.RED);
 		hangar = new SFButtonS("objects/angar", 0.5F*width, 0.150F*backgroundSprite.getWidth(), 0.625F*backgroundSprite.getHeight());		
 		analytic = new SFButtonS("objects/analytic", 0.2F*width, 0.739F*backgroundSprite.getWidth(), 0.785F*backgroundSprite.getHeight());		
 		control = new SFButtonS("objects/control", 0.125F*width, 0.469F*backgroundSprite.getWidth(), 0.665F*backgroundSprite.getHeight());		
+		science = new SFButtonS("objects/science", 0.5F*width, 0.359F*backgroundSprite.getWidth(), 0.45F*backgroundSprite.getHeight());		
 		
 		isTransGame = false;
 		blackAlpha.setBounds(0.0F, 0.0F, backgroundSprite.getWidth(), backgroundSprite.getHeight());
@@ -204,7 +194,6 @@ public class GameScreen implements Screen{
 		
 		touchUpdate();
 		
-		cloudsCoords(delta);
 		moneyCoords();
 		
 		camera.update();
@@ -216,7 +205,6 @@ public class GameScreen implements Screen{
 		backgroundSprite.draw(batch);
 		
 		drawBuildings();
-		drawClouds();
 		drawButtons();
 		drawMoney();
 		
@@ -229,11 +217,6 @@ public class GameScreen implements Screen{
 		
 	}
 	
-	private void cloudsCoords(float delta){
-		//Установка коодрдинат для облаков
-		/**TODO: Облащка 1*/
-		//Установка коодрдинат для облаков
-	}
 	private void moneyCoords(){
 		//Установка координат иконки КосмоКоинов*/
 		moneyX = camera.position.x - moneyWidth - (width/2 - 0.065F*width);
@@ -274,25 +257,6 @@ public class GameScreen implements Screen{
 		metalLine.setY(metalSprite.getY() + 0.25F*metalSprite.getHeight());
 	}	
 
-	private void scienceCentreInit(){
-		//Научный_Центр_1\\
-		scienceCentre1Texture = new Texture("objects/scienceCentre1.png");
-		scienceCentre1Sprite = new Sprite(scienceCentre1Texture);
-		scienceCentre1TentionIndex = (float)scienceCentre1Sprite.getWidth()/scienceCentre1Sprite.getHeight();
-		scienceCentre1Width = 0.5F*width;
-		scienceCentre1Height = (float)scienceCentre1Width/scienceCentre1TentionIndex;
-		scienceCentre1X = 0.359F*backgroundSprite.getWidth();
-		scienceCentre1Y = 0.45F*backgroundSprite.getHeight();
-		scienceCentre1Sprite.setBounds(scienceCentre1X, scienceCentre1Y, scienceCentre1Width, scienceCentre1Height);
-		//Научный_Центр_2\\
-		scienceCentre2Texture = new Texture("objects/scienceCentre2.png");
-		scienceCentre2Sprite = new Sprite(scienceCentre2Texture);
-		scienceCentre2Width = 0.73818897637795275590551181102363F*width;
-		scienceCentre2Height = (float)scienceCentre2Width/scienceCentre1TentionIndex;
-		scienceCentre2X = 0.359F*backgroundSprite.getWidth() - 0.16133333333333333333333333333334F*scienceCentre2Width;
-		scienceCentre2Y = 0.45F*backgroundSprite.getHeight() - 0.16153846153846153846153846153846F*scienceCentre2Height;
-		scienceCentre2Sprite.setBounds(scienceCentre2X, scienceCentre2Y, scienceCentre2Width, scienceCentre2Height);
-	}	
 	private void moneyInit(){
 		//Иконки ресурсов\\
 		moneySprite = new Sprite(new Texture("objects/cosmocoin.png"));
@@ -319,7 +283,6 @@ public class GameScreen implements Screen{
 		metalLine.setBounds(metalLine.getX() + metalLine.getWidth() + metalLine.getWidth()*0.5F, metalLine.getY() + metalLine.getHeight(), 0.5F*moneyWidth, 0.5F*moneyHeight);
 		
 	}
-
 	private void fuelFactoryInit(){
 		//Нефтедобыча\\
 		fuelFactoryTexture = new Texture("objects/fuelFactory_1.png");
@@ -400,9 +363,6 @@ public class GameScreen implements Screen{
 			camera.position.set(new Vector3(camera.position.x, (backgroundSprite.getY() + backgroundSprite.getHeight()) - height/2, 0));
 		/**Границы прокрутки*/
 	}
-	private void drawClouds(){
-		/**TODO: Облащка 3*/
-	}
 	private void drawButtons(){
 		btnMN.setCoordinates();
 		btnMN.getSprite().draw(batch);
@@ -424,6 +384,13 @@ public class GameScreen implements Screen{
 				textBtn.draw(batch, "Главное", btnMN.getX() + 0.075F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 1.0F*textBtn.getCapHeight());
 				textBtn.draw(batch, "меню", btnMN.getX() + 0.2F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 2.5F*textBtn.getCapHeight());
 			}
+		}
+		btnPlus.setCoordinates();
+		btnPlus.getSprite().draw(batch);
+		if(controller.isOnGameStatic(btnPlus.getX(), btnPlus.getY(), btnPlus.getWidth(), btnPlus.getHeight())){
+			btnPlus.setMode(true);
+		}else{
+			btnPlus.setMode(false);
 		}
 	}
 	private void drawBuildings(){
@@ -448,12 +415,13 @@ public class GameScreen implements Screen{
 			control.setMode(false);
 		}
 		control.getSprite().draw(batch);
-		//Научный центр
-		if(controller.isOnGame(scienceCentre1Sprite.getX(), scienceCentre1Sprite.getY(), scienceCentre1Width, scienceCentre1Height)){
-			scienceCentre2Sprite.draw(batch);
+		//Science centre
+		if(controller.isOnGame(science.getX(), science.getY(), science.getWidth(), science.getHeight())){
+			science.setMode(true);
 		}else{
-			scienceCentre1Sprite.draw(batch);
+			science.setMode(false);
 		}
+		science.getSprite().draw(batch);
 		/***/
 		if(InfoAndStats.elapsedTime % 30 == 0){
 			fuelFactorySprite.setTexture(new Texture(schFuel));
@@ -528,7 +496,6 @@ public class GameScreen implements Screen{
 	}
 
 	private void buttonListener(){
-		//Слушатель нажатия на кнопку "Main Menu"*/
 		if(controller.isClickedGame(btnMN.getX(), btnMN.getY(), btnMN.getWidth(), btnMN.getHeight()) || isTransGame){
 			isTransGame = true;
 			if(alp>1.0F){
@@ -540,25 +507,26 @@ public class GameScreen implements Screen{
 				alp+=0.05F;
 			}
 		}
-		//Слушатель нажатия на ангар*/
 		if(controller.isClickedGame(hangar.getX(), hangar.getY(), hangar.getWidth(), hangar.getHeight())){
 				game.setScreen(new AngarScreen(game));
 				this.dispose();
 		}
-		//Слушатель нажатия на аналитический центр*/
 		if(controller.isClickedGame(analytic.getX(), analytic.getY(), analytic.getWidth(), analytic.getHeight())){
 			game.setScreen(new AnalyticCentreScreen(game));
 			this.dispose();
 		}
-		//Слушатель нажатия на диспетчерскую вышку*/
 		if(controller.isClickedGame(control.getX(), control.getY(), control.getWidth(), control.getHeight())){
 			game.setScreen(new ControlCentreScreen(game));
 			this.dispose();
 		}
-		//Слушатель нажатия на научный центр*/
-		if(controller.isClickedGame(scienceCentre1Sprite.getX(), scienceCentre1Sprite.getY(), scienceCentre1Width, scienceCentre1Height)){
+		if(controller.isClickedGame(science.getX(), science.getY(), science.getWidth(), science.getHeight())){
 			game.setScreen(new ScienceCentreScreen(game));
 			this.dispose();
+		}
+		if(controller.isClickedGame(btnPlus.getX(), btnPlus.getY(), btnPlus.getWidth(), btnPlus.getHeight())){
+			InfoAndStats.money += 5;
+			InfoAndStats.fuel += 5;
+			InfoAndStats.metal += 5;
 		}
 	}
 	
@@ -584,8 +552,10 @@ public class GameScreen implements Screen{
 
 	private void textureDispose(){
 		backgroundTexture.dispose();
-		scienceCentre1Texture.dispose();
-		scienceCentre2Texture.dispose();
+		hangar.getTexture().dispose();
+		analytic.getTexture().dispose();
+		control.getTexture().dispose();
+		science.getTexture().dispose();
 	}
 	
 	@Override

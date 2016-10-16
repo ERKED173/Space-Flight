@@ -112,6 +112,8 @@ public class SFlightInputController implements InputProcessor {
 				if((Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (GameScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) >= y && (Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (GameScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) <= y + height){
 					touchUpX = 10000;
 					touchUpY = 10000;
+					touchDownXGame = 0;
+					touchDownYGame = 0;
 					clickSound.play(0.5F);
 					return true;
 				}else{

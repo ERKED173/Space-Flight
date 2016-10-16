@@ -14,8 +14,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.ImgResDraw;
 import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.tech.SFButtonS;
 
 public class StartPanelScreen implements Screen{
 
@@ -27,21 +27,15 @@ public class StartPanelScreen implements Screen{
 	private SpriteBatch batch;
 	private SFlightInputController controller;
 	
-	//Фон
-	private Texture backgroundTexture; //Текстура фона
-	public static Sprite backgroundSprite; //Спрайт фона
+	//Background
+	private Texture backgroundTexture;
+	public static Sprite backgroundSprite;
 	
-	//Копка "Back"
-	private Sprite backButtonInactiveSprite;
-	private Sprite backButtonActiveSprite;
-	private float backButtonX;
-	private float backButtonY;
-	private float backButtonWidth;
-	private float backButtonHeight;
-	public static float backButtonTentionIndex; //Соотношение сторон кнопки
+	//"Back" Button
+	private SFButtonS back;
 	private String schBack;
 	
-	//Шрифты
+	//Fonts
 	private static BitmapFont text;
 	
 	public StartPanelScreen(Game game){
@@ -56,28 +50,13 @@ public class StartPanelScreen implements Screen{
 		
 		MainMenu.music.play();
 		
-		//Фон\\
 		backgroundTexture = new Texture("bckgrnd/resource/resource_1.png");
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundSprite.setBounds(0.0F, 0.0F, width, height);
 		schBack = "bckgrnd/resource/resource_1.png";
 		
-		//Кнопка "Back"\\
-		backButtonInactiveSprite = new Sprite(ImgResDraw.backButtonInactive);
-		backButtonActiveSprite = new Sprite(ImgResDraw.backButtonActive);
-		if(InfoAndStats.lngRussian){
-			backButtonInactiveSprite.setTexture(ImgResDraw.backButtonInactiveRU);
-			backButtonActiveSprite.setTexture(ImgResDraw.backButtonActiveRU);
-		}
-		backButtonTentionIndex = (float)ImgResDraw.backButtonInactive.getWidth()/ImgResDraw.backButtonInactive.getHeight();
-		backButtonWidth = 0.132F*width;
-		backButtonHeight = backButtonWidth/backButtonTentionIndex;
-		backButtonX = width - 0.015F*width - backButtonWidth;
-		backButtonY = 0 + 0.005F*height;
-		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
+		back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height);
 
-		//Шрифты\\
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
 		FreeTypeFontParameter param2 = new FreeTypeFontParameter();
@@ -108,11 +87,12 @@ public class StartPanelScreen implements Screen{
 		
 		backgroundSprite.draw(batch);
 		
-		//Отрисовка кнопки "Back"//
-		if(controller.isOn(backButtonX, backButtonY, backButtonWidth, backButtonHeight))
-			backButtonActiveSprite.draw(batch);
-		else
-			backButtonInactiveSprite.draw(batch);
+		if(controller.isOn(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
+			back.setMode(true);
+		}else{
+			back.setMode(false);
+		}
+		back.getSprite().draw(batch);
 
 		if(!InfoAndStats.lngRussian){
 			text.draw(batch, "Control panel", 0.4F*width, 0.965F*height);
@@ -122,8 +102,7 @@ public class StartPanelScreen implements Screen{
 		
 		batch.end();
 		
-		//Слушатель нажатия на кнопку "Back"//
-		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
+		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
 			game.setScreen(new ControlCentreScreen(game));
 			this.dispose();
 		}
