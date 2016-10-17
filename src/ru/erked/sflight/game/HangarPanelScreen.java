@@ -129,7 +129,7 @@ public class HangarPanelScreen implements Screen{
 		rocketBall.setY(0.5F*height - 0.5F*rocketBall.getHeight());
 		rocketCircle = new SFButtonS("rockets/rocketCircle", 0.1F*width, 0.265F*width, 0.5F*height);
 		rocketCircle.setY(0.5F*height - 0.5F*rocketCircle.getHeight());
-		rocketBasic = new SFButtonS("rockets/rocketBasic", 0.1F*width, 0.415F*width, 0.5F*height);
+		rocketBasic = new SFButtonS("rockets/rocketBasic", 0.059262771F*width, 0.415F*width, 0.5F*height);
 		rocketBasic.setY(0.5F*height - 0.5F*rocketBasic.getHeight());
 	}
 	
@@ -202,23 +202,19 @@ public class HangarPanelScreen implements Screen{
 				if(!InfoAndStats.lngRussian){
 					text.draw(batch, "Name: " + InfoAndStats.rocketBall.getNameUS(), 0.55F*width, 0.825F*height);
 					text.draw(batch, "HP: " + InfoAndStats.rocketBall.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Cosmocoin extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedC() + " per 60 sec", 0.75F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, "Fuel extraction: ", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedF() + " per 60 sec", 0.75F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Metal extraction: ", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedM() + " per 60 sec", 0.75F*width, 0.825F*height - 10.5F*text.getCapHeight());
-					text.draw(batch, "Rocket's price: " + InfoAndStats.rocketBall.getCost() + " metal", 0.55F*width, 0.825F*height - 12.0F*text.getCapHeight());
+					text.draw(batch, "Resorurses' extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBall.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBall.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBall.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(batch, "Rocket's price: " + InfoAndStats.rocketBall.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}else{
 					text.draw(batch, "Название: " + InfoAndStats.rocketBall.getNameRU(), 0.55F*width, 0.825F*height);
 					text.draw(batch, "НР: " + InfoAndStats.rocketBall.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Добыча космокоинов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedC() + " за 60 сек", 0.75F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, "Добыча топлива: ", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedF() + " за 60 сек", 0.75F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Добыча металла: ", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedM() + " за 60 сек", 0.75F*width, 0.825F*height - 10.5F*text.getCapHeight());
-					text.draw(batch, "Цена ракеты: " + InfoAndStats.rocketBall.getCost() + " металла", 0.55F*width, 0.825F*height - 12.0F*text.getCapHeight());
+					text.draw(batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBall.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBall.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBall.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(batch, "Цена ракеты: " + InfoAndStats.rocketBall.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}
 			}
 			rocketBall.getSprite().draw(batch);
