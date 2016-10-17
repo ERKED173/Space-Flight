@@ -17,8 +17,8 @@ import ru.erked.sflight.menu.MainMenu;
 import ru.erked.sflight.random.InfoAndStats;
 import ru.erked.sflight.tech.SFButtonS;
 
-public class ScienceCentreScreen implements Screen{
-	
+public class StartPanelScreen implements Screen{
+
 	final String FONT_CHARS_RU = "абвгдежзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
 	private static final float width = Gdx.graphics.getWidth();
 	private static final float height = Gdx.graphics.getHeight();
@@ -30,81 +30,58 @@ public class ScienceCentreScreen implements Screen{
 	//Background
 	private Texture backgroundTexture;
 	public static Sprite backgroundSprite;
-	private float backgroundX;
-	private float backgroundY;
-	public static final float backgroundTentionIndex = (float)width/600.0F;
 	
 	//"Back" Button
 	private SFButtonS back;
+	private String schBack;
 	
-	//Text
+	//Fonts
 	private static BitmapFont text;
 	
-	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
-	private float alp = 1.0F;
-	private boolean isTransScience;
-	
-	public ScienceCentreScreen(Game game){
+	public StartPanelScreen(Game game){
 		this.game = game;
 	}
 	
 	@Override
 	public void show() {
+
 		batch = new SpriteBatch();
 		controller = new SFlightInputController();
-
+		
 		MainMenu.music.play();
 		
-		backgroundTexture = new Texture("bckgrnd/scienceCentreInside.png");
+		backgroundTexture = new Texture("bckgrnd/resource/resource_1.png");
 		backgroundSprite = new Sprite(backgroundTexture);
-		backgroundX = 0.0F;
-		backgroundY = (-1)*(337*backgroundTentionIndex)/2 + height/2;
-		backgroundSprite.setBounds(backgroundX, backgroundY, width, backgroundTentionIndex*337.0F);
+		backgroundSprite.setBounds(0.0F, 0.0F, width, height);
+		schBack = "bckgrnd/resource/resource_1.png";
 		
-		back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height);
-		
+		back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height);
+
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
-		FreeTypeFontParameter param = new FreeTypeFontParameter();
-		FreeTypeFontParameter paramFail = new FreeTypeFontParameter();
-		FreeTypeFontParameter paramSuc = new FreeTypeFontParameter();
-		param.color = Color.WHITE;
-		param.size = 40;
-		paramFail.color = Color.RED;
-		paramFail.size = 40;
-		paramSuc.color = Color.GREEN;
-		paramSuc.size = 40;
+		FreeTypeFontParameter param2 = new FreeTypeFontParameter();
+		param2.color = Color.WHITE;
+		param2.size = 40;
 		if(InfoAndStats.lngRussian){
-			param.characters = FONT_CHARS_RU;
-			paramFail.characters = FONT_CHARS_RU;
-			paramSuc.characters = FONT_CHARS_RU;
-			text = genRU.generateFont(param);
-
+			param2.characters = FONT_CHARS_RU;
+			text = genRU.generateFont(param2);
 		}else{
-			text = genUS.generateFont(param);
+			text = genUS.generateFont(param2);
 		}
-		text.getData().setScale((float)(0.0006F*width));
+		text.getData().setScale((float)(0.00075F*width));
 		
-		isTransScience = false;
-		blackAlpha.setBounds(0.0F, 0.0F, width, height);
-		blackAlpha.setAlpha(1.0F);
-		
+		genRU.dispose();
+		genUS.dispose();
 	}
-	
+
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
 		
-		if(alp>0.0F && (!isTransScience)){
-			blackAlpha.setAlpha(alp);
-			alp-=0.05F;
-		}else if(!isTransScience){
-			blackAlpha.setAlpha(0.0F);
-			alp = 0.0F;
-		}
-		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		drawBackground();
 		
 		batch.begin();
 		
@@ -116,26 +93,40 @@ public class ScienceCentreScreen implements Screen{
 			back.setMode(false);
 		}
 		back.getSprite().draw(batch);
-		
+
 		if(!InfoAndStats.lngRussian){
-			text.draw(batch, "Science centre", 0.01F*width, 0.99F*height);
+			text.draw(batch, "Control panel", 0.4F*width, 0.965F*height);
 		}else{
-			text.draw(batch, "Научный центр", 0.01F*width, 0.99F*height);
+			text.draw(batch, "Панель управления", 0.35F*width, 0.965F*height);
 		}
-		
-		blackAlpha.draw(batch);
 		
 		batch.end();
 		
-		btnListeners();
+		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
+			game.setScreen(new ControlCentreScreen(game));
+			this.dispose();
+		}
+		
 		resourcesCheck();
 		
 	}
 	
-	private void btnListeners(){
-		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
-			game.setScreen(new GameScreen(game));
-			this.dispose();
+	private void drawBackground(){
+		if(InfoAndStats.elapsedTime % 15 == 0){
+			backgroundSprite.setTexture(new Texture(schBack));
+			if(schBack.equals("bckgrnd/resource/resource_1.png")) schBack = "bckgrnd/resource/resource_2.png";
+			else if(schBack.equals("bckgrnd/resource/resource_2.png")) schBack = "bckgrnd/resource/resource_3.png";
+			else if(schBack.equals("bckgrnd/resource/resource_3.png")) schBack = "bckgrnd/resource/resource_4.png";
+			else if(schBack.equals("bckgrnd/resource/resource_4.png")) schBack = "bckgrnd/resource/resource_5.png";
+			else if(schBack.equals("bckgrnd/resource/resource_5.png")) schBack = "bckgrnd/resource/resource_6.png";
+			else if(schBack.equals("bckgrnd/resource/resource_6.png")) schBack = "bckgrnd/resource/resource_7.png";
+			else if(schBack.equals("bckgrnd/resource/resource_7.png")) schBack = "bckgrnd/resource/resource_8.png";
+			else if(schBack.equals("bckgrnd/resource/resource_8.png")) schBack = "bckgrnd/resource/resource_9.png";
+			else if(schBack.equals("bckgrnd/resource/resource_9.png")) schBack = "bckgrnd/resource/resource_10.png";
+			else if(schBack.equals("bckgrnd/resource/resource_10.png")) schBack = "bckgrnd/resource/resource_11.png";
+			else if(schBack.equals("bckgrnd/resource/resource_11.png")) schBack = "bckgrnd/resource/resource_12.png";
+			else if(schBack.equals("bckgrnd/resource/resource_12.png")) schBack = "bckgrnd/resource/resource_13.png";
+			else if(schBack.equals("bckgrnd/resource/resource_13.png")) schBack = "bckgrnd/resource/resource_1.png";
 		}
 	}
 	
@@ -170,18 +161,13 @@ public class ScienceCentreScreen implements Screen{
 	public void hide() {
 
 	}
-	
-	private void textureDispose(){
-		backgroundTexture.dispose();
-	}
-	
+
 	@Override
 	public void dispose() {
+		backgroundTexture.dispose();
 		game.dispose();
 		batch.dispose();
 		text.dispose();
-		textureDispose();
-		GameScreen.isFromMenu = false;
 	}
-	
+
 }

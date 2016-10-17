@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.random.ImgResDraw;
 import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.tech.SFButtonS;
 
 public class AboutScreen implements Screen{
 
@@ -21,12 +22,12 @@ public class AboutScreen implements Screen{
 	private SpriteBatch batch;
 	private SFlightInputController controller;
 	
-	//Вращение объектов
+	//Rotation
 	public static float planet1PrevRotation = 0.0F;
 	public static float planet2PrevRotation = 0.0F;
 	public static float cometPrevRotation;
 	
-	//Титры
+	//Credits
 	private Texture creditsTexture;
 	public static Sprite creditsSprite;
 	public static float creditsTentionIndex;
@@ -35,16 +36,14 @@ public class AboutScreen implements Screen{
 	private float creditsWidth;
 	private float creditsHeight;
 	
-	//Копка "Back"
-	private Sprite backButtonInactiveSprite;
-	private Sprite backButtonActiveSprite;
-	private float backButtonX;
-	private float backButtonY;
-	private float backButtonWidth;
-	private float backButtonHeight;
-	public static float backButtonTentionIndex; //Соотношение сторон кнопки
+	//"Back" Button
+	private SFButtonS back;
 	
-	//Для прокрутки
+	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
+	private float alp = 1.0F;
+	private boolean isTransAbout;
+	
+	//Scroll
 	private static float prevDragY;
 	
 	public AboutScreen(Game game){
@@ -56,10 +55,10 @@ public class AboutScreen implements Screen{
 		
 		batch = new SpriteBatch();
 		controller = new SFlightInputController();
+		isTransAbout = false;
 		
 		MainMenu.music.play();
 		
-		//Титры//
 		creditsTexture = new Texture("random/credits.png");
 		if(!InfoAndStats.lngRussian)
 			creditsSprite = new Sprite(creditsTexture);
@@ -72,33 +71,27 @@ public class AboutScreen implements Screen{
 		creditsY = 0.0F - creditsHeight;
 		creditsSprite.setBounds(creditsX, creditsY, creditsWidth, creditsHeight);
 		
-		//Кнопка "Back"//
-		backButtonInactiveSprite = new Sprite(ImgResDraw.backButtonInactive);
-		backButtonActiveSprite = new Sprite(ImgResDraw.backButtonActive);
-		if(InfoAndStats.lngRussian){
-			backButtonInactiveSprite.setTexture(ImgResDraw.backButtonInactiveRU);
-			backButtonActiveSprite.setTexture(ImgResDraw.backButtonActiveRU);
-		}
-		backButtonTentionIndex = (float)ImgResDraw.backButtonInactive.getWidth()/ImgResDraw.backButtonInactive.getHeight();
-		backButtonWidth = 0.132F*width;
-		backButtonHeight = backButtonWidth/backButtonTentionIndex;
-		backButtonX = width - 0.015F*width - backButtonWidth;
-		backButtonY = 0 + 0.005F*height;
-		backButtonInactiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-		backButtonActiveSprite.setBounds(backButtonX, backButtonY, backButtonWidth, backButtonHeight);
+		back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height);
 		
+		blackAlpha.setBounds(0.0F, 0.0F, width, height);
+		blackAlpha.setAlpha(1.0F);
 	}
 
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
-		//System.out.println("[About] " + creditsSprite.getY());
 		
+		if(alp>0.0F && !isTransAbout){
+			blackAlpha.setAlpha(alp);
+			alp-=0.05F;
+		}else if(!isTransAbout){
+			blackAlpha.setAlpha(0.0F);
+			alp = 0.0F;
+		}
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		/***Отрисовка менюшных объектов*/
 		MainMenu.planet1Sprite.setOriginCenter();
 		MainMenu.planet1Sprite.rotate(0.0175F);
 		
@@ -113,9 +106,7 @@ public class AboutScreen implements Screen{
 
 		MainMenu.cometSprite.setOrigin(2*width, 2*height);
 		MainMenu.cometSprite.rotate(0.25F);
-		/***Отрисовка менюшных объектов*/
 		
-		//Двигаем и возвращаем титры//
 		creditsSprite.setY(creditsSprite.getY() + 0.85F);
 		if(creditsSprite.getY() > height)
 			creditsSprite.setY(0.0F - creditsHeight);
@@ -127,33 +118,37 @@ public class AboutScreen implements Screen{
 		
 		batch.begin();
 		
-		/***Отрисовка менюшных объектов*/
 		MainMenu.backgroundSprite.draw(batch);
 		MainMenu.planet1Sprite.draw(batch);
 		MainMenu.planet2Sprite.draw(batch);		
 		MainMenu.cometSprite.draw(batch);
-		/***Отрисовка менюшных объектов*/
 		
-		//Отрисовка титров//
 		creditsSprite.draw(batch);
 		
-		//Отрисовка кнопки "Back"//
-		if(controller.isOn(backButtonX, backButtonY, backButtonWidth, backButtonHeight))
-			backButtonActiveSprite.draw(batch);
-		else
-			backButtonInactiveSprite.draw(batch);
+		if(controller.isOn(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
+			back.setMode(true);
+		}else{
+			back.setMode(false);
+		}
+		back.getSprite().draw(batch);
+		
+		blackAlpha.draw(batch);
 		
 		batch.end();
 		
-		//Запоминаем ротэйт//
 		cometPrevRotation = MainMenu.cometSprite.getRotation();
 		planet1PrevRotation = MainMenu.planet1Sprite.getRotation();
 		planet2PrevRotation = MainMenu.planet2Sprite.getRotation();
 		
-		//Слушатель нажатия на кнопку "Back"//
-		if(controller.isClicked(backButtonX, backButtonY, backButtonWidth, backButtonHeight)){
-			this.dispose();
-			game.setScreen(new MainMenu(game));
+		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight()) || isTransAbout){
+			isTransAbout = true;
+			if(alp>1.0F){
+				this.dispose();
+				game.setScreen(new MainMenu(game));
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.05F;
+			}
 		}
 	}
 
@@ -182,7 +177,6 @@ public class AboutScreen implements Screen{
 		creditsTexture.dispose();
 		game.dispose();
 		batch.dispose();
-		//Возвращаем текущие координаты спрайта красной планеты в меню//
 		MainMenu.planet2X = MainMenu.planet2Sprite.getX();
 		MainMenu.planet2Y = MainMenu.planet2Sprite.getY();
 		

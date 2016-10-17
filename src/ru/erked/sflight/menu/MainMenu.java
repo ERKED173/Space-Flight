@@ -4,10 +4,14 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.game.GameScreen;
@@ -23,7 +27,8 @@ public class MainMenu implements Screen {
 	private Game game;
 	private SpriteBatch batch;
 	public static Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music/Deliberate Thought.mp3"));
-	
+	private static BitmapFont text;
+	private static BitmapFont textBlack;
 	
 	public static boolean isFirstScreen = true;
 	
@@ -86,6 +91,13 @@ public class MainMenu implements Screen {
 	private float optionsButtonWidth;
 	private float optionsButtonHeight;
 	public static float optionsButtonTentionIndex; //Соотношение сторон кнопки
+
+	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
+	private float alp = 1.0F;
+	private boolean isTransGame;
+	private boolean isTransAbout;
+	private boolean isTransOptions;
+	private boolean isTransExit;
 	
 	private SFlightInputController controller;
 
@@ -98,6 +110,8 @@ public class MainMenu implements Screen {
 	@Override
 	public void show() {
 		
+		resourcesCheck();
+		
 		/**Установка слушателя контроллера*/
 		controller = new SFlightInputController();
 		Gdx.input.setInputProcessor(controller);
@@ -108,6 +122,11 @@ public class MainMenu implements Screen {
 		music.setLooping(true);
 		music.setVolume(1.0f);
 		music.play();
+		
+		isTransGame = false;
+		isTransAbout = false;
+		isTransOptions = false;
+		isTransExit = false;
 		
 		//Фон//
 		backgroundTexture = new Texture("bckgrnd/menu_background.png");
@@ -218,12 +237,41 @@ public class MainMenu implements Screen {
 		exitButtonInactiveSprite.setBounds(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight);
 		exitButtonActiveSprite.setBounds(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight);
 		/**Инициализация*/
+	
+		//Текст лого\\
+		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
+		FreeTypeFontParameter param = new FreeTypeFontParameter();
+		FreeTypeFontParameter paramBlack = new FreeTypeFontParameter();
+		param.color = Color.WHITE;
+		param.size = 75;
+		paramBlack.color = Color.BLACK;
+		paramBlack.size = 75;
+		if(InfoAndStats.lngRussian){
+			text = genUS.generateFont(param);
+			textBlack = genUS.generateFont(paramBlack);
+		}else{
+			text = genUS.generateFont(param);
+			textBlack = genUS.generateFont(paramBlack);
+		}
+		text.getData().setScale((float)(0.00125F*width));
+		textBlack.getData().setScale((float)(0.00125F*width));
+		
+		/**Плавный переход*/
+		blackAlpha.setBounds(0.0F, 0.0F, width, height);
+		blackAlpha.setAlpha(1.0F);
 	}
 
 	@Override
 	public void render(float delta) {
 		InfoAndStats.elapsedTime++;
-		/**Дебаг*/
+		
+		if(alp>0.0F && (!isTransGame && !isTransAbout && !isTransOptions && !isTransExit)){
+			blackAlpha.setAlpha(alp);
+			alp-=0.05F;
+		}else if(!isTransGame && !isTransAbout && !isTransOptions && !isTransExit){
+			blackAlpha.setAlpha(0.0F);
+			alp = 0.0F;
+		}
 		
 		/**Необходимо для уничтожения эффекта следов*/
 		Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -272,25 +320,76 @@ public class MainMenu implements Screen {
 		else
 			exitButtonInactiveSprite.draw(batch);
 		
+		//Лого игры в меню//
+		textBlack.draw(batch, "Space Flight", 0.244F*width, 0.96F*height);
+		text.draw(batch, "Space Flight", 0.24F*width, 0.965F*height);
+		
+		blackAlpha.draw(batch);
+		
 		batch.end();
 		
 		/**Проверка нажатий на кнопки*/
-		if(controller.isClicked(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight)){
-			Gdx.app.exit();
+		if(controller.isClicked(exitButtonX, exitButtonY, exitButtonWidth, exitButtonHeight) || isTransExit){
+			isTransExit = true;
+			isTransAbout = false;
+			isTransGame = false;
+			isTransOptions = false;
+			if(alp>1.0F){
+				Gdx.app.exit();
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.05F;
+			}
 		}
-		if(controller.isClicked(aboutButtonX, aboutButtonY, aboutButtonWidth, aboutButtonHeight)){
-			this.dispose();
-			game.setScreen(new AboutScreen(game));
+		if(controller.isClicked(aboutButtonX, aboutButtonY, aboutButtonWidth, aboutButtonHeight) || isTransAbout){
+			isTransExit = false;
+			isTransAbout = true;
+			isTransGame = false;
+			isTransOptions = false;
+			if(alp>1.0F){
+				this.dispose();
+				game.setScreen(new AboutScreen(game));
+				alp = 1.0F;
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.05F;
+			}
 		}
-		if(controller.isClicked(startButtonX, startButtonY, startButtonWidth, startButtonHeight)){
-			this.dispose();
-			game.setScreen(new GameScreen(game));
+		if(controller.isClicked(startButtonX, startButtonY, startButtonWidth, startButtonHeight) || isTransGame){
+			isTransExit = false;
+			isTransAbout = false;
+			isTransGame = true;
+			isTransOptions = false;
+			if(alp>1.0F){
+				this.dispose();
+				game.setScreen(new GameScreen(game));
+				alp = 1.0F;
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.05F;
+			}
 		}
-		if(controller.isClicked(optionsButtonX, optionsButtonY, optionsButtonWidth, optionsButtonHeight)){
-			this.dispose();
-			game.setScreen(new OptionsScreen(game));
+		if(controller.isClicked(optionsButtonX, optionsButtonY, optionsButtonWidth, optionsButtonHeight) || isTransOptions){
+			isTransExit = false;
+			isTransAbout = false;
+			isTransGame = false;
+			isTransOptions = true;
+			if(alp>1.0F){
+				this.dispose();
+				game.setScreen(new OptionsScreen(game));
+				alp = 1.0F;
+			}else{
+				blackAlpha.setAlpha(alp);
+				alp+=0.05F;
+			}
 		}
 		/**Проверка нажатий на кнопки*/
+	}
+	
+	private void resourcesCheck(){
+		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
+		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
+		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
 	}
 	
 	@Override
@@ -326,6 +425,8 @@ public class MainMenu implements Screen {
 	
 	@Override
 	public void dispose() {
+		text.dispose();
+		textBlack.dispose();
 		game.dispose();
 		batch.dispose();
 		music.pause();

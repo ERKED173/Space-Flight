@@ -12,6 +12,9 @@ public class ImgResDraw {
 	public static final Texture backIconInactive = new Texture("btns/backIconInactive.png");
 	public static final Texture backIconActive = new Texture("btns/backIconActive.png");
 	
+	public static final Texture buttonI = new Texture("btns/buttonI.png");
+	public static final Texture buttonA = new Texture("btns/buttonA.png");
+	
 	//Localization
 	public static final Texture optionsButtonInactiveRU = new Texture("btns/RU/button_options_inactive_RU.png");
 	public static final Texture optionsButtonActiveRU = new Texture("btns/RU/button_options_active_RU.png");
@@ -23,10 +26,6 @@ public class ImgResDraw {
 	public static final Texture exitButtonActiveRU = new Texture("btns/RU/button_exit_active_RU.png");
 	public static final Texture startGameButtonInactiveRU = new Texture("btns/RU/button_start_game_inactive_RU.png");
 	public static final Texture startGameButtonActiveRU = new Texture("btns/RU/button_start_game_active_RU.png");
-	public static final Texture mainMenuButtonInactiveRU = new Texture("btns/RU/button_main_menu_inactive_RU.png");
-	public static final Texture mainMenuButtonActiveRU = new Texture("btns/RU/button_main_menu_active_RU.png");
-	public static final Texture nextDayButtonInactiveRU = new Texture("btns/RU/button_next_day_inactive_RU.png");
-	public static final Texture nextDayButtonActiveRU = new Texture("btns/RU/button_next_day_active_RU.png");
 	public static final Texture creditsRU = new Texture("random/creditsRU.png");
 	public static final Texture resetButtonInactiveRU = new Texture("btns/RU/button_reset_the_game_inactive_RU.png");
 	public static final Texture resetButtonActiveRU = new Texture("btns/RU/button_reset_the_game_active_RU.png");
