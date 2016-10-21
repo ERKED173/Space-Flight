@@ -28,8 +28,8 @@ public class ResourceScreen implements Screen{
 	private SFlightInputController controller;
 	
 	//Background
-	private Texture backgroundTexture; //Текстура фона
-	public static Sprite backgroundSprite; //Спрайт фона
+	private Texture backgroundTexture;
+	public static Sprite backgroundSprite;
 	
 	//"Back" Button
 	private SFButtonS back;

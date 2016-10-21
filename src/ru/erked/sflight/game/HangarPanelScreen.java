@@ -49,6 +49,7 @@ public class HangarPanelScreen implements Screen{
 	private SFButtonS rocketBall;
 	private SFButtonS rocketCircle;
 	private SFButtonS rocketBasic;
+	private SFButtonS rocketKinetic;
 	
 	public HangarPanelScreen(Game game){
 		this.game = game;
@@ -131,6 +132,8 @@ public class HangarPanelScreen implements Screen{
 		rocketCircle.setY(0.5F*height - 0.5F*rocketCircle.getHeight());
 		rocketBasic = new SFButtonS("rockets/rocketBasic", 0.059262771F*width, 0.415F*width, 0.5F*height);
 		rocketBasic.setY(0.5F*height - 0.5F*rocketBasic.getHeight());
+		rocketKinetic = new SFButtonS("rockets/rocketKinetic", 0.05862068965517241F*width, 0.115F*width, 0.5F*height);
+		rocketKinetic.setY(0.5F*height - 0.5F*rocketKinetic.getHeight());
 	}
 	
 	private void drawBackground(){
@@ -202,11 +205,11 @@ public class HangarPanelScreen implements Screen{
 				if(!InfoAndStats.lngRussian){
 					text.draw(batch, "Name: " + InfoAndStats.rocketBall.getNameUS(), 0.55F*width, 0.825F*height);
 					text.draw(batch, "HP: " + InfoAndStats.rocketBall.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Resorurses' extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
 					text.draw(batch, InfoAndStats.rocketBall.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
 					text.draw(batch, InfoAndStats.rocketBall.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
 					text.draw(batch, InfoAndStats.rocketBall.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Rocket's price: " + InfoAndStats.rocketBall.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+					text.draw(batch, "Price: " + InfoAndStats.rocketBall.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}else{
 					text.draw(batch, "Название: " + InfoAndStats.rocketBall.getNameRU(), 0.55F*width, 0.825F*height);
 					text.draw(batch, "НР: " + InfoAndStats.rocketBall.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
@@ -214,7 +217,7 @@ public class HangarPanelScreen implements Screen{
 					text.draw(batch, InfoAndStats.rocketBall.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
 					text.draw(batch, InfoAndStats.rocketBall.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
 					text.draw(batch, InfoAndStats.rocketBall.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Цена ракеты: " + InfoAndStats.rocketBall.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+					text.draw(batch, "Цена: " + InfoAndStats.rocketBall.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}
 			}
 			rocketBall.getSprite().draw(batch);
@@ -231,23 +234,19 @@ public class HangarPanelScreen implements Screen{
 				if(!InfoAndStats.lngRussian){
 					text.draw(batch, "Name: " + InfoAndStats.rocketCircle.getNameUS(), 0.55F*width, 0.825F*height);
 					text.draw(batch, "HP: " + InfoAndStats.rocketCircle.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Cosmocoin extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedC() + " per 60 sec", 0.75F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, "Fuel extraction: ", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedF() + " per 60 sec", 0.75F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Metal extraction: ", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedM() + " per 60 sec", 0.75F*width, 0.825F*height - 10.5F*text.getCapHeight());
-					text.draw(batch, "Rocket's price: " + InfoAndStats.rocketCircle.getCost() + " metal", 0.55F*width, 0.825F*height - 12.0F*text.getCapHeight());
+					text.draw(batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketCircle.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketCircle.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketCircle.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(batch, "Price: " + InfoAndStats.rocketCircle.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}else{
 					text.draw(batch, "Название: " + InfoAndStats.rocketCircle.getNameRU(), 0.55F*width, 0.825F*height);
 					text.draw(batch, "НР: " + InfoAndStats.rocketCircle.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Добыча космокоинов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedC() + " за 60 сек", 0.75F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, "Добыча топлива: ", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedF() + " за 60 сек", 0.75F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Добыча металла: ", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedM() + " за 60 сек", 0.75F*width, 0.825F*height - 10.5F*text.getCapHeight());
-					text.draw(batch, "Цена ракеты: " + InfoAndStats.rocketCircle.getCost() + " металла", 0.55F*width, 0.825F*height - 12.0F*text.getCapHeight());
+					text.draw(batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketCircle.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketCircle.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketCircle.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(batch, "Цена: " + InfoAndStats.rocketCircle.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}
 			}
 			rocketCircle.getSprite().draw(batch);
@@ -264,27 +263,52 @@ public class HangarPanelScreen implements Screen{
 				if(!InfoAndStats.lngRussian){
 					text.draw(batch, "Name: " + InfoAndStats.rocketBasic.getNameUS(), 0.55F*width, 0.825F*height);
 					text.draw(batch, "HP: " + InfoAndStats.rocketBasic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Cosmocoin extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedC() + " per 60 sec", 0.75F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, "Fuel extraction: ", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedF() + " per 60 sec", 0.75F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Metal extraction: ", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedM() + " per 60 sec", 0.75F*width, 0.825F*height - 10.5F*text.getCapHeight());
-					text.draw(batch, "Rocket's price: " + InfoAndStats.rocketBasic.getCost() + " metal", 0.55F*width, 0.825F*height - 12.0F*text.getCapHeight());
+					text.draw(batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBasic.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBasic.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBasic.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(batch, "Price: " + InfoAndStats.rocketBasic.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}else{
 					text.draw(batch, "Название: " + InfoAndStats.rocketBasic.getNameRU(), 0.55F*width, 0.825F*height);
 					text.draw(batch, "НР: " + InfoAndStats.rocketBasic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Добыча космокоинов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedC() + " за 60 сек", 0.75F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, "Добыча топлива: ", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedF() + " за 60 сек", 0.75F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Добыча металла: ", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedM() + " за 60 сек", 0.75F*width, 0.825F*height - 10.5F*text.getCapHeight());
-					text.draw(batch, "Цена ракеты: " + InfoAndStats.rocketBasic.getCost() + " металла", 0.55F*width, 0.825F*height - 12.0F*text.getCapHeight());
+					text.draw(batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBasic.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBasic.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketBasic.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(batch, "Цена: " + InfoAndStats.rocketBasic.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}
 			}
 			rocketBasic.getSprite().draw(batch);
 			/***/
+		}else if(page == 2){
+			if(controller.isClicked(rocketBall.getX(), rocketBall.getY(), rocketBall.getWidth(), rocketBall.getHeight())){
+				if(rocketKinetic.isActiveMode()) rocketKinetic.setMode(false);
+				else{
+					rocketKinetic.setMode(true);
+					/**Disable another rockets*/
+				}
+			}
+			/***/
+			if(rocketKinetic.isActiveMode()){
+				if(!InfoAndStats.lngRussian){
+					text.draw(batch, "Name: " + InfoAndStats.rocketKinetic.getNameUS(), 0.55F*width, 0.825F*height);
+					text.draw(batch, "HP: " + InfoAndStats.rocketKinetic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
+					text.draw(batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(batch, "Price: " + InfoAndStats.rocketKinetic.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+				}else{
+					text.draw(batch, "Название: " + InfoAndStats.rocketKinetic.getNameRU(), 0.55F*width, 0.825F*height);
+					text.draw(batch, "НР: " + InfoAndStats.rocketKinetic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
+					text.draw(batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(batch, "Цена: " + InfoAndStats.rocketKinetic.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+				}
+			}
+			rocketKinetic.getSprite().draw(batch);
 		}
 	}
 	

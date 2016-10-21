@@ -231,29 +231,29 @@ public class GameScreen implements Screen{
 		cosmocoinLine.setBounds(
 				cosmocoinLine.getX(),
 				cosmocoinLine.getY(),
-				((float)InfoAndStats.money/(float)InfoAndStats.moneyFull)*0.8F*line.getWidth() + 0.005F*width,
+				((float)InfoAndStats.money/(float)InfoAndStats.moneyFull)*0.825F*line.getWidth() + 0.005F*width,
 				cosmocoinLine.getHeight()
 				);
 		fuelLine.setBounds(
 				fuelLine.getX(),
 				fuelLine.getY(),
-				((float)InfoAndStats.fuel/(float)InfoAndStats.fuelFull)*0.8F*line.getWidth() + 0.005F*width,
+				((float)InfoAndStats.fuel/(float)InfoAndStats.fuelFull)*0.825F*line.getWidth() + 0.005F*width,
 				fuelLine.getHeight()
 				);
 		metalLine.setBounds(
 				metalLine.getX(),
 				metalLine.getY(),
-				((float)InfoAndStats.metal/(float)InfoAndStats.metalFull)*0.8F*line.getWidth() + 0.005F*width,
+				((float)InfoAndStats.metal/(float)InfoAndStats.metalFull)*0.825F*line.getWidth() + 0.005F*width,
 				metalLine.getHeight()
 				);
 		
 		line.setX(moneyX + 1.15F*moneyWidth);
 		line.setY(moneyY);
-		cosmocoinLine.setX(moneySprite.getX() + 1.5F*moneySprite.getWidth());
+		cosmocoinLine.setX(moneySprite.getX() + 1.45F*moneySprite.getWidth());
 		cosmocoinLine.setY(moneySprite.getY() + 0.25F*moneySprite.getHeight());
-		fuelLine.setX(fuelSprite.getX() + 1.5F*fuelSprite.getWidth());
+		fuelLine.setX(fuelSprite.getX() + 1.45F*fuelSprite.getWidth());
 		fuelLine.setY(fuelSprite.getY() + 0.25F*fuelSprite.getHeight());
-		metalLine.setX(metalSprite.getX() + 1.5F*metalSprite.getWidth());
+		metalLine.setX(metalSprite.getX() + 1.45F*metalSprite.getWidth());
 		metalLine.setY(metalSprite.getY() + 0.25F*metalSprite.getHeight());
 	}	
 
@@ -278,9 +278,9 @@ public class GameScreen implements Screen{
 		metalSprite.setBounds(moneyX + 2.0F*moneyWidth, moneyY, moneyWidth, moneyHeight);
 		
 		line.setBounds(moneyX + 1.1F*moneyWidth, moneyY - 2.1F*moneyHeight, moneyWidth/0.28125F, moneyWidth);
-		cosmocoinLine.setBounds(moneySprite.getX() + moneySprite.getWidth() + moneySprite.getWidth()*0.5F, moneySprite.getY() + moneySprite.getHeight(), 0.5F*moneyWidth, 0.5F*moneyHeight);
-		fuelLine.setBounds(fuelSprite.getX() + fuelSprite.getWidth() + fuelSprite.getWidth()*0.5F, fuelSprite.getY() + fuelSprite.getHeight(), 0.5F*moneyWidth, 0.5F*moneyHeight);
-		metalLine.setBounds(metalLine.getX() + metalLine.getWidth() + metalLine.getWidth()*0.5F, metalLine.getY() + metalLine.getHeight(), 0.5F*moneyWidth, 0.5F*moneyHeight);
+		cosmocoinLine.setBounds(moneySprite.getX() + 1.5F*moneySprite.getWidth(), moneySprite.getY() + moneySprite.getHeight(), 0.5F*moneyWidth, 0.5F*moneyHeight);
+		fuelLine.setBounds(fuelSprite.getX() + 1.5F*fuelSprite.getWidth(), fuelSprite.getY() + fuelSprite.getHeight(), 0.5F*moneyWidth, 0.5F*moneyHeight);
+		metalLine.setBounds(metalLine.getX() + 1.5F*metalLine.getWidth(), metalLine.getY() + metalLine.getHeight(), 0.5F*moneyWidth, 0.5F*moneyHeight);
 		
 	}
 	private void fuelFactoryInit(){
@@ -490,9 +490,9 @@ public class GameScreen implements Screen{
 		cosmocoinLine.draw(batch);
 		fuelLine.draw(batch);
 		metalLine.draw(batch);
-		text.draw(batch, ":    " + Long.toString((int)(InfoAndStats.money)) + "/" + Long.toString((int)(InfoAndStats.moneyFull)), moneySprite.getX() + 1.05F*moneySprite.getWidth(), moneySprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
-		text.draw(batch, ":    " + Long.toString((int)(InfoAndStats.fuel)) + "/" + Long.toString((int)(InfoAndStats.fuelFull)), fuelSprite.getX() + 1.05F*fuelSprite.getWidth(), fuelSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
-		text.draw(batch, ":    " + Long.toString((int)(InfoAndStats.metal)) + "/" + Long.toString((int)(InfoAndStats.metalFull)), metalSprite.getX() + 1.05F*metalSprite.getWidth(), metalSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
+		text.draw(batch, ":     " + Long.toString((int)(InfoAndStats.money)) + "/" + Long.toString((int)(InfoAndStats.moneyFull)), moneySprite.getX() + 1.05F*moneySprite.getWidth(), moneySprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
+		text.draw(batch, ":     " + Long.toString((int)(InfoAndStats.fuel)) + "/" + Long.toString((int)(InfoAndStats.fuelFull)), fuelSprite.getX() + 1.05F*fuelSprite.getWidth(), fuelSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
+		text.draw(batch, ":     " + Long.toString((int)(InfoAndStats.metal)) + "/" + Long.toString((int)(InfoAndStats.metalFull)), metalSprite.getX() + 1.05F*metalSprite.getWidth(), metalSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
 	}
 
 	private void buttonListener(){
