@@ -79,7 +79,11 @@ public class ControlCentreScreen implements Screen{
 		backgroundY = (-1)*(74*backgroundTentionIndex)/2 + height/2;
 		backgroundSprite.setBounds(backgroundX, backgroundY, width, backgroundTentionIndex*74.0F);
 		
-		back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height);
+		if(!InfoAndStats.lngRussian){
+			back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height, 1.0F);
+		}else{
+			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.147F*width, 0.005F*height, 1.0F);
+		}
 	
 		panelInit();
 		

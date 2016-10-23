@@ -19,14 +19,14 @@ public class SFButtonA {
 	private Sprite sprite;
 	private Camera camera;
 	
-	public SFButtonA(String texture, float width, float x, float y, Camera camera){
+	public SFButtonA(String texture, float width, float x, float y, Camera camera, float asp){
 		this.x = x - Gdx.graphics.getWidth()/2;
 		this.y = y - Gdx.graphics.getHeight()/2;
 		textureI = new Texture(texture + "I.png");
 		textureA = new Texture(texture + "A.png");
 		aspect = (float)textureA.getWidth()/(float)textureI.getWidth();
 		textureCur = textureI;
-		aspectRatio = (float)this.textureI.getWidth()/(float)this.textureI.getHeight();
+		aspectRatio = (float)this.textureI.getWidth()/(float)this.textureI.getHeight()*asp;
 		this.width = width;
 		height = (float)this.width/(float)aspectRatio;
 		sprite = new Sprite(this.textureI);

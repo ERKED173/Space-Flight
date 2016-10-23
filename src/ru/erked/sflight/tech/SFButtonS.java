@@ -16,18 +16,22 @@ public class SFButtonS {
 	private float aspect;
 	private Sprite sprite;
 	
-	public SFButtonS(String texture, float width, float x, float y){
+	public SFButtonS(String texture, float width, float x, float y, float asp){
 		this.x = x;
 		this.y = y;
 		textureI = new Texture(texture + "I.png");
 		textureA = new Texture(texture + "A.png");
 		aspect = (float)textureA.getWidth()/(float)textureI.getWidth();
 		textureCur = textureI;
-		aspectRatio = (float)this.textureI.getWidth()/(float)this.textureI.getHeight();
+		aspectRatio = (float)this.textureI.getWidth()/(float)this.textureI.getHeight()*asp;
 		this.width = width;
 		height = (float)this.width/(float)aspectRatio;
 		sprite = new Sprite(this.textureI);
 		sprite.setBounds(this.x, this.y, this.width, height);
+	}
+	
+	public float getAspectRatio(){
+		return aspectRatio;
 	}
 	
 	public float getX(){

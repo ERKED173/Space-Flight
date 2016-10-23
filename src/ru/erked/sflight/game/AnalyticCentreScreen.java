@@ -94,8 +94,12 @@ public class AnalyticCentreScreen implements Screen{
 			text.getData().setScale((float)(0.0006F*width));
 		}
 		
-		board = new SFButtonS("objects/board", 0.2F*width, 0.6F*backgroundSprite.getWidth(), backgroundSprite.getY() + 0.475F*backgroundSprite.getHeight());
-		back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height);
+		board = new SFButtonS("objects/board", 0.2F*width, 0.6F*backgroundSprite.getWidth(), backgroundSprite.getY() + 0.475F*backgroundSprite.getHeight(), 1.0F);
+		if(!InfoAndStats.lngRussian){
+			back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height, 1.0F);
+		}else{
+			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.147F*width, 0.005F*height, 1.0F);
+		}
 		
 		isTransAnalytic = false;
 		blackAlpha.setBounds(0.0F, 0.0F, width, height);

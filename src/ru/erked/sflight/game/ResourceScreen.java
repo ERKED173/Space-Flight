@@ -28,8 +28,8 @@ public class ResourceScreen implements Screen{
 	private SFlightInputController controller;
 	
 	//Background
-	private Texture backgroundTexture; //Текстура фона
-	public static Sprite backgroundSprite; //Спрайт фона
+	private Texture backgroundTexture;
+	public static Sprite backgroundSprite;
 	
 	//"Back" Button
 	private SFButtonS back;
@@ -66,7 +66,11 @@ public class ResourceScreen implements Screen{
 		backgroundSprite.setBounds(0.0F, 0.0F, width, height);
 		schBack = "bckgrnd/resource/resource_1.png";
 		
-		back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height);
+		if(!InfoAndStats.lngRussian){
+			back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
+		}else{
+			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
+		}
 
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
@@ -91,11 +95,11 @@ public class ResourceScreen implements Screen{
 		
 		resourcesInit();
 		
-		upC = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.675F*height);
+		upC = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.675F*height, 1.0F);
 		upC.getSprite().setColor(Color.TEAL);
-		upF = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.475F*height);
+		upF = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.475F*height, 1.0F);
 		upF.getSprite().setColor(Color.TEAL);
-		upM = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.275F*height);
+		upM = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.275F*height, 1.0F);
 		upM.getSprite().setColor(Color.TEAL);
 		
 		genRU.dispose();
