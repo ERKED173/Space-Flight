@@ -55,7 +55,11 @@ public class StartPanelScreen implements Screen{
 		backgroundSprite.setBounds(0.0F, 0.0F, width, height);
 		schBack = "bckgrnd/resource/resource_1.png";
 		
-		back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height);
+		if(!InfoAndStats.lngRussian){
+			back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
+		}else{
+			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
+		}
 
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));

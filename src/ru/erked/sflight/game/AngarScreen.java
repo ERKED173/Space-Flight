@@ -78,7 +78,11 @@ public class AngarScreen implements Screen{
 		backgroundY = (height - width/1.6129032258064516129032258064516F)/2.0F;
 		backgroundSprite.setBounds(backgroundX, backgroundY, width, width/1.6129032258064516129032258064516F);
 		
-		back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height);
+		if(!InfoAndStats.lngRussian){
+			back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height, 1.0F);
+		}else{
+			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.147F*width, 0.005F*height, 1.0F);
+		}
 		
 		panelInit();
 		

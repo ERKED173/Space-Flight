@@ -19,14 +19,20 @@ public class SFButtonA {
 	private Sprite sprite;
 	private Camera camera;
 	
+<<<<<<< HEAD
 	public SFButtonA(String texture, float width, float x, float y, Camera camera){
 		this.x = x - (float)Gdx.graphics.getWidth()/2.0F;
 		this.y = y - (float)Gdx.graphics.getHeight()/2.0F;
+=======
+	public SFButtonA(String texture, float width, float x, float y, Camera camera, float asp){
+		this.x = x - Gdx.graphics.getWidth()/2;
+		this.y = y - Gdx.graphics.getHeight()/2;
+>>>>>>> branch 'master' of https://github.com/ERKED173/Space-Flight.git
 		textureI = new Texture(texture + "I.png");
 		textureA = new Texture(texture + "A.png");
 		aspect = (float)textureA.getWidth()/(float)textureI.getWidth();
 		textureCur = textureI;
-		aspectRatio = (float)this.textureI.getWidth()/(float)this.textureI.getHeight();
+		aspectRatio = (float)this.textureI.getWidth()/(float)this.textureI.getHeight()*asp;
 		this.width = width;
 		height = (float)this.width/(float)aspectRatio;
 		sprite = new Sprite(this.textureI);

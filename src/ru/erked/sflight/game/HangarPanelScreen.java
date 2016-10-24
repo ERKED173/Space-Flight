@@ -27,8 +27,6 @@ public class HangarPanelScreen implements Screen{
 	private SpriteBatch batch;
 	private SFlightInputController controller;
 	
-	
-	
 	//Background
 	private Texture backgroundTexture;
 	public static Sprite backgroundSprite;
@@ -37,6 +35,9 @@ public class HangarPanelScreen implements Screen{
 	private SFButtonS back;
 	private String schBack;
 	
+	//Metal
+	private Sprite metalIcon;
+	
 	//Fonts
 	private static BitmapFont text;
 	
@@ -44,12 +45,20 @@ public class HangarPanelScreen implements Screen{
 	private int page = 1;
 	private SFButtonS next;
 	private SFButtonS prev;
+	private SFButtonS buyRocket;
 	
 	//Rockets
+<<<<<<< HEAD
 	private SFButtonS rocketBall;
 	private SFButtonS rocketCircle;
 	private SFButtonS rocketBasic;
 	private SFButtonS rocketKinetic;
+=======
+	public static SFButtonS rocketBall = new SFButtonS("rockets/rocketBall", 0.1F*width, 0.115F*width, 0.5F*height, 1.0F);
+	public static SFButtonS rocketCircle = new SFButtonS("rockets/rocketCircle", 0.1F*width, 0.265F*width, 0.5F*height, 1.0F);
+	public static SFButtonS rocketBasic = new SFButtonS("rockets/rocketBasic", 0.059262771F*width, 0.415F*width, 0.5F*height, 1.0F);
+	public static SFButtonS rocketKinetic = new SFButtonS("rockets/rocketKinetic", 0.03884503531366846697133361030328F*width, 0.135F*width, 0.5F*height, 1.0F);
+>>>>>>> branch 'master' of https://github.com/ERKED173/Space-Flight.git
 	
 	public HangarPanelScreen(Game game){
 		this.game = game;
@@ -68,20 +77,24 @@ public class HangarPanelScreen implements Screen{
 		backgroundSprite.setBounds(0.0F, 0.0F, width, height);
 		schBack = "bckgrnd/hangar/hangar_1.png";
 		
+		metalIcon = new Sprite(new Texture("objects/metal.png"));
+		metalIcon.setBounds(0.095F*width, 0.185F*width, 0.075F*width, 0.075F*width);
+		
 		SFButtonsInit();
 
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
-		FreeTypeFontParameter param2 = new FreeTypeFontParameter();
-		param2.color = Color.WHITE;
-		param2.size = 40;
+		FreeTypeFontParameter param = new FreeTypeFontParameter();
+		param.color = Color.WHITE;
+		param.size = 40;
 		if(InfoAndStats.lngRussian){
-			param2.characters = FONT_CHARS_RU;
-			text = genRU.generateFont(param2);
+			param.characters = FONT_CHARS_RU;
+			text = genRU.generateFont(param);
+			text.getData().setScale((float)(0.0006F*width));
 		}else{
-			text = genUS.generateFont(param2);
+			text = genUS.generateFont(param);
+			text.getData().setScale((float)(0.00075F*width));
 		}
-		text.getData().setScale((float)(0.00075F*width));
 		
 		genRU.dispose();
 		genUS.dispose();
@@ -100,9 +113,13 @@ public class HangarPanelScreen implements Screen{
 		
 		backgroundSprite.draw(batch);
 
+		metalIcon.draw(batch);
+		text.draw(batch, ": " + InfoAndStats.metal, metalIcon.getX() + 1.1F*metalIcon.getWidth(), metalIcon.getY() + 0.65F*metalIcon.getHeight());
+		
 		drawBackButton();
 		drawNextPrev();
 		drawRockets();
+		drawBuyButton();
 		
 		if(!InfoAndStats.lngRussian){
 			text.draw(batch, "Control panel", 0.4F*width, 0.965F*height);
@@ -120,12 +137,19 @@ public class HangarPanelScreen implements Screen{
 	}
 	
 	private void SFButtonsInit(){
-		back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height);
-		next = new SFButtonS("btns/button", 0.1F*width, width - 0.185F*width, 0.2F*height);
+		if(!InfoAndStats.lngRussian){
+			back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
+		}else{
+			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
+		}
+		next = new SFButtonS("btns/button", 0.1F*width, 0.815F*width, 0.2F*height, 1.0F);
 		next.getSprite().setColor(Color.LIME);
-		prev = new SFButtonS("btns/button", 0.1F*width, width - 0.3F*width, 0.2F*height);
+		prev = new SFButtonS("btns/button", 0.1F*width, 0.7F*width, 0.2F*height, 1.0F);
 		prev.getSprite().setColor(Color.LIME);
+		buyRocket = new SFButtonS("btns/button", 0.125F*width, 0.1F*width, 0.15F*height, 1.0F);
+		buyRocket.getSprite().setColor(Color.LIME);
 		/***/
+<<<<<<< HEAD
 		rocketBall = new SFButtonS("rockets/rocketBall", 0.1F*width, 0.115F*width, 0.5F*height);
 		rocketBall.setY(0.5F*height - 0.5F*rocketBall.getHeight());
 		rocketCircle = new SFButtonS("rockets/rocketCircle", 0.1F*width, 0.265F*width, 0.5F*height);
@@ -134,6 +158,30 @@ public class HangarPanelScreen implements Screen{
 		rocketBasic.setY(0.5F*height - 0.5F*rocketBasic.getHeight());
 		rocketKinetic = new SFButtonS("rockets/rocketKinetic", 0.05862068965517241F*width, 0.115F*width, 0.5F*height);
 		rocketKinetic.setY(0.5F*height - 0.5F*rocketKinetic.getHeight());
+=======
+		rocketsInit();
+	}
+	private void rocketsInit(){
+		rocketBall.setX(0.115F*width);
+		rocketBall.setY(0.5F*height);
+		rocketBall.setWidth(0.1F*width);
+		rocketBall.setHeight(0.1F*width/rocketBall.getAspectRatio());
+		/***/
+		rocketCircle.setX(0.265F*width);
+		rocketCircle.setY(0.5F*height);
+		rocketCircle.setWidth(0.1F*width);
+		rocketCircle.setHeight(0.1F*width/rocketCircle.getAspectRatio());
+		/***/
+		rocketBasic.setX(0.415F*width);
+		rocketBasic.setY(0.5F*height);
+		rocketBasic.setWidth(0.059262771F*width);
+		rocketBasic.setHeight(0.059262771F*width/rocketBasic.getAspectRatio());
+		/***/
+		rocketKinetic.setX(0.135F*width);
+		rocketKinetic.setY(0.5F*height);
+		rocketKinetic.setWidth(0.03884503531366846697133361030328F*width);
+		rocketKinetic.setHeight(0.03884503531366846697133361030328F*width/rocketKinetic.getAspectRatio());
+>>>>>>> branch 'master' of https://github.com/ERKED173/Space-Flight.git
 	}
 	
 	private void drawBackground(){
@@ -179,6 +227,7 @@ public class HangarPanelScreen implements Screen{
 		}
 		next.getSprite().draw(batch);
 		prev.getSprite().draw(batch);
+		buyRocket.getSprite().draw(batch);
 		/***/
 		text.getData().setScale((float)(0.0015F*width));
 		if(!next.isActiveMode())
@@ -190,6 +239,7 @@ public class HangarPanelScreen implements Screen{
 		else
 			text.draw(batch, "<", prev.getX() + 0.3F*prev.getWidth(), prev.getY() + 0.8F*prev.getHeight());
 		text.getData().setScale((float)(0.00075F*width));
+		/***/
 	}
 	private void drawRockets(){
 		if(page == 1){
@@ -218,6 +268,16 @@ public class HangarPanelScreen implements Screen{
 					text.draw(batch, InfoAndStats.rocketBall.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
 					text.draw(batch, InfoAndStats.rocketBall.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
 					text.draw(batch, "Цена: " + InfoAndStats.rocketBall.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+<<<<<<< HEAD
+=======
+				}
+			}
+			if(InfoAndStats.currentRocket.equals("rocketBall")){
+				if(!InfoAndStats.lngRussian){
+					text.draw(batch, "Selected", rocketBall.getX() - 0.1F*rocketBall.getWidth(), rocketBall.getY() - 0.1F*rocketBall.getHeight());
+				}else{
+					text.draw(batch, "Выбрана", rocketBall.getX() - 0.175F*rocketBall.getWidth(), rocketBall.getY() - 0.1F*rocketBall.getHeight());
+>>>>>>> branch 'master' of https://github.com/ERKED173/Space-Flight.git
 				}
 			}
 			rocketBall.getSprite().draw(batch);
@@ -247,6 +307,16 @@ public class HangarPanelScreen implements Screen{
 					text.draw(batch, InfoAndStats.rocketCircle.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
 					text.draw(batch, InfoAndStats.rocketCircle.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
 					text.draw(batch, "Цена: " + InfoAndStats.rocketCircle.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+<<<<<<< HEAD
+=======
+				}
+			}
+			if(InfoAndStats.currentRocket.equals("rocketCircle")){
+				if(!InfoAndStats.lngRussian){
+					text.draw(batch, "Selected", rocketCircle.getX() - 0.1F*rocketCircle.getWidth(), rocketCircle.getY() - 0.1F*rocketCircle.getHeight());
+				}else{
+					text.draw(batch, "Выбрана", rocketCircle.getX() - 0.175F*rocketCircle.getWidth(), rocketCircle.getY() - 0.1F*rocketCircle.getHeight());
+>>>>>>> branch 'master' of https://github.com/ERKED173/Space-Flight.git
 				}
 			}
 			rocketCircle.getSprite().draw(batch);
@@ -276,6 +346,16 @@ public class HangarPanelScreen implements Screen{
 					text.draw(batch, InfoAndStats.rocketBasic.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
 					text.draw(batch, InfoAndStats.rocketBasic.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
 					text.draw(batch, "Цена: " + InfoAndStats.rocketBasic.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+<<<<<<< HEAD
+=======
+				}
+			}
+			if(InfoAndStats.currentRocket.equals("rocketBasic")){
+				if(!InfoAndStats.lngRussian){
+					text.draw(batch, "Selected", rocketBasic.getX() - 0.5F*rocketBasic.getWidth(), rocketBasic.getY() - 0.1F*rocketBasic.getHeight());
+				}else{
+					text.draw(batch, "Выбрана", rocketBasic.getX() - 0.575F*rocketBasic.getWidth(), rocketBasic.getY() - 0.1F*rocketBasic.getHeight());
+>>>>>>> branch 'master' of https://github.com/ERKED173/Space-Flight.git
 				}
 			}
 			rocketBasic.getSprite().draw(batch);
@@ -308,7 +388,75 @@ public class HangarPanelScreen implements Screen{
 					text.draw(batch, "Цена: " + InfoAndStats.rocketKinetic.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}
 			}
+<<<<<<< HEAD
 			rocketKinetic.getSprite().draw(batch);
+=======
+			if(InfoAndStats.currentRocket.equals("rocketKinetic")){
+				if(!InfoAndStats.lngRussian){
+					text.draw(batch, "Selected", rocketKinetic.getX() - 1.1F*rocketKinetic.getWidth(), rocketKinetic.getY() - 0.1F*rocketKinetic.getHeight());
+				}else{
+					text.draw(batch, "Выбрана", rocketKinetic.getX() - 1.175F*rocketKinetic.getWidth(), rocketKinetic.getY() - 0.1F*rocketKinetic.getHeight());
+				}
+			}
+			rocketKinetic.getSprite().draw(batch);
+			/***/
+		}
+	}
+	private void drawBuyButton(){
+		if(InfoAndStats.currentRocket.equals("null")){
+			if(page==1){
+				if(rocketBall.isActiveMode() && InfoAndStats.metal >= InfoAndStats.rocketBall.getCost()){
+					buyRocket.getSprite().setColor(Color.LIME);
+					if(controller.isOn(buyRocket.getX(), buyRocket.getY(), buyRocket.getWidth(), buyRocket.getHeight())){
+						buyRocket.setMode(true);
+					}else{
+						buyRocket.setMode(false);
+					}
+				}else if(rocketCircle.isActiveMode() && InfoAndStats.metal >= InfoAndStats.rocketCircle.getCost()){
+					buyRocket.getSprite().setColor(Color.LIME);
+					if(controller.isOn(buyRocket.getX(), buyRocket.getY(), buyRocket.getWidth(), buyRocket.getHeight())){
+						buyRocket.setMode(true);
+					}else{
+						buyRocket.setMode(false);
+					}
+				}else if(rocketBasic.isActiveMode() && InfoAndStats.metal >= InfoAndStats.rocketBasic.getCost()){
+					buyRocket.getSprite().setColor(Color.LIME);
+					if(controller.isOn(buyRocket.getX(), buyRocket.getY(), buyRocket.getWidth(), buyRocket.getHeight())){
+						buyRocket.setMode(true);
+					}else{
+						buyRocket.setMode(false);
+					}
+				}else{
+					buyRocket.getSprite().setColor(Color.FOREST);
+				}
+			}else if(page==2){
+				if(rocketKinetic.isActiveMode() && InfoAndStats.metal >= InfoAndStats.rocketKinetic.getCost()){
+					buyRocket.getSprite().setColor(Color.LIME);
+					if(controller.isOn(buyRocket.getX(), buyRocket.getY(), buyRocket.getWidth(), buyRocket.getHeight())){
+						buyRocket.setMode(true);
+					}else{
+						buyRocket.setMode(false);
+					}
+				}
+			}else{
+				buyRocket.getSprite().setColor(Color.FOREST);
+			}
+		}else{
+			buyRocket.getSprite().setColor(Color.FOREST);
+		}
+		buyRocket.getSprite().draw(batch);
+		/***/
+		if(!InfoAndStats.lngRussian){
+			if(buyRocket.isActiveMode())
+				text.draw(batch, "Buy", buyRocket.getX() + 0.275F*buyRocket.getWidth(), buyRocket.getY() + 0.625F*buyRocket.getHeight());
+			else
+				text.draw(batch, "Buy", buyRocket.getX() + 0.275F*buyRocket.getWidth(), buyRocket.getY() + 0.65F*buyRocket.getHeight());
+		}else{
+			if(buyRocket.isActiveMode())
+				text.draw(batch, "Купить", buyRocket.getX() + 0.075F*buyRocket.getWidth(), buyRocket.getY() + 0.625F*buyRocket.getHeight());
+			else
+				text.draw(batch, "Купить", buyRocket.getX() + 0.075F*buyRocket.getWidth(), buyRocket.getY() + 0.65F*buyRocket.getHeight());
+>>>>>>> branch 'master' of https://github.com/ERKED173/Space-Flight.git
 		}
 	}
 	
@@ -319,9 +467,32 @@ public class HangarPanelScreen implements Screen{
 		}
 		if(controller.isClicked(next.getX(), next.getY(), next.getWidth(), next.getHeight())){
 			page++;
+			rocketBall.setMode(false);
+			rocketCircle.setMode(false);
+			rocketBasic.setMode(false);
+			rocketKinetic.setMode(false);
 		}
 		if(controller.isClicked(prev.getX(), prev.getY(), prev.getWidth(), prev.getHeight())){
 			page--;
+			rocketBall.setMode(false);
+			rocketCircle.setMode(false);
+			rocketBasic.setMode(false);
+			rocketKinetic.setMode(false);
+		}
+		if(controller.isClicked(buyRocket.getX(), buyRocket.getY(), buyRocket.getWidth(), buyRocket.getHeight()) && (InfoAndStats.currentRocket.equals("null"))){
+			if(rocketBall.isActiveMode() && InfoAndStats.metal>=InfoAndStats.rocketBall.getCost()){
+				InfoAndStats.metal -= InfoAndStats.rocketBall.getCost();
+				InfoAndStats.currentRocket = "rocketBall";
+			}else if(rocketCircle.isActiveMode() && InfoAndStats.metal>=InfoAndStats.rocketCircle.getCost()){
+				InfoAndStats.metal -= InfoAndStats.rocketCircle.getCost();
+				InfoAndStats.currentRocket = "rocketCircle";
+			}else if(rocketBasic.isActiveMode() && InfoAndStats.metal>=InfoAndStats.rocketBasic.getCost()){
+				InfoAndStats.metal -= InfoAndStats.rocketBasic.getCost();
+				InfoAndStats.currentRocket = "rocketBasic";
+			}else if(rocketKinetic.isActiveMode() && InfoAndStats.metal>=InfoAndStats.rocketKinetic.getCost()){
+				InfoAndStats.metal -= InfoAndStats.rocketKinetic.getCost();
+				InfoAndStats.currentRocket = "rocketKinetic";
+			}
 		}
 	}
 	
