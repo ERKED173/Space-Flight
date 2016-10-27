@@ -19,15 +19,9 @@ public class SFButtonA {
 	private Sprite sprite;
 	private Camera camera;
 	
-<<<<<<< HEAD
-	public SFButtonA(String texture, float width, float x, float y, Camera camera){
-		this.x = x - (float)Gdx.graphics.getWidth()/2.0F;
-		this.y = y - (float)Gdx.graphics.getHeight()/2.0F;
-=======
 	public SFButtonA(String texture, float width, float x, float y, Camera camera, float asp){
 		this.x = x - Gdx.graphics.getWidth()/2;
 		this.y = y - Gdx.graphics.getHeight()/2;
->>>>>>> branch 'master' of https://github.com/ERKED173/Space-Flight.git
 		textureI = new Texture(texture + "I.png");
 		textureA = new Texture(texture + "A.png");
 		aspect = (float)textureA.getWidth()/(float)textureI.getWidth();
@@ -84,7 +78,7 @@ public class SFButtonA {
 		if(bool){
 			textureCur = textureA;
 			sprite.setTexture(textureCur);
-			sprite.setBounds(x, y, (float)width*aspect, (float)height*aspect);
+			sprite.setBounds(x, y, width*aspect, height*aspect);
 		}else{
 			textureCur = textureI;
 			sprite.setTexture(textureCur);
@@ -111,8 +105,15 @@ public class SFButtonA {
 	
 	public void setCoordinates(){
 		if(isActiveMode()){
-			float prevX = camera.position.x + (x - (float)width/aspect);
-			float prevY = camera.position.y + (y - (float)height/aspect);
+			float prevX;
+			float prevY;
+			if(!(aspect == 1.0F)){
+				prevX = camera.position.x + (x - width/aspect);
+				prevY = camera.position.y + (y - height/aspect);
+			}else{
+				prevX = camera.position.x + x;
+				prevY = camera.position.y + y;
+			}
 			sprite.setX(prevX);
 			sprite.setY(prevY);
 		}else{

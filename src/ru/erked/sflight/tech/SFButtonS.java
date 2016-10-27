@@ -78,7 +78,7 @@ public class SFButtonS {
 		if(bool){
 			textureCur = textureA;
 			sprite.setTexture(textureCur);
-			sprite.setBounds(x - 0.5F*((float)(width*aspect)-width), y - 0.5F*((float)(height*aspect)-height), (float)width*aspect, (float)height*aspect);
+			sprite.setBounds(x - 0.5F*((width*aspect)-width), y - 0.5F*((height*aspect)-height), width*aspect, height*aspect);
 		}else{
 			textureCur = textureI;
 			sprite.setTexture(textureCur);

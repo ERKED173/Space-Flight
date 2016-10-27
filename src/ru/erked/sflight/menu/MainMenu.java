@@ -213,7 +213,7 @@ public class MainMenu implements Screen {
 			optionsButtonActiveSprite.setTexture(ImgResDraw.optionsButtonActiveRU);
 		}
 		optionsButtonTentionIndex = (float)optionsButtonInactive.getWidth()/optionsButtonInactive.getHeight();
-		optionsButtonWidth = 0.25F*width;
+		optionsButtonWidth = 0.225F*width;
 		optionsButtonHeight = optionsButtonWidth/optionsButtonTentionIndex;
 		optionsButtonX = width/2 - optionsButtonWidth/2;
 		optionsButtonY = height/2 - optionsButtonHeight/2 - optionsButtonHeight;

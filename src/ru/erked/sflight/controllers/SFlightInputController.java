@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 
 import ru.erked.sflight.game.GameScreen;
+import ru.erked.sflight.game.PlanetScreen;
  
 public class SFlightInputController implements InputProcessor {
 	
@@ -80,8 +81,8 @@ public class SFlightInputController implements InputProcessor {
 	/**Magic*/
 	public boolean isOnGame(float x, float y, float width, float height){
 		if(touchDownX != 0 && touchDownY != 0){
-			if((touchDownX + (GameScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) >= x && (SFlightInputController.touchDownX + (GameScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) <= x + width){
-				if((Math.abs((-1)*SFlightInputController.touchDownY + SFlightInputController.height) + (GameScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) >= y && (Math.abs((-1)*SFlightInputController.touchDownY + SFlightInputController.height) + (GameScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) <= y + height){
+			if((touchDownX + (GameScreen.camera.position.x - SFlightInputController.width/2)) >= x && (SFlightInputController.touchDownX + (GameScreen.camera.position.x - SFlightInputController.width/2)) <= x + width){
+				if((Math.abs((-1)*SFlightInputController.touchDownY + SFlightInputController.height) + (GameScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) >= y && (Math.abs((-1)*SFlightInputController.touchDownY + SFlightInputController.height) + (GameScreen.camera.position.y - SFlightInputController.height/2)) <= y + height){
 					return true;
 				}else{
 					return false;
@@ -95,8 +96,8 @@ public class SFlightInputController implements InputProcessor {
 	}
 	
 	public boolean isOnGameStatic(float x, float y, float width, float height){
-		if((touchDownXGame + (GameScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) >= x && (SFlightInputController.touchDownXGame + (GameScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) <= x + width){
-			if((Math.abs((-1)*SFlightInputController.touchDownYGame + SFlightInputController.height) + (GameScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) >= y && (Math.abs((-1)*SFlightInputController.touchDownYGame + SFlightInputController.height) + (GameScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) <= y + height){
+		if((touchDownXGame + (GameScreen.camera.position.x - SFlightInputController.width/2)) >= x && (SFlightInputController.touchDownXGame + (GameScreen.camera.position.x - SFlightInputController.width/2)) <= x + width){
+			if((Math.abs((-1)*SFlightInputController.touchDownYGame + SFlightInputController.height) + (GameScreen.camera.position.y - SFlightInputController.height/2)) >= y && (Math.abs((-1)*SFlightInputController.touchDownYGame + SFlightInputController.height) + (GameScreen.camera.position.y - SFlightInputController.height/2)) <= y + height){
 				return true;
 			}else{
 				return false;
@@ -108,8 +109,8 @@ public class SFlightInputController implements InputProcessor {
 	
 	public boolean isClickedGame(float x, float y, float width, float height){
 		if(isOnGameStatic(x, y, width, height)){
-			if((touchUpX + (GameScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) >= x && (SFlightInputController.touchUpX + (GameScreen.camera.position.x + SFlightInputController.width/2 - SFlightInputController.width)) <= x + width){
-				if((Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (GameScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) >= y && (Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (GameScreen.camera.position.y + SFlightInputController.height/2 - SFlightInputController.height)) <= y + height){
+			if((touchUpX + (GameScreen.camera.position.x - SFlightInputController.width/2)) >= x && (SFlightInputController.touchUpX + (GameScreen.camera.position.x - SFlightInputController.width/2)) <= x + width){
+				if((Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (GameScreen.camera.position.y - SFlightInputController.height/2)) >= y && (Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (GameScreen.camera.position.y - SFlightInputController.height/2)) <= y + height){
 					touchUpX = 10000;
 					touchUpY = 10000;
 					touchDownXGame = 0;
@@ -127,6 +128,56 @@ public class SFlightInputController implements InputProcessor {
 		}
 	}
 	/**Magic*/
+	/**Magic#2*/
+	public boolean isOnGameHangar(float x, float y, float width, float height){
+		if(touchDownX != 0 && touchDownY != 0){
+			if((touchDownX + (PlanetScreen.camera.position.x - SFlightInputController.width/2)) >= x && (SFlightInputController.touchDownX + (PlanetScreen.camera.position.x - SFlightInputController.width/2)) <= x + width){
+				if((Math.abs((-1)*SFlightInputController.touchDownY + SFlightInputController.height) + (PlanetScreen.camera.position.y - SFlightInputController.height/2)) >= y && (Math.abs((-1)*SFlightInputController.touchDownY + SFlightInputController.height) + (PlanetScreen.camera.position.y - SFlightInputController.height/2)) <= y + height){
+					return true;
+				}else{
+					return false;
+				}
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
+	}
+	
+	public boolean isOnGameStaticHangar(float x, float y, float width, float height){
+		if((touchDownXGame + (PlanetScreen.camera.position.x - SFlightInputController.width/2)) >= x && (SFlightInputController.touchDownXGame + (PlanetScreen.camera.position.x - SFlightInputController.width/2)) <= x + width){
+			if((Math.abs((-1)*SFlightInputController.touchDownYGame + SFlightInputController.height) + (PlanetScreen.camera.position.y - SFlightInputController.height/2)) >= y && (Math.abs((-1)*SFlightInputController.touchDownYGame + SFlightInputController.height) + (PlanetScreen.camera.position.y - SFlightInputController.height/2)) <= y + height){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
+	}
+	
+	public boolean isClickedGameHangar(float x, float y, float width, float height){
+		if(isOnGameStaticHangar(x, y, width, height)){
+			if((touchUpX + (PlanetScreen.camera.position.x - SFlightInputController.width/2)) >= x && (SFlightInputController.touchUpX + (PlanetScreen.camera.position.x - SFlightInputController.width/2)) <= x + width){
+				if((Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (PlanetScreen.camera.position.y - SFlightInputController.height/2)) >= y && (Math.abs((-1)*SFlightInputController.touchUpY + SFlightInputController.height) + (PlanetScreen.camera.position.y - SFlightInputController.height/2)) <= y + height){
+					touchUpX = 10000;
+					touchUpY = 10000;
+					touchDownXGame = 0;
+					touchDownYGame = 0;
+					clickSound.play(0.5F);
+					return true;
+				}else{
+					return false;
+				}
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
+	}
+	/**Magic#2*/
 	
 	@Override
 	public boolean keyDown(int keycode) {

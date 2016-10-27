@@ -79,7 +79,7 @@ public class GameScreen implements Screen{
 	private float metalFactoryY;
 	private float metalFactoryTentionIndex;
 	
-//Scrool
+//Scroll
 	private static float prevDragX;
 	private static float prevDragY;
 	
@@ -163,9 +163,9 @@ public class GameScreen implements Screen{
 		metalFactoryInit();
 		rocketsInit();
 		
-		btnMN = new SFButtonA("btns/button", 0.132F*width, width - 0.14F*width, 0.01F*height, camera, 1.0F);
+		btnMN = new SFButtonA("btns/button", 0.132F*width, 0.86F*width, 0.01F*height, camera, 1.0F);
 		btnMN.getSprite().setColor(Color.CYAN);
-		btnPlus = new SFButtonA("btns/button", 0.132F*width, width - 0.14F*width, 0.01F*height + 1.1F*btnMN.getHeight(), camera, 0.75F);
+		btnPlus = new SFButtonA("btns/button", 0.132F*width, 0.86F*width, 0.01F*height + 1.1F*btnMN.getHeight(), camera, 0.775F);
 		btnPlus.getSprite().setColor(Color.RED);
 		hangar = new SFButtonS("objects/angar", 0.5F*width, 0.150F*backgroundSprite.getWidth(), 0.625F*backgroundSprite.getHeight(), 1.0F);		
 		analytic = new SFButtonS("objects/analytic", 0.2F*width, 0.739F*backgroundSprite.getWidth(), 0.785F*backgroundSprite.getHeight(), 1.0F);		
@@ -206,9 +206,9 @@ public class GameScreen implements Screen{
 		backgroundSprite.draw(batch);
 		
 		drawBuildings();
+		drawRockets();
 		drawButtons();
 		drawMoney();
-		drawRockets();
 		
 		blackAlpha.draw(batch);
 		
@@ -220,7 +220,6 @@ public class GameScreen implements Screen{
 	}
 	
 	private void moneyCoords(){
-		//Установка координат иконки КосмоКоинов*/
 		moneyX = camera.position.x - moneyWidth - (width/2 - 0.065F*width);
 		moneyY = camera.position.y - moneyHeight + (height/2 - 0.015F*height);
 		moneySprite.setX(moneyX);
@@ -260,7 +259,6 @@ public class GameScreen implements Screen{
 	}	
 
 	private void moneyInit(){
-		//Иконки ресурсов\\
 		moneySprite = new Sprite(new Texture("objects/cosmocoin.png"));
 		fuelSprite = new Sprite(new Texture("objects/fuel.png"));
 		metalSprite = new Sprite(new Texture("objects/metal.png"));
@@ -286,7 +284,6 @@ public class GameScreen implements Screen{
 		
 	}
 	private void fuelFactoryInit(){
-		//Нефтедобыча\\
 		fuelFactoryTexture = new Texture("objects/fuelFactory_1.png");
 		fuelFactorySprite = new Sprite(fuelFactoryTexture);
 		fuelFactoryTentionIndex = (float)fuelFactorySprite.getWidth()/fuelFactorySprite.getHeight();
@@ -298,7 +295,6 @@ public class GameScreen implements Screen{
 		schFuel = "objects/fuelFactory_1.png";
 	}
 	private void coinFactoryInit(){
-		//Нефтедобыча\\
 		coinFactoryTexture = new Texture("objects/coinFactory_1.png");
 		coinFactorySprite = new Sprite(coinFactoryTexture);
 		coinFactoryTentionIndex = (float)coinFactorySprite.getWidth()/coinFactorySprite.getHeight();
@@ -310,7 +306,6 @@ public class GameScreen implements Screen{
 		schCoin = "objects/coinFactory_1.png";
 	}
 	private void metalFactoryInit(){
-		//Нефтедобыча\\
 		metalFactoryTexture = new Texture("objects/metalFactory/metalFactory_1.png");
 		metalFactorySprite = new Sprite(metalFactoryTexture);
 		metalFactoryTentionIndex = (float)metalFactorySprite.getWidth()/metalFactorySprite.getHeight();
@@ -324,25 +319,25 @@ public class GameScreen implements Screen{
 	private void rocketsInit(){
 		HangarPanelScreen.rocketBall.setMode(false);
 		HangarPanelScreen.rocketBall.setX(0.6535F*backgroundSprite.getWidth());
-		HangarPanelScreen.rocketBall.setY(0.675F*backgroundSprite.getHeight());
+		HangarPanelScreen.rocketBall.setY(0.6775F*backgroundSprite.getHeight());
 		HangarPanelScreen.rocketBall.setWidth(0.04F*backgroundSprite.getHeight());
 		HangarPanelScreen.rocketBall.setHeight(HangarPanelScreen.rocketBall.getWidth()/HangarPanelScreen.rocketBall.getAspectRatio());		
 		/***/
 		HangarPanelScreen.rocketCircle.setMode(false);
 		HangarPanelScreen.rocketCircle.setX(0.6535F*backgroundSprite.getWidth());
-		HangarPanelScreen.rocketCircle.setY(0.675F*backgroundSprite.getHeight());
+		HangarPanelScreen.rocketCircle.setY(0.6775F*backgroundSprite.getHeight());
 		HangarPanelScreen.rocketCircle.setWidth(0.04F*backgroundSprite.getHeight());
 		HangarPanelScreen.rocketCircle.setHeight(HangarPanelScreen.rocketCircle.getWidth()/HangarPanelScreen.rocketCircle.getAspectRatio());		
 		/***/
 		HangarPanelScreen.rocketBasic.setMode(false);
-		HangarPanelScreen.rocketBasic.setX(0.649F*backgroundSprite.getWidth());
-		HangarPanelScreen.rocketBasic.setY(0.675F*backgroundSprite.getHeight());
+		HangarPanelScreen.rocketBasic.setX(0.6485F*backgroundSprite.getWidth());
+		HangarPanelScreen.rocketBasic.setY(0.6825F*backgroundSprite.getHeight());
 		HangarPanelScreen.rocketBasic.setWidth(0.05F*backgroundSprite.getHeight());
 		HangarPanelScreen.rocketBasic.setHeight(HangarPanelScreen.rocketBasic.getWidth()/HangarPanelScreen.rocketBasic.getAspectRatio());		
 		/***/
 		HangarPanelScreen.rocketKinetic.setMode(false);
-		HangarPanelScreen.rocketKinetic.setX(0.65F*backgroundSprite.getWidth());
-		HangarPanelScreen.rocketKinetic.setY(0.675F*backgroundSprite.getHeight());
+		HangarPanelScreen.rocketKinetic.setX(0.6485F*backgroundSprite.getWidth());
+		HangarPanelScreen.rocketKinetic.setY(0.685F*backgroundSprite.getHeight());
 		HangarPanelScreen.rocketKinetic.setWidth(0.05F*backgroundSprite.getHeight());
 		HangarPanelScreen.rocketKinetic.setHeight(HangarPanelScreen.rocketKinetic.getWidth()/HangarPanelScreen.rocketKinetic.getAspectRatio());			
 		/***/
@@ -367,29 +362,21 @@ public class GameScreen implements Screen{
 	}
 	
 	private void touchUpdate(){
-		/**Обработка нажатия aka прокрутки*/
 		if(prevDragX != 0.0F && SFlightInputController.touchDragX != 0.0F)
 			camera.position.x -= SFlightInputController.touchDragX - prevDragX;
 		if(prevDragY != 0.0F && SFlightInputController.touchDragY != 0.0F)
 			camera.position.y += SFlightInputController.touchDragY - prevDragY;
 		prevDragX = SFlightInputController.touchDragX;
 		prevDragY = SFlightInputController.touchDragY;
-		/**Обработка нажатия aka прокрутки*/
 			
-		/**Границы прокрутки*/
-		//Выравниваем по левой грани*/
 		if(camera.position.x < backgroundSprite.getX() + width/2)
 			camera.position.set(new Vector3(backgroundSprite.getX() + width/2, camera.position.y, 0));
-		//Выравниваем по нижней грани*/
 		if(camera.position.y < backgroundSprite.getY() + height/2)
 			camera.position.set(new Vector3(camera.position.x, backgroundSprite.getY() + height/2, 0));
-		//Выравниваем по правой грани*/
 		if(camera.position.x > (backgroundSprite.getX() + backgroundSprite.getWidth()) - width/2)
 			camera.position.set(new Vector3((backgroundSprite.getX() + backgroundSprite.getWidth()) - width/2, camera.position.y, 0));
-		//Выравниваем по верхней грани*/
 		if(camera.position.y > (backgroundSprite.getY() + backgroundSprite.getHeight()) - height/2)
 			camera.position.set(new Vector3(camera.position.x, (backgroundSprite.getY() + backgroundSprite.getHeight()) - height/2, 0));
-		/**Границы прокрутки*/
 	}
 	private void drawButtons(){
 		btnMN.setCoordinates();
@@ -429,7 +416,7 @@ public class GameScreen implements Screen{
 			hangar.setMode(false);
 		}
 		hangar.getSprite().draw(batch);
-		//Analytic centre
+		//Analytic center
 		if(controller.isOnGame(analytic.getX(), analytic.getY(), analytic.getWidth(), analytic.getHeight())){
 			analytic.setMode(true);
 		}else{
@@ -443,7 +430,7 @@ public class GameScreen implements Screen{
 			control.setMode(false);
 		}
 		control.getSprite().draw(batch);
-		//Science centre
+		//Science center
 		if(controller.isOnGame(science.getX(), science.getY(), science.getWidth(), science.getHeight())){
 			science.setMode(true);
 		}else{

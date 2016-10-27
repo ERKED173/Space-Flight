@@ -17,7 +17,7 @@ import ru.erked.sflight.menu.MainMenu;
 import ru.erked.sflight.random.InfoAndStats;
 import ru.erked.sflight.tech.SFButtonS;
 
-public class StartPanelScreen implements Screen{
+public class InformationScreen implements Screen{
 
 	final String FONT_CHARS_RU = "абвгдежзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
 	private static final float width = Gdx.graphics.getWidth();
@@ -26,6 +26,7 @@ public class StartPanelScreen implements Screen{
 	private Game game;
 	private SpriteBatch batch;
 	private SFlightInputController controller;
+	private int iter;
 	
 	//Background
 	private Texture backgroundTexture;
@@ -33,17 +34,13 @@ public class StartPanelScreen implements Screen{
 	
 	//"Back" Button
 	private SFButtonS back;
-	private String schBack;
-	
-	//"Start" Button
-	private SFButtonS start;
-	private SFButtonS monogram;
 	
 	//Fonts
 	private static BitmapFont text;
 	
-	public StartPanelScreen(Game game){
+	public InformationScreen(Game game, int i){
 		this.game = game;
+		iter = i;
 	}
 	
 	@Override
@@ -54,22 +51,16 @@ public class StartPanelScreen implements Screen{
 		
 		MainMenu.music.play();
 		
-		backgroundTexture = new Texture("bckgrnd/resource/resource_1.png");
+		backgroundTexture = new Texture("bckgrnd/info.png");
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundSprite.setBounds(0.0F, 0.0F, width, height);
-		schBack = "bckgrnd/resource/resource_1.png";
 		
 		if(!InfoAndStats.lngRussian){
-			back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
+			back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height, 1.0F);
 		}else{
-			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
+			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.147F*width, 0.005F*height, 1.0F);
 		}
 
-		start = new SFButtonS("btns/start", 0.3F*width, 0.65F*width, 0.5F*height, 1.0F);
-		start.setY(0.5F*height - 0.5F*start.getHeight());
-		monogram = new SFButtonS("btns/monogramm", 0.5F*width, 0.05F*width, 0.5F*height, 1.0F);
-		monogram.setY(0.5F*height - 0.5F*monogram.getHeight());
-		
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
 		FreeTypeFontParameter param2 = new FreeTypeFontParameter();
@@ -94,8 +85,6 @@ public class StartPanelScreen implements Screen{
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		drawBackground();
-		
 		batch.begin();
 		
 		backgroundSprite.draw(batch);
@@ -108,38 +97,17 @@ public class StartPanelScreen implements Screen{
 		back.getSprite().draw(batch);
 
 		if(!InfoAndStats.lngRussian){
-			text.draw(batch, "Control panel", 0.4F*width, 0.965F*height);
+			text.draw(batch, "Information", 0.4F*width, 0.965F*height);
 		}else{
-			text.draw(batch, "Панель управления", 0.35F*width, 0.965F*height);
+			text.draw(batch, "Информация", 0.35F*width, 0.965F*height);
 		}
 		
-		if(controller.isOn(start.getX(), start.getY(), start.getWidth(), start.getHeight())){
-			start.setMode(true);
-			start.setY(0.5F*height - 0.51F*start.getHeight());
-		}else{
-			start.setMode(false);
-			start.setY(0.5F*height - 0.5F*start.getHeight());
-		}
-		start.getSprite().draw(batch);
-		
-		if(controller.isOn(monogram.getX(), monogram.getY(), monogram.getWidth(), monogram.getHeight())){
-			monogram.setMode(true);
-			monogram.setY(0.5F*height - 0.51F*monogram.getHeight());
-		}else{
-			monogram.setMode(false);
-			monogram.setY(0.5F*height - 0.5F*monogram.getHeight());
-		}
-		monogram.getSprite().draw(batch);
+		textDraw();
 		
 		batch.end();
 		
 		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
-			game.setScreen(new ControlCentreScreen(game));
-			this.dispose();
-		}
-		
-		if(controller.isClicked(monogram.getX(), monogram.getY(), monogram.getWidth(), monogram.getHeight())){
-			game.setScreen(new PlanetScreen(game));
+			game.setScreen(new HangarPanelScreen(game));
 			this.dispose();
 		}
 		
@@ -147,22 +115,13 @@ public class StartPanelScreen implements Screen{
 		
 	}
 	
-	private void drawBackground(){
-		if(InfoAndStats.elapsedTime % 15 == 0){
-			backgroundSprite.setTexture(new Texture(schBack));
-			if(schBack.equals("bckgrnd/resource/resource_1.png")) schBack = "bckgrnd/resource/resource_2.png";
-			else if(schBack.equals("bckgrnd/resource/resource_2.png")) schBack = "bckgrnd/resource/resource_3.png";
-			else if(schBack.equals("bckgrnd/resource/resource_3.png")) schBack = "bckgrnd/resource/resource_4.png";
-			else if(schBack.equals("bckgrnd/resource/resource_4.png")) schBack = "bckgrnd/resource/resource_5.png";
-			else if(schBack.equals("bckgrnd/resource/resource_5.png")) schBack = "bckgrnd/resource/resource_6.png";
-			else if(schBack.equals("bckgrnd/resource/resource_6.png")) schBack = "bckgrnd/resource/resource_7.png";
-			else if(schBack.equals("bckgrnd/resource/resource_7.png")) schBack = "bckgrnd/resource/resource_8.png";
-			else if(schBack.equals("bckgrnd/resource/resource_8.png")) schBack = "bckgrnd/resource/resource_9.png";
-			else if(schBack.equals("bckgrnd/resource/resource_9.png")) schBack = "bckgrnd/resource/resource_10.png";
-			else if(schBack.equals("bckgrnd/resource/resource_10.png")) schBack = "bckgrnd/resource/resource_11.png";
-			else if(schBack.equals("bckgrnd/resource/resource_11.png")) schBack = "bckgrnd/resource/resource_12.png";
-			else if(schBack.equals("bckgrnd/resource/resource_12.png")) schBack = "bckgrnd/resource/resource_13.png";
-			else if(schBack.equals("bckgrnd/resource/resource_13.png")) schBack = "bckgrnd/resource/resource_1.png";
+	private void textDraw(){
+		if(iter==1){
+			if(!InfoAndStats.lngRussian){
+				text.draw(batch, "Info about rockets", 0.5F*width, 0.5F*height);
+			}else{
+				text.draw(batch, "Инфо о ракетах", 0.5F*width, 0.5F*height);
+			}
 		}
 	}
 	
