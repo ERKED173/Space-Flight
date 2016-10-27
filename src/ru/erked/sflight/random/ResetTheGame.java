@@ -18,6 +18,7 @@ public class ResetTheGame {
 		InfoAndStats.fuelLevel = 0;
 		InfoAndStats.metalLevel = 0;
 		InfoAndStats.currentRocket = "null";
+		InfoAndStats.currentPlanet = "null";
 	}
 	
 }

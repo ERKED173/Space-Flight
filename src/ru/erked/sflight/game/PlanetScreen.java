@@ -18,6 +18,7 @@ import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
 import ru.erked.sflight.random.InfoAndStats;
 import ru.erked.sflight.tech.SFButtonA;
+import ru.erked.sflight.tech.SFButtonS;
 
 public class PlanetScreen implements Screen{
 
@@ -33,6 +34,13 @@ public class PlanetScreen implements Screen{
 	//Background
 	private Texture backgroundTexture;
 	public static Sprite backgroundSprite;
+	
+	//Planets 
+	private Sprite earth;
+	private SFButtonS loon;
+	
+	//"Select" button
+	private SFButtonS select;
 	
 	//"Back" Button
 	private SFButtonA back;
@@ -63,12 +71,22 @@ public class PlanetScreen implements Screen{
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundSprite.setBounds(0.0F, 0.0F, width, 4.0F*width);
 		
+		earth = new Sprite(new Texture("objects/menu_planet_1.png"));
+		earth.setBounds(-0.125F*width, -0.85F*width, 1.25F*width, 1.25F*width);
+		earth.setOriginCenter();
+		earth.setRotation((float)(359.0D*Math.random()));
+		
 		if(!InfoAndStats.lngRussian){
 			back = new SFButtonA("btns/back", 0.132F*width, 0.8523F*width, 0.005F*height, camera, 1.0F);
 		}else{
 			back = new SFButtonA("btns/RU/backR", 0.132F*width, 0.8523F*width, 0.005F*height, camera, 1.0F);
 		}
 
+		loon = new SFButtonS("planets/loon", 0.15F*width, 0.1F*width, 0.15F*backgroundSprite.getHeight(), 1.0F);
+		
+		select = new SFButtonS("btns/button", 0.132F*width, 0.6F*width, 0.16F*backgroundSprite.getHeight(), 1.0F);
+		select.getSprite().setColor(Color.CYAN);
+		
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
 		FreeTypeFontParameter param2 = new FreeTypeFontParameter();
@@ -77,10 +95,11 @@ public class PlanetScreen implements Screen{
 		if(InfoAndStats.lngRussian){
 			param2.characters = FONT_CHARS_RU;
 			text = genRU.generateFont(param2);
+			text.getData().setScale((float)(0.0005F*width));
 		}else{
 			text = genUS.generateFont(param2);
+			text.getData().setScale((float)(0.00075F*width));
 		}
-		text.getData().setScale((float)(0.00075F*width));
 		
 		genRU.dispose();
 		genUS.dispose();
@@ -102,6 +121,11 @@ public class PlanetScreen implements Screen{
 		
 		backgroundSprite.draw(batch);
 		
+		earth.rotate(0.0166666666666667F);
+		earth.draw(batch);
+		
+		loon.getSprite().draw(batch);
+		
 		back.setCoordinates();
 		back.getSprite().draw(batch);
 		if(controller.isOnGameStaticHangar(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
@@ -109,12 +133,14 @@ public class PlanetScreen implements Screen{
 		}else{
 			back.setMode(false);
 		}
-
+		
 		if(!InfoAndStats.lngRussian){
 			text.draw(batch, "Planet choice", camera.position.x - 0.475F*width, camera.position.y + 0.465F*height);
 		}else{
 			text.draw(batch, "Выбор планеты", camera.position.x - 0.475F*width, camera.position.y + 0.465F*height);
 		}
+		
+		drawPlanetInformation();
 		
 		batch.end();
 		
@@ -123,8 +149,57 @@ public class PlanetScreen implements Screen{
 			this.dispose();
 		}
 	
+		buttonListener();
 		resourcesCheck();
 		
+	}
+	
+	private void drawPlanetInformation(){
+		/***/
+		if(loon.isActiveMode()){
+			select.getSprite().draw(batch);
+			if(InfoAndStats.planetLoon.isSelected() && !InfoAndStats.currentPlanet.equals("planetLoon")){
+				select.getSprite().setColor(Color.CYAN);
+				select.setX(0.6F*width);
+				select.setY(0.16F*backgroundSprite.getHeight());
+				if(controller.isOnGameHangar(select.getX(), select.getY(), select.getWidth(), select.getHeight())){
+					select.setMode(true);
+				}else{
+					select.setMode(false);
+				}
+				if(controller.isClickedGameHangar(select.getX(), select.getY(), select.getWidth(), select.getHeight())){
+					InfoAndStats.currentPlanet = "planetLoon";
+				}
+			}else{
+				select.getSprite().setColor(Color.TEAL);
+			}
+			if(!InfoAndStats.lngRussian){
+				text.draw(batch, "Select", 1.0375F*select.getX(), 1.09F*select.getY());
+				text.draw(batch, "Planet's name: " + InfoAndStats.planetLoon.getNameUS(), 3.0F*loon.getX(), 1.27F*loon.getY());
+				text.draw(batch, "Level: " + InfoAndStats.planetLoon.getLevel(), 3.0F*loon.getX(), 1.27F*loon.getY() - 1.5F*text.getCapHeight());
+				text.draw(batch, "You need " + InfoAndStats.planetLoon.getFuelTo() + " fuel", 3.0F*loon.getX(), 1.27F*loon.getY() - 3.0F*text.getCapHeight());
+				text.draw(batch, "to reach the planet", 3.0F*loon.getX(), 1.27F*loon.getY() - 4.5F*text.getCapHeight());
+				if(InfoAndStats.currentPlanet.equals("planetLoon")) text.draw(batch, "Selected", 3.0F*loon.getX(), 1.27F*loon.getY() - 6.0F*text.getCapHeight());
+			}else{
+				text.draw(batch, "Выбрать", 1.0375F*select.getX(), 1.08F*select.getY());
+				text.draw(batch, "Название планеты: " + InfoAndStats.planetLoon.getNameRU(), 3.0F*loon.getX(), 1.225F*loon.getY());
+				text.draw(batch, "Уровень: " + InfoAndStats.planetLoon.getLevel(), 3.0F*loon.getX(), 1.225F*loon.getY() - 1.5F*text.getCapHeight());
+				text.draw(batch, "Для достижения планеты", 3.0F*loon.getX(), 1.225F*loon.getY() - 3.0F*text.getCapHeight());
+				text.draw(batch, "нужно " + InfoAndStats.planetLoon.getFuelTo() + " топлива", 3.0F*loon.getX(), 1.225F*loon.getY() - 4.5F*text.getCapHeight());
+				if(InfoAndStats.currentPlanet.equals("planetLoon")) text.draw(batch, "Выбрана", 3.0F*loon.getX(), 1.225F*loon.getY() - 6.0F*text.getCapHeight());
+			}
+		}
+		/***/
+	}
+	
+	private void buttonListener(){
+		if(controller.isClickedGameHangar(loon.getX(), loon.getY(), loon.getWidth(), loon.getHeight())){
+			if(!loon.isActiveMode()){
+				loon.setMode(true);
+			}else{
+				loon.setMode(false);
+			}
+		}
 	}
 	
 	private void touchUpdate(){

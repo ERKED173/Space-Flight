@@ -47,11 +47,11 @@ public class GameScreen implements Screen{
 	
 //Hangar
 	private SFButtonS hangar;
-//Analytic centre
+//Analytic center
 	private SFButtonS analytic;	
 //Control tower
 	private SFButtonS control;	
-//Science centre
+//Science center
 	private SFButtonS science;	
 	
 //FuelFactory
