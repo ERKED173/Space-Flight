@@ -7,13 +7,15 @@ public class Planet {
 	private int level;
 	private int fuelTo;
 	private boolean isSelected;
+	private boolean isAvailable;
 	
-	public Planet(String nameUS, String nameRU, int level, int fuelTo, boolean isSelected){
+	public Planet(String nameUS, String nameRU, int level, int fuelTo, boolean isSelected, boolean isAvailable){
 		this.setNameUS(nameUS);
 		this.setNameRU(nameRU);
 		this.setLevel(level);
 		this.setFuelTo(fuelTo);
 		this.setSelected(isSelected);
+		this.setAvailable(isAvailable);
 	}
 
 	public String getNameUS() {
@@ -54,6 +56,14 @@ public class Planet {
 
 	public void setSelected(boolean isSelected) {
 		this.isSelected = isSelected;
+	}
+
+	public boolean isAvailable() {
+		return isAvailable;
+	}
+
+	public void setAvailable(boolean isAvailable) {
+		this.isAvailable = isAvailable;
 	}
 	
 	

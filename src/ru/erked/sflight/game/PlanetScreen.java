@@ -38,6 +38,7 @@ public class PlanetScreen implements Screen{
 	//Planets 
 	private Sprite earth;
 	private SFButtonS loon;
+	private SFButtonS emion;
 	
 	//"Select" button
 	private SFButtonS select;
@@ -83,6 +84,7 @@ public class PlanetScreen implements Screen{
 		}
 
 		loon = new SFButtonS("planets/loon", 0.15F*width, 0.1F*width, 0.15F*backgroundSprite.getHeight(), 1.0F);
+		emion = new SFButtonS("planets/emion", 0.2F*width, 0.75F*width, 0.2F*backgroundSprite.getHeight(), 1.0F);
 		
 		select = new SFButtonS("btns/button", 0.132F*width, 0.6F*width, 0.16F*backgroundSprite.getHeight(), 1.0F);
 		select.getSprite().setColor(Color.CYAN);
@@ -125,6 +127,7 @@ public class PlanetScreen implements Screen{
 		earth.draw(batch);
 		
 		loon.getSprite().draw(batch);
+		emion.getSprite().draw(batch);
 		
 		back.setCoordinates();
 		back.getSprite().draw(batch);
@@ -158,10 +161,10 @@ public class PlanetScreen implements Screen{
 		/***/
 		if(loon.isActiveMode()){
 			select.getSprite().draw(batch);
-			if(InfoAndStats.planetLoon.isSelected() && !InfoAndStats.currentPlanet.equals("planetLoon")){
+			select.setX(0.6F*width);
+			select.setY(0.16F*backgroundSprite.getHeight());
+			if(InfoAndStats.planetLoon.isAvailable() && !InfoAndStats.currentPlanet.equals("planetLoon")){
 				select.getSprite().setColor(Color.CYAN);
-				select.setX(0.6F*width);
-				select.setY(0.16F*backgroundSprite.getHeight());
 				if(controller.isOnGameHangar(select.getX(), select.getY(), select.getWidth(), select.getHeight())){
 					select.setMode(true);
 				}else{
@@ -190,14 +193,58 @@ public class PlanetScreen implements Screen{
 			}
 		}
 		/***/
+		if(emion.isActiveMode()){
+			select.getSprite().draw(batch);
+			if(InfoAndStats.planetEmion.isAvailable() && !InfoAndStats.currentPlanet.equals("planetEmion")){
+				select.getSprite().setColor(Color.CYAN);
+				if(controller.isOnGameHangar(select.getX(), select.getY(), select.getWidth(), select.getHeight())){
+					select.setMode(true);
+				}else{
+					select.setMode(false);
+				}
+				if(controller.isClickedGameHangar(select.getX(), select.getY(), select.getWidth(), select.getHeight())){
+					InfoAndStats.currentPlanet = "planetEmion";
+				}
+			}else{
+				select.getSprite().setColor(Color.TEAL);
+			}
+			if(!InfoAndStats.lngRussian){
+				text.draw(batch, "Select", 1.115F*select.getX(), 1.07F*select.getY());
+				text.draw(batch, "Planet's name: " + InfoAndStats.planetEmion.getNameUS(), 0.5F*emion.getX(), 1.22F*emion.getY());
+				text.draw(batch, "Level: " + InfoAndStats.planetEmion.getLevel(), 0.5F*emion.getX(), 1.22F*emion.getY() - 1.5F*text.getCapHeight());
+				text.draw(batch, "You need " + InfoAndStats.planetEmion.getFuelTo() + " fuel", 0.5F*emion.getX(), 1.22F*emion.getY() - 3.0F*text.getCapHeight());
+				text.draw(batch, "to reach the planet", 0.5F*emion.getX(), 1.22F*emion.getY() - 4.5F*text.getCapHeight());
+				if(InfoAndStats.currentPlanet.equals("planetEmion")) text.draw(batch, "Selected", 0.5F*emion.getX(), 1.22F*emion.getY() - 6.0F*text.getCapHeight());
+			}else{
+				text.draw(batch, "Выбрать", 1.115F*select.getX(), 1.06F*select.getY());
+				text.draw(batch, "Название планеты: " + InfoAndStats.planetEmion.getNameRU(), 0.5F*emion.getX(), 1.18F*emion.getY());
+				text.draw(batch, "Уровень: " + InfoAndStats.planetEmion.getLevel(), 0.5F*emion.getX(), 1.18F*emion.getY() - 1.5F*text.getCapHeight());
+				text.draw(batch, "Для достижения планеты", 0.5F*emion.getX(), 1.18F*emion.getY() - 3.0F*text.getCapHeight());
+				text.draw(batch, "нужно " + InfoAndStats.planetEmion.getFuelTo() + " топлива", 0.5F*emion.getX(), 1.18F*emion.getY() - 4.5F*text.getCapHeight());
+				if(InfoAndStats.currentPlanet.equals("planetEmion")) text.draw(batch, "Выбрана", 0.5F*emion.getX(), 1.18F*emion.getY() - 6.0F*text.getCapHeight());
+			}
+		}
+		/***/
 	}
 	
 	private void buttonListener(){
 		if(controller.isClickedGameHangar(loon.getX(), loon.getY(), loon.getWidth(), loon.getHeight())){
 			if(!loon.isActiveMode()){
 				loon.setMode(true);
+				emion.setMode(false);
 			}else{
 				loon.setMode(false);
+			}
+		}
+		/***/
+		if(controller.isClickedGameHangar(emion.getX(), emion.getY(), emion.getWidth(), emion.getHeight())){
+			if(!emion.isActiveMode()){
+				emion.setMode(true);
+				loon.setMode(false);
+				select.setX(0.2F*width);
+				select.setY(0.2125F*backgroundSprite.getHeight());
+			}else{
+				emion.setMode(false);
 			}
 		}
 	}
