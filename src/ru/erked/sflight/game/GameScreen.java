@@ -1,6 +1,5 @@
 package ru.erked.sflight.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
@@ -15,9 +14,15 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector3;
 
+import ru.erked.sflight.StartSFlight;
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.planets.EmionScreen;
+import ru.erked.sflight.planets.LoonScreen;
+import ru.erked.sflight.random.INF;
+import ru.erked.sflight.tech.CurPR;
+import ru.erked.sflight.tech.Planet;
+import ru.erked.sflight.tech.Rocket;
 import ru.erked.sflight.tech.SFButtonA;
 import ru.erked.sflight.tech.SFButtonS;
 
@@ -27,16 +32,19 @@ public class GameScreen implements Screen{
 	private static final float width = Gdx.graphics.getWidth();
 	private static final float height = Gdx.graphics.getHeight();
 	
-	private Game game;
-	public static OrthographicCamera camera;
+	private final StartSFlight game;
 	private SpriteBatch batch;
+	public static OrthographicCamera camera;
 	private SFlightInputController controller;
 	
 	private Music cash = Gdx.audio.newMusic(Gdx.files.internal("sounds/misc/cash.wav"));
 	private Music bubble = Gdx.audio.newMusic(Gdx.files.internal("sounds/misc/bubble.wav"));
 	private Music anvil = Gdx.audio.newMusic(Gdx.files.internal("sounds/misc/anvil.wav"));
+	private Music flight = Gdx.audio.newMusic(Gdx.files.internal("sounds/misc/WavLibraryNet_Sound6386.mp3"));
+	private boolean isStarted;
 	
 	public static boolean isFromMenu = true;
+	private float speed;
 	
 //Background
 	private Texture backgroundTexture;
@@ -52,7 +60,7 @@ public class GameScreen implements Screen{
 //Control tower
 	private SFButtonS control;	
 //Science center
-	private SFButtonS science;	
+	private SFButtonS gunStore;	
 	
 //FuelFactory
 	private Texture fuelFactoryTexture;
@@ -102,8 +110,6 @@ public class GameScreen implements Screen{
 	private Sprite fuelLine;
 	private Sprite metalLine;
 	
-	private Music launchSoundPath = Gdx.audio.newMusic(Gdx.files.internal("sounds/misc/WavLibraryNet_Sound6386.mp3"));
-	
 	private Sprite blackAlpha = new Sprite(new Texture("objects/black.png"));
 	private float alp = 1.0F;
 	private boolean isTransGame;
@@ -112,7 +118,23 @@ public class GameScreen implements Screen{
 	private static String schCoin;
 	private static String schMetal;
 	
-	public GameScreen(Game game){
+	//Planets
+	private Planet planet;
+	
+	//Rockets
+	private Rocket rocket;
+	private SFButtonS rocketS;
+	private SFButtonS rocketBall;
+	private SFButtonS rocketCircle;
+	private SFButtonS rocketBasic;
+	private SFButtonS rocketKinetic;
+	
+	private Sprite rocketFire;
+	private String schFire;
+	private float rocketX;
+	private float rocketY;	
+	
+	public GameScreen(final StartSFlight game){
 		this.game = game;
 	}
 	
@@ -120,12 +142,30 @@ public class GameScreen implements Screen{
 	public void show() {
 		
 		batch = new SpriteBatch();
+		
 		controller = new SFlightInputController();
 		MainMenu.music.play();
+		
+		rocketsPreInit();
+		planet = CurPR.getCurPlanet();
+		rocket = CurPR.getCurRocket();
+		if(rocket != null){
+			if(rocket.equals(INF.rocketBall)){
+				rocketS = rocketBall;
+			}else if(rocket.equals(INF.rocketCircle)){
+				rocketS = rocketCircle;
+			}else if(rocket.equals(INF.rocketBasic)){
+				rocketS = rocketBasic;
+			}else if(rocket.equals(INF.rocketKinetic)){
+				rocketS = rocketKinetic;
+			}
+		}
 		
 		cash.setVolume(1.0F);
 		bubble.setVolume(1.0F);
 		anvil.setVolume(1.0F);
+		isStarted = false;
+		flight.setVolume(0.5F);
 		
 		backgroundTexture = new Texture("bckgrnd/spaceport_4.png");
 		backgroundSprite = new Sprite(backgroundTexture);
@@ -144,7 +184,7 @@ public class GameScreen implements Screen{
 		param.size = 40;
 		param2.color = Color.WHITE;
 		param2.size = 60;
-		if(InfoAndStats.lngRussian){
+		if(INF.lngRussian){
 			param.characters = FONT_CHARS_RU;
 			param2.characters = FONT_CHARS_RU;
 			text = genRU.generateFont(param);
@@ -170,16 +210,22 @@ public class GameScreen implements Screen{
 		hangar = new SFButtonS("objects/angar", 0.5F*width, 0.150F*backgroundSprite.getWidth(), 0.625F*backgroundSprite.getHeight(), 1.0F);		
 		analytic = new SFButtonS("objects/analytic", 0.2F*width, 0.739F*backgroundSprite.getWidth(), 0.785F*backgroundSprite.getHeight(), 1.0F);		
 		control = new SFButtonS("objects/control", 0.125F*width, 0.469F*backgroundSprite.getWidth(), 0.665F*backgroundSprite.getHeight(), 1.0F);		
-		science = new SFButtonS("objects/science", 0.5F*width, 0.359F*backgroundSprite.getWidth(), 0.45F*backgroundSprite.getHeight(), 1.0F);		
+		gunStore = new SFButtonS("objects/gunStore", 0.35F*width, 0.359F*backgroundSprite.getWidth(), 0.45F*backgroundSprite.getHeight(), 1.0F);		
 		
 		isTransGame = false;
 		blackAlpha.setBounds(0.0F, 0.0F, backgroundSprite.getWidth(), backgroundSprite.getHeight());
 		blackAlpha.setAlpha(1.0F);
+		
+		speed = 0.01F;
+		if(rocket != null){
+			rocketX = rocketS.getSprite().getX() + rocketS.getSprite().getWidth()/2;
+			rocketY = rocketS.getSprite().getY() + rocketS.getSprite().getHeight()/2;
+		}
 	}
 
 	@Override
 	public void render(float delta) {
-		InfoAndStats.elapsedTime++;
+		INF.elapsedTime++;
 		resourcesCheck();
 		
 		if(alp>0.0F && (!isTransGame)){
@@ -199,21 +245,26 @@ public class GameScreen implements Screen{
 		
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
-		
-		/**Drawing objects*/
+
 		batch.begin();
 		
 		backgroundSprite.draw(batch);
 		
 		drawBuildings();
 		drawRockets();
+		if(INF.isLaunch){
+			drawFlight();
+			if(!isStarted){
+				flight.play();
+				isStarted = true;
+			}
+		}
 		drawButtons();
 		drawMoney();
 		
 		blackAlpha.draw(batch);
 		
 		batch.end();
-		/**Drawing objects*/
 		
 		buttonListener();
 		
@@ -232,19 +283,19 @@ public class GameScreen implements Screen{
 		cosmocoinLine.setBounds(
 				cosmocoinLine.getX(),
 				cosmocoinLine.getY(),
-				((float)InfoAndStats.money/(float)InfoAndStats.moneyFull)*0.825F*line.getWidth() + 0.005F*width,
+				((float)INF.money/(float)INF.moneyFull)*0.825F*line.getWidth() + 0.005F*width,
 				cosmocoinLine.getHeight()
 				);
 		fuelLine.setBounds(
 				fuelLine.getX(),
 				fuelLine.getY(),
-				((float)InfoAndStats.fuel/(float)InfoAndStats.fuelFull)*0.825F*line.getWidth() + 0.005F*width,
+				((float)INF.fuel/(float)INF.fuelFull)*0.825F*line.getWidth() + 0.005F*width,
 				fuelLine.getHeight()
 				);
 		metalLine.setBounds(
 				metalLine.getX(),
 				metalLine.getY(),
-				((float)InfoAndStats.metal/(float)InfoAndStats.metalFull)*0.825F*line.getWidth() + 0.005F*width,
+				((float)INF.metal/(float)INF.metalFull)*0.825F*line.getWidth() + 0.005F*width,
 				metalLine.getHeight()
 				);
 		
@@ -316,74 +367,111 @@ public class GameScreen implements Screen{
 		metalFactorySprite.setBounds(metalFactoryX, metalFactoryY, metalFactoryWidth, metalFactoryHeight);
 		schMetal = "objects/metalFactory/metalFactory_1.png";
 	}
+	private void rocketsPreInit(){
+		rocketBall = new SFButtonS("rockets/rocketBall", 0.05F*height, 0.115F*width, 0.5F*height, 1.0F);
+		rocketCircle = new SFButtonS("rockets/rocketCircle", 0.05F*height, 0.265F*width, 0.5F*height, 1.0F);
+		rocketBasic = new SFButtonS("rockets/rocketBasic", 0.059262771F*height, 0.415F*width, 0.5F*height, 1.0F);
+		rocketKinetic = new SFButtonS("rockets/rocketKinetic", 0.03884503531366846697133361030328F*height, 0.135F*width, 0.5F*height, 1.0F);
+	}
 	private void rocketsInit(){
-		HangarPanelScreen.rocketBall.setMode(false);
-		HangarPanelScreen.rocketBall.setX(0.6535F*backgroundSprite.getWidth());
-		HangarPanelScreen.rocketBall.setY(0.6775F*backgroundSprite.getHeight());
-		HangarPanelScreen.rocketBall.setWidth(0.04F*backgroundSprite.getHeight());
-		HangarPanelScreen.rocketBall.setHeight(HangarPanelScreen.rocketBall.getWidth()/HangarPanelScreen.rocketBall.getAspectRatio());		
 		/***/
-		HangarPanelScreen.rocketCircle.setMode(false);
-		HangarPanelScreen.rocketCircle.setX(0.6535F*backgroundSprite.getWidth());
-		HangarPanelScreen.rocketCircle.setY(0.6775F*backgroundSprite.getHeight());
-		HangarPanelScreen.rocketCircle.setWidth(0.04F*backgroundSprite.getHeight());
-		HangarPanelScreen.rocketCircle.setHeight(HangarPanelScreen.rocketCircle.getWidth()/HangarPanelScreen.rocketCircle.getAspectRatio());		
+		rocketBall.setMode(false);
+		rocketBall.setX(0.6535F*backgroundSprite.getWidth());
+		rocketBall.setY(0.6775F*backgroundSprite.getHeight());
+		rocketBall.setWidth(0.04F*backgroundSprite.getHeight());
+		rocketBall.setHeight(rocketBall.getWidth()/rocketBall.getAspectRatio());		
 		/***/
-		HangarPanelScreen.rocketBasic.setMode(false);
-		HangarPanelScreen.rocketBasic.setX(0.6485F*backgroundSprite.getWidth());
-		HangarPanelScreen.rocketBasic.setY(0.6825F*backgroundSprite.getHeight());
-		HangarPanelScreen.rocketBasic.setWidth(0.05F*backgroundSprite.getHeight());
-		HangarPanelScreen.rocketBasic.setHeight(HangarPanelScreen.rocketBasic.getWidth()/HangarPanelScreen.rocketBasic.getAspectRatio());		
+		rocketCircle.setMode(false);
+		rocketCircle.setX(0.6535F*backgroundSprite.getWidth());
+		rocketCircle.setY(0.6775F*backgroundSprite.getHeight());
+		rocketCircle.setWidth(0.04F*backgroundSprite.getHeight());
+		rocketCircle.setHeight(rocketCircle.getWidth()/rocketCircle.getAspectRatio());		
 		/***/
-		HangarPanelScreen.rocketKinetic.setMode(false);
-		HangarPanelScreen.rocketKinetic.setX(0.6485F*backgroundSprite.getWidth());
-		HangarPanelScreen.rocketKinetic.setY(0.685F*backgroundSprite.getHeight());
-		HangarPanelScreen.rocketKinetic.setWidth(0.05F*backgroundSprite.getHeight());
-		HangarPanelScreen.rocketKinetic.setHeight(HangarPanelScreen.rocketKinetic.getWidth()/HangarPanelScreen.rocketKinetic.getAspectRatio());			
+		rocketBasic.setMode(false);
+		rocketBasic.setX(0.6485F*backgroundSprite.getWidth());
+		rocketBasic.setY(0.6825F*backgroundSprite.getHeight());
+		rocketBasic.setWidth(0.05F*backgroundSprite.getHeight());
+		rocketBasic.setHeight(rocketBasic.getWidth()/rocketBasic.getAspectRatio());		
 		/***/
+		rocketKinetic.setMode(false);
+		rocketKinetic.setX(0.6485F*backgroundSprite.getWidth());
+		rocketKinetic.setY(0.685F*backgroundSprite.getHeight());
+		rocketKinetic.setWidth(0.05F*backgroundSprite.getHeight());
+		rocketKinetic.setHeight(rocketKinetic.getWidth()/rocketKinetic.getAspectRatio());			
+		/***/
+		rocketFire = new Sprite(new Texture("rockets/fire_1.png"));
+		schFire = "rockets/fire_1.png";
+		if(rocket != null){
+			if(rocket.equals(INF.rocketBall)){
+				rocketFire.setBounds(rocketS.getSprite().getX()+0.3F*rocketS.getSprite().getWidth(),
+						rocketS.getSprite().getY()-1.01F*rocketS.getSprite().getHeight(),
+						0.4F*rocketS.getSprite().getWidth(),
+						0.8F*rocketS.getSprite().getWidth());
+			}else if(rocket.equals(INF.rocketCircle)){
+				rocketFire.setBounds(rocketS.getSprite().getX()+0.3F*rocketS.getSprite().getWidth(),
+						rocketS.getSprite().getY()+0.01F*rocketS.getSprite().getHeight(),
+						0.4F*rocketS.getSprite().getWidth(),
+						0.8F*rocketS.getSprite().getWidth());
+			}else if(rocket.equals(INF.rocketBasic)){
+				rocketFire.setBounds(rocketS.getSprite().getX()+0.05F*rocketS.getSprite().getWidth(),
+						rocketS.getSprite().getY()+0.01F*rocketS.getSprite().getHeight(),
+						0.4F*rocketS.getSprite().getWidth(),
+						0.8F*rocketS.getSprite().getWidth());
+			}else if(rocket.equals(INF.rocketKinetic)){
+				rocketFire.setBounds(rocketS.getSprite().getX()+0.05F*rocketS.getSprite().getWidth(),
+						rocketS.getSprite().getY()+0.01F*rocketS.getSprite().getHeight(),
+						0.7F*rocketS.getSprite().getWidth(),
+						1.4F*rocketS.getSprite().getWidth());
+			}
+		}
 	}
 	
 	private void resourcesCheck(){
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
-			if(InfoAndStats.money<InfoAndStats.moneyFull) cash.play();
-			InfoAndStats.money++;
+		if(INF.elapsedTime%(3600/INF.moneyAmount) == 0){
+			if(INF.money<INF.moneyFull) cash.play();
+			INF.money++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.fuelAmount) == 60){
-			if(InfoAndStats.fuel<InfoAndStats.fuelFull)bubble.play();
-			InfoAndStats.fuel++;
+		if(INF.elapsedTime%(3600/INF.fuelAmount) == 60){
+			if(INF.fuel<INF.fuelFull)bubble.play();
+			INF.fuel++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.metalAmount) == 120){
-			if(InfoAndStats.metal<InfoAndStats.metalFull)anvil.play();
-			InfoAndStats.metal++;
+		if(INF.elapsedTime%(3600/INF.metalAmount) == 120){
+			if(INF.metal<INF.metalFull)anvil.play();
+			INF.metal++;
 		}
-		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
-		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
-		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
+		if(INF.money>INF.moneyFull) INF.money = INF.moneyFull;
+		if(INF.fuel>INF.fuelFull) INF.fuel = INF.fuelFull;
+		if(INF.metal>INF.metalFull) INF.metal = INF.metalFull;
 	}
 	
 	private void touchUpdate(){
-		if(prevDragX != 0.0F && SFlightInputController.touchDragX != 0.0F)
-			camera.position.x -= SFlightInputController.touchDragX - prevDragX;
-		if(prevDragY != 0.0F && SFlightInputController.touchDragY != 0.0F)
-			camera.position.y += SFlightInputController.touchDragY - prevDragY;
-		prevDragX = SFlightInputController.touchDragX;
-		prevDragY = SFlightInputController.touchDragY;
+		if(!INF.isLaunch){
+			if(prevDragX != 0.0F && SFlightInputController.touchDragX != 0.0F)
+				camera.position.x -= SFlightInputController.touchDragX - prevDragX;
+			if(prevDragY != 0.0F && SFlightInputController.touchDragY != 0.0F)
+				camera.position.y += SFlightInputController.touchDragY - prevDragY;
+			prevDragX = SFlightInputController.touchDragX;
+			prevDragY = SFlightInputController.touchDragY;
 			
-		if(camera.position.x < backgroundSprite.getX() + width/2)
-			camera.position.set(new Vector3(backgroundSprite.getX() + width/2, camera.position.y, 0));
-		if(camera.position.y < backgroundSprite.getY() + height/2)
-			camera.position.set(new Vector3(camera.position.x, backgroundSprite.getY() + height/2, 0));
-		if(camera.position.x > (backgroundSprite.getX() + backgroundSprite.getWidth()) - width/2)
-			camera.position.set(new Vector3((backgroundSprite.getX() + backgroundSprite.getWidth()) - width/2, camera.position.y, 0));
-		if(camera.position.y > (backgroundSprite.getY() + backgroundSprite.getHeight()) - height/2)
-			camera.position.set(new Vector3(camera.position.x, (backgroundSprite.getY() + backgroundSprite.getHeight()) - height/2, 0));
+			if(camera.position.x < backgroundSprite.getX() + width/2)
+				camera.position.set(new Vector3(backgroundSprite.getX() + width/2, camera.position.y, 0));
+			if(camera.position.y < backgroundSprite.getY() + height/2)
+				camera.position.set(new Vector3(camera.position.x, backgroundSprite.getY() + height/2, 0));
+			if(camera.position.x > (backgroundSprite.getX() + backgroundSprite.getWidth()) - width/2)
+				camera.position.set(new Vector3((backgroundSprite.getX() + backgroundSprite.getWidth()) - width/2, camera.position.y, 0));
+			if(camera.position.y > (backgroundSprite.getY() + backgroundSprite.getHeight()) - height/2)
+				camera.position.set(new Vector3(camera.position.x, (backgroundSprite.getY() + backgroundSprite.getHeight()) - height/2, 0));
+		}else{
+			camera.position.set(new Vector3(rocketX, rocketY, 0));
+		}
 	}
 	private void drawButtons(){
 		btnMN.setCoordinates();
 		btnMN.getSprite().draw(batch);
 		if(controller.isOnGameStatic(btnMN.getX(), btnMN.getY(), btnMN.getWidth(), btnMN.getHeight())){
-			btnMN.setMode(true);
-			if(!InfoAndStats.lngRussian){
+			if(!INF.isLaunch)
+				btnMN.setMode(true);
+			if(!INF.lngRussian){
 				textBtn.draw(batch, "Main", btnMN.getX() + 0.225F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 0.6F*textBtn.getCapHeight());
 				textBtn.draw(batch, "menu", btnMN.getX() + 0.175F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 1.85F*textBtn.getCapHeight());
 			}else{
@@ -392,7 +480,7 @@ public class GameScreen implements Screen{
 			}
 		}else{
 			btnMN.setMode(false);
-			if(!InfoAndStats.lngRussian){
+			if(!INF.lngRussian){
 				textBtn.draw(batch, "Main", btnMN.getX() + 0.225F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 0.5F*textBtn.getCapHeight());
 				textBtn.draw(batch, "menu", btnMN.getX() + 0.175F*btnMN.getWidth(), btnMN.getY() + btnMN.getHeight() - 1.75F*textBtn.getCapHeight());
 			}else{
@@ -403,7 +491,8 @@ public class GameScreen implements Screen{
 		btnPlus.setCoordinates();
 		btnPlus.getSprite().draw(batch);
 		if(controller.isOnGameStatic(btnPlus.getX(), btnPlus.getY(), btnPlus.getWidth(), btnPlus.getHeight())){
-			btnPlus.setMode(true);
+			if(!INF.isLaunch)
+				btnPlus.setMode(true);
 		}else{
 			btnPlus.setMode(false);
 		}
@@ -430,38 +519,38 @@ public class GameScreen implements Screen{
 			control.setMode(false);
 		}
 		control.getSprite().draw(batch);
-		//Science center
-		if(controller.isOnGame(science.getX(), science.getY(), science.getWidth(), science.getHeight())){
-			science.setMode(true);
+		//Armory
+		if(controller.isOnGame(gunStore.getX(), gunStore.getY(), gunStore.getWidth(), gunStore.getHeight())){
+			gunStore.setMode(true);
 		}else{
-			science.setMode(false);
+			gunStore.setMode(false);
 		}
-		science.getSprite().draw(batch);
+		gunStore.getSprite().draw(batch);
 		/***/
-		if(InfoAndStats.elapsedTime % 30 == 0){
+		if(INF.elapsedTime % 30 == 0){
 			fuelFactorySprite.setTexture(new Texture(schFuel));
 			if(schFuel.equals("objects/fuelFactory_1.png")) schFuel = "objects/fuelFactory_2.png";
 			else if(schFuel.equals("objects/fuelFactory_2.png")) schFuel = "objects/fuelFactory_3.png";
 			else if(schFuel.equals("objects/fuelFactory_3.png")) schFuel = "objects/fuelFactory_4.png";
 			else if(schFuel.equals("objects/fuelFactory_4.png")) schFuel = "objects/fuelFactory_1.png";
 		}
-		for(int i=0;i<(int)InfoAndStats.fuelAmount;i++){
+		for(int i=0;i<(int)INF.fuelAmount;i++){
 			fuelFactorySprite.setX(fuelFactoryX + (1.2F*i)*fuelFactoryWidth);
 			fuelFactorySprite.draw(batch);
 		}
 		/***/
-		if(InfoAndStats.elapsedTime % 15 == 0){
+		if(INF.elapsedTime % 15 == 0){
 			coinFactorySprite.setTexture(new Texture(schCoin));
 			if(schCoin.equals("objects/coinFactory_1.png")) schCoin = "objects/coinFactory_2.png";
 			else if(schCoin.equals("objects/coinFactory_2.png")) schCoin = "objects/coinFactory_3.png";
 			else if(schCoin.equals("objects/coinFactory_3.png")) schCoin = "objects/coinFactory_1.png";
 		}
-		for(int i=0;i<(int)InfoAndStats.moneyAmount;i++){
+		for(int i=0;i<(int)INF.moneyAmount;i++){
 			coinFactorySprite.setX(coinFactoryX + (1.2F*i)*coinFactoryWidth);
 			coinFactorySprite.draw(batch);
 		}
 		/***/
-		if(InfoAndStats.elapsedTime % 6 == 0){
+		if(INF.elapsedTime % 6 == 0){
 			metalFactorySprite.setTexture(new Texture(schMetal));
 			if(schMetal.equals("objects/metalFactory/metalFactory_1.png")) schMetal = "objects/metalFactory/metalFactory_2.png";
 			else if(schMetal.equals("objects/metalFactory/metalFactory_2.png")) schMetal = "objects/metalFactory/metalFactory_3.png";
@@ -488,7 +577,7 @@ public class GameScreen implements Screen{
 			else if(schMetal.equals("objects/metalFactory/metalFactory_23.png")) schMetal = "objects/metalFactory/metalFactory_24.png";
 			else if(schMetal.equals("objects/metalFactory/metalFactory_24.png")) schMetal = "objects/metalFactory/metalFactory_1.png";
 		}
-		for(int i=0;i<(int)InfoAndStats.metalAmount;i++){
+		for(int i=0;i<(int)INF.metalAmount;i++){
 			metalFactorySprite.setX(metalFactoryX + (1.2F*i)*metalFactoryWidth);
 			metalFactorySprite.draw(batch);
 		}
@@ -505,53 +594,95 @@ public class GameScreen implements Screen{
 		cosmocoinLine.draw(batch);
 		fuelLine.draw(batch);
 		metalLine.draw(batch);
-		text.draw(batch, ":     " + Long.toString((int)(InfoAndStats.money)) + "/" + Long.toString((int)(InfoAndStats.moneyFull)), moneySprite.getX() + 1.05F*moneySprite.getWidth(), moneySprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
-		text.draw(batch, ":     " + Long.toString((int)(InfoAndStats.fuel)) + "/" + Long.toString((int)(InfoAndStats.fuelFull)), fuelSprite.getX() + 1.05F*fuelSprite.getWidth(), fuelSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
-		text.draw(batch, ":     " + Long.toString((int)(InfoAndStats.metal)) + "/" + Long.toString((int)(InfoAndStats.metalFull)), metalSprite.getX() + 1.05F*metalSprite.getWidth(), metalSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
+		text.draw(batch, ":     " + Long.toString((int)(INF.money)) + "/" + Long.toString((int)(INF.moneyFull)), moneySprite.getX() + 1.05F*moneySprite.getWidth(), moneySprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
+		text.draw(batch, ":     " + Long.toString((int)(INF.fuel)) + "/" + Long.toString((int)(INF.fuelFull)), fuelSprite.getX() + 1.05F*fuelSprite.getWidth(), fuelSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
+		text.draw(batch, ":     " + Long.toString((int)(INF.metal)) + "/" + Long.toString((int)(INF.metalFull)), metalSprite.getX() + 1.05F*metalSprite.getWidth(), metalSprite.getY() + 0.825F*moneySprite.getHeight() - text.getCapHeight()/1.4F);
 	}
 	private void drawRockets(){
-		if(InfoAndStats.currentRocket.equals("rocketBall"))
-			HangarPanelScreen.rocketBall.getSprite().draw(batch);
-		if(InfoAndStats.currentRocket.equals("rocketCircle"))
-			HangarPanelScreen.rocketCircle.getSprite().draw(batch);
-		if(InfoAndStats.currentRocket.equals("rocketBasic"))
-			HangarPanelScreen.rocketBasic.getSprite().draw(batch);
-		if(InfoAndStats.currentRocket.equals("rocketKinetic"))
-			HangarPanelScreen.rocketKinetic.getSprite().draw(batch);
+		if(rocket != null){
+			if(INF.isLaunch) rocketFire.draw(batch);
+			rocketS.getSprite().draw(batch);
+		}
 	}
-	
-	private void buttonListener(){
-		if(controller.isClickedGame(btnMN.getX(), btnMN.getY(), btnMN.getWidth(), btnMN.getHeight()) || isTransGame){
+	private void drawFlight(){
+		speed *= 1.01F;
+		if(rocketS.getSprite().getY() <= camera.position.y + height){
+			rocketS.getSprite().setY(rocketS.getSprite().getY() + speed);
+			if(rocket != null){
+				if(rocket.equals(INF.rocketBall)){
+					rocketFire.setX(rocketS.getSprite().getX()+0.3F*rocketS.getSprite().getWidth());
+					rocketFire.setY(rocketS.getSprite().getY()+0.2F*rocketS.getSprite().getHeight());
+				}else if(rocket.equals(INF.rocketCircle)){
+					rocketFire.setX(rocketS.getSprite().getX()+0.3F*rocketS.getSprite().getWidth());
+					rocketFire.setY(rocketS.getSprite().getY()+0.2F*rocketS.getSprite().getHeight());
+				}else if(rocket.equals(INF.rocketBasic)){
+					rocketFire.setX(rocketS.getSprite().getX()+0.3F*rocketS.getSprite().getWidth());
+					rocketFire.setY(rocketS.getSprite().getY()-0.15F*rocketS.getSprite().getHeight());
+				}else if(rocket.equals(INF.rocketKinetic)){
+					rocketFire.setX(rocketS.getSprite().getX()+0.15F*rocketS.getSprite().getWidth());
+					rocketFire.setY(rocketS.getSprite().getY()-0.3F*rocketS.getSprite().getHeight());
+				}
+			}
+			if(INF.elapsedTime%3==0){
+				if(schFire.equals("rockets/fire_1.png")){
+					schFire = "rockets/fire_2.png";
+				}else{
+					schFire = "rockets/fire_1.png";
+				}
+			}
+			rocketFire.setTexture(new Texture(schFire));
+		}else{
 			isTransGame = true;
 			if(alp>1.0F){
-				this.dispose();
-				game.setScreen(new MainMenu(game));
+				if(planet.equals(INF.planetLoon)){
+					game.setScreen(new LoonScreen(game));
+				}else if(planet.equals(INF.planetEmion)){
+					game.setScreen(new EmionScreen(game));
+				}
+				INF.isLaunch = false;
 				alp = 1.0F;
+				this.dispose();
 			}else{
 				blackAlpha.setAlpha(alp);
 				alp+=0.05F;
 			}
 		}
-		if(controller.isClickedGame(hangar.getX(), hangar.getY(), hangar.getWidth(), hangar.getHeight())){
-				game.setScreen(new AngarScreen(game));
+	}
+	
+	private void buttonListener(){
+		if(!INF.isLaunch){
+			if(controller.isClickedGame(btnMN.getX(), btnMN.getY(), btnMN.getWidth(), btnMN.getHeight()) || isTransGame){
+				isTransGame = true;
+				if(alp>1.0F){
+					game.setScreen(new MainMenu(game));
+					alp = 1.0F;
+					this.dispose();
+				}else{
+					blackAlpha.setAlpha(alp);
+					alp+=0.05F;
+				}
+			}
+			if(controller.isClickedGame(hangar.getX(), hangar.getY(), hangar.getWidth(), hangar.getHeight())){
+				game.setScreen(new HangarScreen(game));
 				this.dispose();
-		}
-		if(controller.isClickedGame(analytic.getX(), analytic.getY(), analytic.getWidth(), analytic.getHeight())){
-			game.setScreen(new AnalyticCentreScreen(game));
-			this.dispose();
-		}
-		if(controller.isClickedGame(control.getX(), control.getY(), control.getWidth(), control.getHeight())){
-			game.setScreen(new ControlCentreScreen(game));
-			this.dispose();
-		}
-		if(controller.isClickedGame(science.getX(), science.getY(), science.getWidth(), science.getHeight())){
-			game.setScreen(new ScienceCentreScreen(game));
-			this.dispose();
-		}
-		if(controller.isClickedGame(btnPlus.getX(), btnPlus.getY(), btnPlus.getWidth(), btnPlus.getHeight())){
-			InfoAndStats.money += 5;
-			InfoAndStats.fuel += 5;
-			InfoAndStats.metal += 5;
+			}
+			if(controller.isClickedGame(analytic.getX(), analytic.getY(), analytic.getWidth(), analytic.getHeight())){
+				game.setScreen(new AnalyticCentreScreen(game));
+				this.dispose();
+			}
+			if(controller.isClickedGame(control.getX(), control.getY(), control.getWidth(), control.getHeight())){
+				game.setScreen(new ControlCentreScreen(game));
+				this.dispose();
+			}
+			if(controller.isClickedGame(gunStore.getX(), gunStore.getY(), gunStore.getWidth(), gunStore.getHeight())){
+				game.setScreen(new ArmoryScreen(game));
+				this.dispose();
+			}
+			if(controller.isClickedGame(btnPlus.getX(), btnPlus.getY(), btnPlus.getWidth(), btnPlus.getHeight())){
+				INF.money += 5;
+				INF.fuel += 5;
+				INF.metal += 5;
+			}
 		}
 	}
 	
@@ -562,7 +693,7 @@ public class GameScreen implements Screen{
 
 	@Override
 	public void pause() {
-
+		
 	}
 
 	@Override
@@ -574,25 +705,39 @@ public class GameScreen implements Screen{
 	public void hide() {
 
 	}
-
-	private void textureDispose(){
+	
+	@Override
+	public void dispose() {
+		flight.stop();
+		flight.dispose();
+		text.dispose();
+		textBtn.dispose();
 		backgroundTexture.dispose();
 		hangar.getTexture().dispose();
 		analytic.getTexture().dispose();
 		control.getTexture().dispose();
-		science.getTexture().dispose();
-	}
-	
-	@Override
-	public void dispose() {
-		text.dispose();
-		launchSoundPath.stop();
-		launchSoundPath.dispose();
-		game.dispose();
-		textureDispose();
+		gunStore.getTexture().dispose();
+		fuelFactoryTexture.dispose();
+		coinFactoryTexture.dispose();
+		metalFactoryTexture.dispose();
+		btnMN.getSprite().getTexture().dispose();
+		btnPlus.getSprite().getTexture().dispose();
+		moneySprite.getTexture().dispose();
+		fuelSprite.getTexture().dispose();
+		metalSprite.getTexture().dispose();
+		cosmocoinLine.getTexture().dispose();
+		fuelLine.getTexture().dispose();
+		metalLine.getTexture().dispose();
+		blackAlpha.getTexture().dispose();
+		rocketFire.getTexture().dispose();
+		rocketBall.getSprite().getTexture().dispose();
+		rocketCircle.getSprite().getTexture().dispose();
+		rocketBasic.getSprite().getTexture().dispose();
+		rocketKinetic.getSprite().getTexture().dispose();
 		cash.dispose();
 		bubble.dispose();
 		anvil.dispose();
+		batch.dispose();
 	}
 
 }

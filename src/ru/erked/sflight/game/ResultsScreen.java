@@ -17,7 +17,7 @@ import ru.erked.sflight.random.INF;
 import ru.erked.sflight.tech.CurPR;
 import ru.erked.sflight.tech.SFButtonS;
 
-public class StartPanelScreen implements Screen{
+public class ResultsScreen implements Screen{
 
 	final String FONT_CHARS_RU = "абвгдежзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
 	private static final float width = Gdx.graphics.getWidth();
@@ -26,23 +26,31 @@ public class StartPanelScreen implements Screen{
 	private final StartSFlight game;
 	private SFlightInputController controller;
 	
+	//Resources
+	private int exCoin;
+	private int exFuel;
+	private int exMetal;
+	private long survTime;
+	private int kills;
+	
 	//Background
 	private Texture backgroundTexture;
 	public static Sprite backgroundSprite;
 	
-	//"Back" Button
+	//"Continue" Button
 	private SFButtonS back;
 	private String schBack;
-	
-	//"Start" Button
-	private SFButtonS start;
-	private SFButtonS monogram;
 	
 	//Fonts
 	private static BitmapFont text;
 	
-	public StartPanelScreen(final StartSFlight game){
+	public ResultsScreen(final StartSFlight game, int exCoin, int exFuel, int exMetal, long survTime, int kills){
 		this.game = game;
+		this.exCoin = exCoin;
+		this.exFuel = exFuel;
+		this.exMetal = exMetal;
+		this.survTime = survTime;
+		this.kills = kills;
 	}
 	
 	@Override
@@ -58,15 +66,10 @@ public class StartPanelScreen implements Screen{
 		schBack = "bckgrnd/resource/resource_1.png";
 		
 		if(!INF.lngRussian){
-			back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
+			back = new SFButtonS("btns/continue", 0.185F*width, width - 0.25F*width, 0.035F*height, 1.0F);
 		}else{
-			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
+			back = new SFButtonS("btns/RU/continueR", 0.25F*width, width - 0.35F*width, 0.035F*height, 1.0F);
 		}
-
-		start = new SFButtonS("btns/start", 0.3F*width, 0.65F*width, 0.5F*height, 1.0F);
-		start.setY(0.75F*height - 0.5F*start.getHeight());
-		monogram = new SFButtonS("btns/monogramm", 0.5F*width, 0.05F*width, 0.5F*height, 1.0F);
-		monogram.setY(0.75F*height - 0.5F*monogram.getHeight());
 		
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
 		FreeTypeFontGenerator genRU = new FreeTypeFontGenerator(Gdx.files.internal("fonts/9840.otf"));
@@ -76,10 +79,11 @@ public class StartPanelScreen implements Screen{
 		if(INF.lngRussian){
 			param2.characters = FONT_CHARS_RU;
 			text = genRU.generateFont(param2);
+			text.getData().setScale((float)(0.00125F*height));
 		}else{
 			text = genUS.generateFont(param2);
+			text.getData().setScale((float)(0.00150F*height));
 		}
-		text.getData().setScale((float)(0.00075F*width));
 		
 		genRU.dispose();
 		genUS.dispose();
@@ -106,68 +110,53 @@ public class StartPanelScreen implements Screen{
 		}
 		back.getSprite().draw(game.batch);
 
+		long sec = (survTime/60)%60;
+		long min = survTime/3600;
 		if(!INF.lngRussian){
-			text.draw(game.batch, "Control panel", 0.4F*width, 0.965F*height);
-			if(!INF.currentPlanet.equals("null")){
-				text.draw(game.batch, "Current planet: " + CurPR.getCurPlanet().getNameUS(), 0.05F*width, 0.4F*height);
+			text.draw(game.batch, "Results", 0.45F*width, 0.965F*height);
+			text.draw(game.batch, "Extracted:", 0.05F*width, 0.965F*height-3.0F*text.getCapHeight());
+			text.draw(game.batch, exCoin + " cosmocoins", 0.05F*width, 0.965F*height-4.5F*text.getCapHeight());
+			text.draw(game.batch, exFuel + " fuel", 0.05F*width, 0.965F*height-6.0F*text.getCapHeight());
+			text.draw(game.batch, exMetal + " metal", 0.05F*width, 0.965F*height-7.5F*text.getCapHeight());
+			if(kills > INF.killsRecord){
+				text.draw(game.batch, "You have destroyed " + kills + " enemies  -  NEW RECORD!", 0.05F*width, 0.965F*height-10.5F*text.getCapHeight());
+				INF.killsRecord = kills;
 			}else{
-				text.draw(game.batch, "The planet is not selected.", 0.05F*width, 0.4F*height);
+				text.draw(game.batch, "You have destroyed " + kills + " enemies", 0.05F*width, 0.965F*height-10.5F*text.getCapHeight());
 			}
-			if(!INF.currentRocket.equals("null")){
-				text.draw(game.batch, "Current rocket: " + CurPR.getCurRocket().getNameUS(), 0.05F*width, 0.4F*height - 1.5F*text.getCapHeight());
+			if(survTime > INF.survTimeRecord){
+				text.draw(game.batch, "You have survived " + min + " min " + sec + " sec   -  NEW RECORD!", 0.05F*width, 0.965F*height-12.0F*text.getCapHeight());
+				INF.survTimeRecord = survTime;
 			}else{
-				text.draw(game.batch, "The rocket is not selected.", 0.05F*width, 0.4F*height - 1.5F*text.getCapHeight());
+				text.draw(game.batch, "You have survived " + min + " min " + sec + " sec ", 0.05F*width, 0.965F*height-12.0F*text.getCapHeight());
 			}
-			if(!INF.currentGun.equals("null")){
-				text.draw(game.batch, "Current space gun: " + CurPR.getCurGun().getNameUS(), 0.05F*width, 0.4F*height - 3.0F*text.getCapHeight());
-			}else{
-				text.draw(game.batch, "The space gun is not selected.", 0.05F*width, 0.4F*height - 3.0F*text.getCapHeight());
-			}
+			text.draw(game.batch, "Bonus:", 0.05F*width, 0.965F*height-15.0F*text.getCapHeight());
+			text.draw(game.batch, (int)(kills/30) + " cosmocoins", 0.05F*width, 0.965F*height-16.5F*text.getCapHeight());
+			text.draw(game.batch, min + " fuel", 0.05F*width, 0.965F*height-18.0F*text.getCapHeight());
+			text.draw(game.batch, CurPR.getCurPlanet().getLevel() + " metal", 0.05F*width, 0.965F*height-19.5F*text.getCapHeight());
 		}else{
-			if(!INF.currentPlanet.equals("null")){
-				text.draw(game.batch, "Текущая планета: " + CurPR.getCurPlanet().getNameRU(), 0.05F*width, 0.4F*height);
+			text.draw(game.batch, "Результаты", 0.4F*width, 0.965F*height);
+			text.draw(game.batch, "Добыто:", 0.05F*width, 0.965F*height-3.0F*text.getCapHeight());
+			text.draw(game.batch, exCoin + " космокоинов", 0.05F*width, 0.965F*height-4.5F*text.getCapHeight());
+			text.draw(game.batch, exFuel + " топлива", 0.05F*width, 0.965F*height-6.0F*text.getCapHeight());
+			text.draw(game.batch, exMetal + " металла", 0.05F*width, 0.965F*height-7.5F*text.getCapHeight());
+			if(kills > INF.killsRecord){
+				text.draw(game.batch, "Вы уничтожили " + kills + " противников  -  НОВЫЙ РЕКОРД!", 0.05F*width, 0.965F*height-10.5F*text.getCapHeight());
+				INF.killsRecord = kills;
 			}else{
-				text.draw(game.batch, "Планета не выбрана.", 0.05F*width, 0.4F*height);
+				text.draw(game.batch, "Вы уничтожили " + kills + " противников", 0.05F*width, 0.965F*height-10.5F*text.getCapHeight());
 			}
-			if(!INF.currentRocket.equals("null")){
-				text.draw(game.batch, "Текущая ракета: " + CurPR.getCurRocket().getNameRU(), 0.05F*width, 0.4F*height - 1.5F*text.getCapHeight());
+			if(survTime > INF.survTimeRecord){
+				text.draw(game.batch, "Вы выжили " + min + " мин " + sec + " сек   -  НОВЫЙ РЕКОРД!", 0.05F*width, 0.965F*height-12.0F*text.getCapHeight());
+				INF.survTimeRecord = survTime;
 			}else{
-				text.draw(game.batch, "Ракета не выбрана.", 0.05F*width, 0.4F*height - 1.5F*text.getCapHeight());
+				text.draw(game.batch, "Вы выжили " + min + " мин " + sec + " сек ", 0.05F*width, 0.965F*height-12.0F*text.getCapHeight());
 			}
-			if(!INF.currentGun.equals("null")){
-				text.draw(game.batch, "Текущее космооружие: " + CurPR.getCurGun().getNameRU(), 0.05F*width, 0.4F*height - 3.0F*text.getCapHeight());
-			}else{
-				text.draw(game.batch, "Космооружие не выбрано.", 0.05F*width, 0.4F*height - 3.0F*text.getCapHeight());
-			}
+			text.draw(game.batch, "Бонус:", 0.05F*width, 0.965F*height-15.0F*text.getCapHeight());
+			text.draw(game.batch, (int)(kills/30) + " космокоинов", 0.05F*width, 0.965F*height-16.5F*text.getCapHeight());
+			text.draw(game.batch, min + " топлива", 0.05F*width, 0.965F*height-18.0F*text.getCapHeight());
+			text.draw(game.batch, CurPR.getCurPlanet().getLevel() + " металла", 0.05F*width, 0.965F*height-19.5F*text.getCapHeight());
 		}
-		if(!INF.lngRussian){
-			if(!INF.currentPlanet.equals("null") && !INF.currentRocket.equals("null") && !INF.currentGun.equals("null")){
-				text.draw(game.batch, "Rocket is ready to start.", 0.05F*width, 0.4F*height - 6.0F*text.getCapHeight());
-			}
-		}else{
-			if(!INF.currentPlanet.equals("null") && !INF.currentRocket.equals("null") && !INF.currentGun.equals("null")){
-				text.draw(game.batch, "Ракета готова к запуску.", 0.05F*width, 0.4F*height - 6.0F*text.getCapHeight());
-			}
-		}
-		
-		
-		if(controller.isOn(start.getX(), start.getY(), start.getWidth(), start.getHeight())){
-			start.setMode(true);
-			start.setY(0.65F*height - 0.51F*start.getHeight());
-		}else{
-			start.setMode(false);
-			start.setY(0.65F*height - 0.5F*start.getHeight());
-		}
-		start.getSprite().draw(game.batch);
-		
-		if(controller.isOn(monogram.getX(), monogram.getY(), monogram.getWidth(), monogram.getHeight())){
-			monogram.setMode(true);
-			monogram.setY(0.65F*height - 0.51F*monogram.getHeight());
-		}else{
-			monogram.setMode(false);
-			monogram.setY(0.65F*height - 0.5F*monogram.getHeight());
-		}
-		monogram.getSprite().draw(game.batch);
 		
 		game.batch.end();
 		
@@ -177,26 +166,20 @@ public class StartPanelScreen implements Screen{
 	
 	private void buttonListener(){
 		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
-			game.setScreen(new ControlCentreScreen(game));
+			/***/
+			INF.money+=(int)(kills/30);
+			INF.fuel+=survTime/3600;
+			INF.metal+=CurPR.getCurPlanet().getLevel();
+			INF.money+=exCoin;
+			INF.fuel+=exFuel;
+			INF.metal+=exMetal;
+			INF.launch++;
+			INF.currentGun = "null";
+			INF.currentPlanet = "null";
+			INF.currentRocket = "null";
+			/***/
+			game.setScreen(new GameScreen(game));
 			this.dispose();
-		}
-		
-		if(controller.isClicked(monogram.getX(), monogram.getY(), monogram.getWidth(), monogram.getHeight())){
-			game.setScreen(new PlanetScreen(game));
-			this.dispose();
-		}
-		
-		if(controller.isClicked(start.getX(), start.getY(), start.getWidth(), start.getHeight())){
-			if(CurPR.getCurRocket() != null){
-				if(CurPR.getCurPlanet() != null){
-					if(CurPR.getCurGun() != null){
-						INF.fuel -= CurPR.getCurPlanet().getFuelTo();
-						INF.isLaunch = true;
-						game.setScreen(new GameScreen(game));
-						this.dispose();
-					}
-				}
-			}
 		}
 	}
 	

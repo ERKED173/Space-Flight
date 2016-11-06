@@ -1,6 +1,5 @@
 package ru.erked.sflight.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -8,13 +7,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
+import ru.erked.sflight.StartSFlight;
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.random.INF;
 import ru.erked.sflight.tech.SFButtonS;
 
 public class ResourceScreen implements Screen{
@@ -23,8 +22,7 @@ public class ResourceScreen implements Screen{
 	private static final float width = Gdx.graphics.getWidth();
 	private static final float height = Gdx.graphics.getHeight();
 	
-	private Game game;
-	private SpriteBatch batch;
+	private final StartSFlight game;
 	private SFlightInputController controller;
 	
 	//Background
@@ -49,14 +47,13 @@ public class ResourceScreen implements Screen{
 	private static BitmapFont text;
 	private static BitmapFont textBtn;
 	
-	public ResourceScreen(Game game){
+	public ResourceScreen(final StartSFlight game){
 		this.game = game;
 	}
 	
 	@Override
 	public void show() {
 
-		batch = new SpriteBatch();
 		controller = new SFlightInputController();
 		
 		MainMenu.music.play();
@@ -66,7 +63,7 @@ public class ResourceScreen implements Screen{
 		backgroundSprite.setBounds(0.0F, 0.0F, width, height);
 		schBack = "bckgrnd/resource/resource_1.png";
 		
-		if(!InfoAndStats.lngRussian){
+		if(!INF.lngRussian){
 			back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
 		}else{
 			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
@@ -80,26 +77,26 @@ public class ResourceScreen implements Screen{
 		param.size = 40;
 		param2.color = Color.WHITE;
 		param2.size = 40;
-		if(InfoAndStats.lngRussian){
+		if(INF.lngRussian){
 			param.characters = FONT_CHARS_RU;
 			param2.characters = FONT_CHARS_RU;
 			text = genRU.generateFont(param);
 			textBtn = genRU.generateFont(param2);
-			textBtn.getData().setScale((float)(0.0006F*width));
+			textBtn.getData().setScale((float)(0.0011F*height));
 		}else{
 			text = genUS.generateFont(param);
 			textBtn = genUS.generateFont(param2);
-			textBtn.getData().setScale((float)(0.00075F*width));
+			textBtn.getData().setScale((float)(0.0013F*height));
 		}
-		text.getData().setScale((float)(0.00075F*width));
+		text.getData().setScale((float)(0.00115F*height));
 		
 		resourcesInit();
 		
-		upC = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.675F*height, 1.0F);
+		upC = new SFButtonS("btns/button", 0.275F*height, 0.55F*width, 0.675F*height, 1.0F);
 		upC.getSprite().setColor(Color.TEAL);
-		upF = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.475F*height, 1.0F);
+		upF = new SFButtonS("btns/button", 0.275F*height, 0.55F*width, 0.475F*height, 1.0F);
 		upF.getSprite().setColor(Color.TEAL);
-		upM = new SFButtonS("btns/button", 0.15F*width, 0.55F*width, 0.275F*height, 1.0F);
+		upM = new SFButtonS("btns/button", 0.275F*height, 0.55F*width, 0.275F*height, 1.0F);
 		upM.getSprite().setColor(Color.TEAL);
 		
 		genRU.dispose();
@@ -108,49 +105,49 @@ public class ResourceScreen implements Screen{
 
 	@Override
 	public void render(float delta) {
-		InfoAndStats.elapsedTime++;
+		INF.elapsedTime++;
+		resourcesCheck();
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		drawBackground();
 		
-		batch.begin();
+		game.batch.begin();
 		
-		backgroundSprite.draw(batch);
+		backgroundSprite.draw(game.batch);
 		
 		if(controller.isOn(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
 			back.setMode(true);
 		}else{
 			back.setMode(false);
 		}
-		back.getSprite().draw(batch);
+		back.getSprite().draw(game.batch);
 
-		if(!InfoAndStats.lngRussian){
-			text.draw(batch, "Information about resources", 0.315F*width, 0.965F*height);
-			text.draw(batch, InfoAndStats.money + "/" + InfoAndStats.moneyFull + " cosmocoins", 0.125F*width, 0.8F*height - 0.0F*text.getCapHeight());
-			text.draw(batch, 60/(60/InfoAndStats.moneyAmount) + " cosmocoins per 60 sec", 0.125F*width, 0.8F*height - 1.5F*text.getCapHeight());
-			text.draw(batch, InfoAndStats.fuel + "/" + InfoAndStats.fuelFull + " fuel", 0.125F*width, 0.8F*height - 6.0F*text.getCapHeight());
-			text.draw(batch, 60/(60/InfoAndStats.fuelAmount) + " fuel per 60 sec", 0.125F*width, 0.8F*height - 7.5F*text.getCapHeight());
-			text.draw(batch, InfoAndStats.metal + "/" + InfoAndStats.metalFull + " metal", 0.125F*width, 0.8F*height - 12.0F*text.getCapHeight());
-			text.draw(batch, 60/(60/InfoAndStats.metalAmount) + " metal per 60 sec", 0.125F*width, 0.8F*height - 13.5F*text.getCapHeight());
+		if(!INF.lngRussian){
+			text.draw(game.batch, "Information about resources", 0.315F*width, 0.965F*height);
+			text.draw(game.batch, INF.money + "/" + INF.moneyFull + " cosmocoins", 0.125F*width, 0.8F*height - 0.0F*text.getCapHeight());
+			text.draw(game.batch, 60/(60/INF.moneyAmount) + " cosmocoins per 60 sec", 0.125F*width, 0.8F*height - 1.5F*text.getCapHeight());
+			text.draw(game.batch, INF.fuel + "/" + INF.fuelFull + " fuel", 0.125F*width, 0.8F*height - 6.0F*text.getCapHeight());
+			text.draw(game.batch, 60/(60/INF.fuelAmount) + " fuel per 60 sec", 0.125F*width, 0.8F*height - 7.5F*text.getCapHeight());
+			text.draw(game.batch, INF.metal + "/" + INF.metalFull + " metal", 0.125F*width, 0.8F*height - 12.0F*text.getCapHeight());
+			text.draw(game.batch, 60/(60/INF.metalAmount) + " metal per 60 sec", 0.125F*width, 0.8F*height - 13.5F*text.getCapHeight());
 		}else{
-			text.draw(batch, "Информация о ресурсах", 0.315F*width, 0.965F*height);
-			text.draw(batch, InfoAndStats.money + "/" + InfoAndStats.moneyFull + " космокоинов", 0.125F*width, 0.8F*height - 0.0F*text.getCapHeight());
-			text.draw(batch, 60/(60/InfoAndStats.moneyAmount) + " космокоинов за 60 сек", 0.125F*width, 0.8F*height - 1.5F*text.getCapHeight());
-			text.draw(batch, InfoAndStats.fuel + "/" + InfoAndStats.fuelFull + " топлива", 0.125F*width, 0.8F*height - 6.0F*text.getCapHeight());
-			text.draw(batch, 60/(60/InfoAndStats.fuelAmount) + " топлива за 60 сек", 0.125F*width, 0.8F*height - 7.5F*text.getCapHeight());
-			text.draw(batch, InfoAndStats.metal + "/" + InfoAndStats.metalFull + " металла", 0.125F*width, 0.8F*height - 12.0F*text.getCapHeight());
-			text.draw(batch, 60/(60/InfoAndStats.metalAmount) + " металла за 60 сек", 0.125F*width, 0.8F*height - 13.5F*text.getCapHeight());
+			text.draw(game.batch, "Информация о ресурсах", 0.315F*width, 0.965F*height);
+			text.draw(game.batch, INF.money + "/" + INF.moneyFull + " космокоинов", 0.125F*width, 0.8F*height - 0.0F*text.getCapHeight());
+			text.draw(game.batch, 60/(60/INF.moneyAmount) + " космокоинов за 60 сек", 0.125F*width, 0.8F*height - 1.5F*text.getCapHeight());
+			text.draw(game.batch, INF.fuel + "/" + INF.fuelFull + " топлива", 0.125F*width, 0.8F*height - 6.0F*text.getCapHeight());
+			text.draw(game.batch, 60/(60/INF.fuelAmount) + " топлива за 60 сек", 0.125F*width, 0.8F*height - 7.5F*text.getCapHeight());
+			text.draw(game.batch, INF.metal + "/" + INF.metalFull + " металла", 0.125F*width, 0.8F*height - 12.0F*text.getCapHeight());
+			text.draw(game.batch, 60/(60/INF.metalAmount) + " металла за 60 сек", 0.125F*width, 0.8F*height - 13.5F*text.getCapHeight());
 		}
 		
 		drawResources();
 		drawUpBtns();
 		
-		batch.end();
+		game.batch.end();
 		
 		btnListener();
-		resourcesCheck();
 		
 	}
 
@@ -165,7 +162,7 @@ public class ResourceScreen implements Screen{
 
 	
 	private void drawBackground(){
-		if(InfoAndStats.elapsedTime % 15 == 0){
+		if(INF.elapsedTime % 15 == 0){
 			backgroundSprite.setTexture(new Texture(schBack));
 			if(schBack.equals("bckgrnd/resource/resource_1.png")) schBack = "bckgrnd/resource/resource_2.png";
 			else if(schBack.equals("bckgrnd/resource/resource_2.png")) schBack = "bckgrnd/resource/resource_3.png";
@@ -183,58 +180,58 @@ public class ResourceScreen implements Screen{
 		}
 	}
 	private void drawResources(){
-		moneySprite.draw(batch);
-		fuelSprite.draw(batch);
-		metalSprite.draw(batch);
+		moneySprite.draw(game.batch);
+		fuelSprite.draw(game.batch);
+		metalSprite.draw(game.batch);
 	}
 	private void drawUpBtns(){
 		/***/
-		upC.getSprite().draw(batch);
+		upC.getSprite().draw(game.batch);
 		if(controller.isOn(upC.getX(), upC.getY(), upC.getWidth(), upC.getHeight()) && !(upC.getSprite().getColor().equals(Color.TEAL))){
 			upC.setMode(true);
-			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upC.getX() + 0.125F*upC.getWidth(), upC.getY() + 0.575F*upC.getHeight());
+			if(!INF.lngRussian){
+				textBtn.draw(game.batch, "Upgrade", upC.getX() + 0.125F*upC.getWidth(), upC.getY() + 0.575F*upC.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upC.getX() + 0.115F*upC.getWidth(), upC.getY() + 0.575F*upC.getHeight());
+				textBtn.draw(game.batch, "Улучшить", upC.getX() + 0.115F*upC.getWidth(), upC.getY() + 0.575F*upC.getHeight());
 			}
 		}else{
 			upC.setMode(false);
-			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upC.getX() + 0.125F*upC.getWidth(), upC.getY() + 0.6F*upC.getHeight());
+			if(!INF.lngRussian){
+				textBtn.draw(game.batch, "Upgrade", upC.getX() + 0.125F*upC.getWidth(), upC.getY() + 0.6F*upC.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upC.getX() + 0.115F*upC.getWidth(), upC.getY() + 0.6F*upC.getHeight());
+				textBtn.draw(game.batch, "Улучшить", upC.getX() + 0.115F*upC.getWidth(), upC.getY() + 0.6F*upC.getHeight());
 			}
 		}
-		upF.getSprite().draw(batch);
+		upF.getSprite().draw(game.batch);
 		if(controller.isOn(upF.getX(), upF.getY(), upF.getWidth(), upF.getHeight()) && !(upF.getSprite().getColor().equals(Color.TEAL))){
 			upF.setMode(true);
-			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upF.getX() + 0.125F*upF.getWidth(), upF.getY() + 0.575F*upF.getHeight());
+			if(!INF.lngRussian){
+				textBtn.draw(game.batch, "Upgrade", upF.getX() + 0.125F*upF.getWidth(), upF.getY() + 0.575F*upF.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upF.getX() + 0.115F*upF.getWidth(), upF.getY() + 0.575F*upF.getHeight());
+				textBtn.draw(game.batch, "Улучшить", upF.getX() + 0.115F*upF.getWidth(), upF.getY() + 0.575F*upF.getHeight());
 			}
 		}else{
 			upF.setMode(false);
-			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upF.getX() + 0.125F*upF.getWidth(), upF.getY() + 0.6F*upF.getHeight());
+			if(!INF.lngRussian){
+				textBtn.draw(game.batch, "Upgrade", upF.getX() + 0.125F*upF.getWidth(), upF.getY() + 0.6F*upF.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upF.getX() + 0.115F*upM.getWidth(), upF.getY() + 0.6F*upF.getHeight());
+				textBtn.draw(game.batch, "Улучшить", upF.getX() + 0.115F*upM.getWidth(), upF.getY() + 0.6F*upF.getHeight());
 			}
 		}
-		upM.getSprite().draw(batch);
+		upM.getSprite().draw(game.batch);
 		if(controller.isOn(upM.getX(), upM.getY(), upM.getWidth(), upM.getHeight()) && !(upM.getSprite().getColor().equals(Color.TEAL))){
 			upM.setMode(true);
-			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upM.getX() + 0.125F*upM.getWidth(), upM.getY() + 0.575F*upM.getHeight());
+			if(!INF.lngRussian){
+				textBtn.draw(game.batch, "Upgrade", upM.getX() + 0.125F*upM.getWidth(), upM.getY() + 0.575F*upM.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upM.getX() + 0.115F*upM.getWidth(), upM.getY() + 0.575F*upM.getHeight());
+				textBtn.draw(game.batch, "Улучшить", upM.getX() + 0.115F*upM.getWidth(), upM.getY() + 0.575F*upM.getHeight());
 			}
 		}else{
 			upM.setMode(false);
-			if(!InfoAndStats.lngRussian){
-				textBtn.draw(batch, "Upgrade", upM.getX() + 0.125F*upM.getWidth(), upM.getY() + 0.6F*upM.getHeight());
+			if(!INF.lngRussian){
+				textBtn.draw(game.batch, "Upgrade", upM.getX() + 0.125F*upM.getWidth(), upM.getY() + 0.6F*upM.getHeight());
 			}else{
-				textBtn.draw(batch, "Улучшить", upM.getX() + 0.115F*upM.getWidth(), upM.getY() + 0.6F*upM.getHeight());
+				textBtn.draw(game.batch, "Улучшить", upM.getX() + 0.115F*upM.getWidth(), upM.getY() + 0.6F*upM.getHeight());
 			}
 		}
 		/***/
@@ -243,243 +240,243 @@ public class ResourceScreen implements Screen{
 	}
 	private void drawUpInfo(){
 		/***/
-		if(!InfoAndStats.lngRussian){
-			text.draw(batch, "Cost:", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.95F*upC.getHeight());
-			if(InfoAndStats.moneyLevel == 0){
-				if(InfoAndStats.fuel < 10 || InfoAndStats.metal < 10){
+		if(!INF.lngRussian){
+			text.draw(game.batch, "Cost:", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.95F*upC.getHeight());
+			if(INF.moneyLevel == 0){
+				if(INF.fuel < 10 || INF.metal < 10){
 					upC.getSprite().setColor(Color.TEAL);
 				}else{
 					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
-				text.draw(batch, "10 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
-			}else if(InfoAndStats.moneyLevel == 1){
-				if(InfoAndStats.fuel < 25 || InfoAndStats.metal < 25){
+				text.draw(game.batch, "10 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(game.batch, "10 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
+			}else if(INF.moneyLevel == 1){
+				if(INF.fuel < 25 || INF.metal < 25){
 					upC.getSprite().setColor(Color.TEAL);
 				}else{
 					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
-				text.draw(batch, "25 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
-			}else if(InfoAndStats.moneyLevel == 2){
-				if(InfoAndStats.fuel < 50 || InfoAndStats.metal < 50){
+				text.draw(game.batch, "25 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(game.batch, "25 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
+			}else if(INF.moneyLevel == 2){
+				if(INF.fuel < 50 || INF.metal < 50){
 					upC.getSprite().setColor(Color.TEAL);
 				}else{
 					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
-				text.draw(batch, "50 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
-			}else if(InfoAndStats.moneyLevel == 3){
-				if(InfoAndStats.fuel < 75 || InfoAndStats.metal < 75){
+				text.draw(game.batch, "50 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(game.batch, "50 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
+			}else if(INF.moneyLevel == 3){
+				if(INF.fuel < 75 || INF.metal < 75){
 					upC.getSprite().setColor(Color.TEAL);
 				}else{
 					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
-				text.draw(batch, "75 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
-			}else if(InfoAndStats.moneyLevel == 4){
-				text.draw(batch, "MAX level", upM.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(game.batch, "75 metal", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(game.batch, "75 fuel", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
+			}else if(INF.moneyLevel == 4){
+				text.draw(game.batch, "MAX level", upM.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
 				upC.getSprite().setColor(Color.TEAL);
 			}else{
 				upC.getSprite().setColor(Color.CYAN);
 			}
 			////
-			text.draw(batch, "Cost:", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.95F*upF.getHeight());
-			if(InfoAndStats.fuelLevel == 0){
-				if(InfoAndStats.money < 10 || InfoAndStats.metal < 10){
+			text.draw(game.batch, "Cost:", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.95F*upF.getHeight());
+			if(INF.fuelLevel == 0){
+				if(INF.money < 10 || INF.metal < 10){
 					upF.getSprite().setColor(Color.TEAL);
 				}else{
 					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
-				text.draw(batch, "10 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
-			}else if(InfoAndStats.fuelLevel == 1){
-				if(InfoAndStats.money < 25 || InfoAndStats.metal < 25){
+				text.draw(game.batch, "10 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(game.batch, "10 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
+			}else if(INF.fuelLevel == 1){
+				if(INF.money < 25 || INF.metal < 25){
 					upF.getSprite().setColor(Color.TEAL);
 				}else{
 					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
-				text.draw(batch, "25 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
-			}else if(InfoAndStats.fuelLevel == 2){
-				if(InfoAndStats.money < 50 || InfoAndStats.metal < 50){
+				text.draw(game.batch, "25 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(game.batch, "25 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
+			}else if(INF.fuelLevel == 2){
+				if(INF.money < 50 || INF.metal < 50){
 					upF.getSprite().setColor(Color.TEAL);
 				}else{
 					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
-				text.draw(batch, "50 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
-			}else if(InfoAndStats.fuelLevel == 3){
-				if(InfoAndStats.money < 75 || InfoAndStats.metal < 75){
+				text.draw(game.batch, "50 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(game.batch, "50 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
+			}else if(INF.fuelLevel == 3){
+				if(INF.money < 75 || INF.metal < 75){
 					upF.getSprite().setColor(Color.TEAL);
 				}else{
 					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
-				text.draw(batch, "75 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
-			}else if(InfoAndStats.fuelLevel == 4){
-				text.draw(batch, "MAX level", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(game.batch, "75 cosmocoins", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(game.batch, "75 metal", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
+			}else if(INF.fuelLevel == 4){
+				text.draw(game.batch, "MAX level", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
 				upF.getSprite().setColor(Color.TEAL);
 			}else{
 				upF.getSprite().setColor(Color.CYAN);
 			}
 			////
-			text.draw(batch, "Cost:", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.95F*upM.getHeight());
-			if(InfoAndStats.metalLevel == 0){
-				if(InfoAndStats.money < 10 || InfoAndStats.fuel < 10){
+			text.draw(game.batch, "Cost:", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.95F*upM.getHeight());
+			if(INF.metalLevel == 0){
+				if(INF.money < 10 || INF.fuel < 10){
 					upM.getSprite().setColor(Color.TEAL);
 				}else{
 					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
-				text.draw(batch, "10 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
-			}else if(InfoAndStats.metalLevel == 1){
-				if(InfoAndStats.money < 25 || InfoAndStats.fuel < 25){
+				text.draw(game.batch, "10 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(game.batch, "10 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
+			}else if(INF.metalLevel == 1){
+				if(INF.money < 25 || INF.fuel < 25){
 					upM.getSprite().setColor(Color.TEAL);
 				}else{
 					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
-				text.draw(batch, "25 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
-			}else if(InfoAndStats.metalLevel == 2){
-				if(InfoAndStats.money < 50 || InfoAndStats.fuel < 50){
+				text.draw(game.batch, "25 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(game.batch, "25 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
+			}else if(INF.metalLevel == 2){
+				if(INF.money < 50 || INF.fuel < 50){
 					upM.getSprite().setColor(Color.TEAL);
 				}else{
 					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
-				text.draw(batch, "50 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
-			}else if(InfoAndStats.metalLevel == 3){
-				if(InfoAndStats.money < 75 || InfoAndStats.fuel < 75){
+				text.draw(game.batch, "50 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(game.batch, "50 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
+			}else if(INF.metalLevel == 3){
+				if(INF.money < 75 || INF.fuel < 75){
 					upM.getSprite().setColor(Color.TEAL);
 				}else{
 					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
-				text.draw(batch, "75 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
-			}else if(InfoAndStats.metalLevel == 4){
-				text.draw(batch, "MAX level", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(game.batch, "75 cosmocoins", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(game.batch, "75 fuel", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
+			}else if(INF.metalLevel == 4){
+				text.draw(game.batch, "MAX level", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
 				upM.getSprite().setColor(Color.TEAL);
 			}else{
 				upM.getSprite().setColor(Color.CYAN);
 			}
 			////
 		}else{
-			text.draw(batch, "Цена:", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.95F*upC.getHeight());
-			if(InfoAndStats.moneyLevel == 0){
-				if(InfoAndStats.fuel < 10 || InfoAndStats.metal < 10){
+			text.draw(game.batch, "Цена:", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.95F*upC.getHeight());
+			if(INF.moneyLevel == 0){
+				if(INF.fuel < 10 || INF.metal < 10){
 					upC.getSprite().setColor(Color.TEAL);
 				}else{
 					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
-				text.draw(batch, "10 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
-			}else if(InfoAndStats.moneyLevel == 1){
-				if(InfoAndStats.fuel < 25 || InfoAndStats.metal < 25){
+				text.draw(game.batch, "10 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(game.batch, "10 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
+			}else if(INF.moneyLevel == 1){
+				if(INF.fuel < 25 || INF.metal < 25){
 					upC.getSprite().setColor(Color.TEAL);
 				}else{
 					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
-				text.draw(batch, "25 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
-			}else if(InfoAndStats.moneyLevel == 2){
-				if(InfoAndStats.fuel < 50 || InfoAndStats.metal < 50){
+				text.draw(game.batch, "25 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(game.batch, "25 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
+			}else if(INF.moneyLevel == 2){
+				if(INF.fuel < 50 || INF.metal < 50){
 					upC.getSprite().setColor(Color.TEAL);
 				}else{
 					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
-				text.draw(batch, "50 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
-			}else if(InfoAndStats.moneyLevel == 3){
-				if(InfoAndStats.fuel < 75 || InfoAndStats.metal < 75){
+				text.draw(game.batch, "50 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(game.batch, "50 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
+			}else if(INF.moneyLevel == 3){
+				if(INF.fuel < 75 || INF.metal < 75){
 					upC.getSprite().setColor(Color.TEAL);
 				}else{
 					upC.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
-				text.draw(batch, "75 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
-			}else if(InfoAndStats.moneyLevel == 4){
-				text.draw(batch, "Макс. уровень", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(game.batch, "75 металла", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
+				text.draw(game.batch, "75 топлива", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.35F*upC.getHeight());
+			}else if(INF.moneyLevel == 4){
+				text.draw(game.batch, "Макс. уровень", upC.getX() + 1.1F*upC.getWidth(), upC.getY() + 0.65F*upC.getHeight());
 				upC.getSprite().setColor(Color.TEAL);
 			}else{
 				upC.getSprite().setColor(Color.CYAN);
 			}
 			////
-			text.draw(batch, "Цена:", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.95F*upF.getHeight());
-			if(InfoAndStats.fuelLevel == 0){
-				if(InfoAndStats.money < 10 || InfoAndStats.metal < 10){
+			text.draw(game.batch, "Цена:", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.95F*upF.getHeight());
+			if(INF.fuelLevel == 0){
+				if(INF.money < 10 || INF.metal < 10){
 					upF.getSprite().setColor(Color.TEAL);
 				}else{
 					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
-				text.draw(batch, "10 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
-			}else if(InfoAndStats.fuelLevel == 1){
-				if(InfoAndStats.money < 25 || InfoAndStats.metal < 25){
+				text.draw(game.batch, "10 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(game.batch, "10 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
+			}else if(INF.fuelLevel == 1){
+				if(INF.money < 25 || INF.metal < 25){
 					upF.getSprite().setColor(Color.TEAL);
 				}else{
 					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
-				text.draw(batch, "25 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
-			}else if(InfoAndStats.fuelLevel == 2){
-				if(InfoAndStats.money < 50 || InfoAndStats.metal < 50){
+				text.draw(game.batch, "25 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(game.batch, "25 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
+			}else if(INF.fuelLevel == 2){
+				if(INF.money < 50 || INF.metal < 50){
 					upF.getSprite().setColor(Color.TEAL);
 				}else{
 					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
-				text.draw(batch, "50 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
-			}else if(InfoAndStats.fuelLevel == 3){
-				if(InfoAndStats.money < 75 || InfoAndStats.metal < 75){
+				text.draw(game.batch, "50 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(game.batch, "50 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
+			}else if(INF.fuelLevel == 3){
+				if(INF.money < 75 || INF.metal < 75){
 					upF.getSprite().setColor(Color.TEAL);
 				}else{
 					upF.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
-				text.draw(batch, "75 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
-			}else if(InfoAndStats.fuelLevel == 4){
-				text.draw(batch, "Макс. уровень", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(game.batch, "75 космокоинов", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
+				text.draw(game.batch, "75 металла", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.35F*upF.getHeight());
+			}else if(INF.fuelLevel == 4){
+				text.draw(game.batch, "Макс. уровень", upF.getX() + 1.1F*upF.getWidth(), upF.getY() + 0.65F*upF.getHeight());
 				upF.getSprite().setColor(Color.TEAL);
 			}else{
 				upF.getSprite().setColor(Color.CYAN);
 			}
 			////
-			text.draw(batch, "Цена:", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.95F*upM.getHeight());
-			if(InfoAndStats.metalLevel == 0){
-				if(InfoAndStats.money < 10 || InfoAndStats.fuel < 10){
+			text.draw(game.batch, "Цена:", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.95F*upM.getHeight());
+			if(INF.metalLevel == 0){
+				if(INF.money < 10 || INF.fuel < 10){
 					upM.getSprite().setColor(Color.TEAL);
 				}else{
 					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "10 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
-				text.draw(batch, "10 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
-			}else if(InfoAndStats.metalLevel == 1){
-				if(InfoAndStats.money < 25 || InfoAndStats.fuel < 25){
+				text.draw(game.batch, "10 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(game.batch, "10 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
+			}else if(INF.metalLevel == 1){
+				if(INF.money < 25 || INF.fuel < 25){
 					upM.getSprite().setColor(Color.TEAL);
 				}else{
 					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "25 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
-				text.draw(batch, "25 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
-			}else if(InfoAndStats.metalLevel == 2){
-				if(InfoAndStats.money < 50 || InfoAndStats.fuel < 50){
+				text.draw(game.batch, "25 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(game.batch, "25 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
+			}else if(INF.metalLevel == 2){
+				if(INF.money < 50 || INF.fuel < 50){
 					upM.getSprite().setColor(Color.TEAL);
 				}else{
 					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "50 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
-				text.draw(batch, "50 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
-			}else if(InfoAndStats.metalLevel == 3){
-				if(InfoAndStats.money < 75 || InfoAndStats.fuel < 75){
+				text.draw(game.batch, "50 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(game.batch, "50 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
+			}else if(INF.metalLevel == 3){
+				if(INF.money < 75 || INF.fuel < 75){
 					upM.getSprite().setColor(Color.TEAL);
 				}else{
 					upM.getSprite().setColor(Color.CYAN);
 				}
-				text.draw(batch, "75 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
-				text.draw(batch, "75 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
-			}else if(InfoAndStats.metalLevel == 4){
-				text.draw(batch, "Макс. уровень", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(game.batch, "75 космокоинов", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
+				text.draw(game.batch, "75 топлива", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.35F*upM.getHeight());
+			}else if(INF.metalLevel == 4){
+				text.draw(game.batch, "Макс. уровень", upM.getX() + 1.1F*upM.getWidth(), upM.getY() + 0.65F*upM.getHeight());
 				upM.getSprite().setColor(Color.TEAL);
 			}else{
 				upM.getSprite().setColor(Color.CYAN);
@@ -497,44 +494,44 @@ public class ResourceScreen implements Screen{
 		}
 		//Слушатель нажатия на коноку апгрейда космокоинов//
 		if(controller.isClicked(upC.getX(), upC.getY(), upC.getWidth(), upC.getHeight())){
-			switch((int)InfoAndStats.moneyLevel){
+			switch((int)INF.moneyLevel){
 			case 0:{
-				if(InfoAndStats.fuel >= 10 && InfoAndStats.metal >= 10){
-					InfoAndStats.fuel -= 10;
-					InfoAndStats.metal -= 10;
-					InfoAndStats.moneyFull = 25;
-					InfoAndStats.moneyAmount = 2;
-					InfoAndStats.moneyLevel = 1;
+				if(INF.fuel >= 10 && INF.metal >= 10){
+					INF.fuel -= 10;
+					INF.metal -= 10;
+					INF.moneyFull = 25;
+					INF.moneyAmount = 2;
+					INF.moneyLevel = 1;
 				}
 				break;
 			}
 			case 1:{
-				if(InfoAndStats.fuel >= 25 && InfoAndStats.metal >= 25){
-					InfoAndStats.fuel -= 25;
-					InfoAndStats.metal -= 25;
-					InfoAndStats.moneyFull = 50;
-					InfoAndStats.moneyAmount = 3;
-					InfoAndStats.moneyLevel = 2;
+				if(INF.fuel >= 25 && INF.metal >= 25){
+					INF.fuel -= 25;
+					INF.metal -= 25;
+					INF.moneyFull = 50;
+					INF.moneyAmount = 3;
+					INF.moneyLevel = 2;
 				}
 				break;
 			}
 			case 2:{
-				if(InfoAndStats.fuel >= 50 && InfoAndStats.metal >= 50){
-					InfoAndStats.fuel -= 50;
-					InfoAndStats.metal -= 50;
-					InfoAndStats.moneyFull = 75;
-					InfoAndStats.moneyAmount = 4;
-					InfoAndStats.moneyLevel = 3;
+				if(INF.fuel >= 50 && INF.metal >= 50){
+					INF.fuel -= 50;
+					INF.metal -= 50;
+					INF.moneyFull = 75;
+					INF.moneyAmount = 4;
+					INF.moneyLevel = 3;
 				}
 				break;
 			}
 			case 3:{
-				if(InfoAndStats.fuel >= 75 && InfoAndStats.metal >= 75){
-					InfoAndStats.fuel -= 75;
-					InfoAndStats.metal -= 75;
-					InfoAndStats.moneyFull = 100;
-					InfoAndStats.moneyAmount = 5;
-					InfoAndStats.moneyLevel = 4;
+				if(INF.fuel >= 75 && INF.metal >= 75){
+					INF.fuel -= 75;
+					INF.metal -= 75;
+					INF.moneyFull = 100;
+					INF.moneyAmount = 5;
+					INF.moneyLevel = 4;
 				}
 				break;
 			}
@@ -543,44 +540,44 @@ public class ResourceScreen implements Screen{
 		//---//
 		//Слушатель нажатия на коноку апгрейда топлива//
 		if(controller.isClicked(upF.getX(), upF.getY(), upF.getWidth(), upF.getHeight())){
-			switch((int)InfoAndStats.fuelLevel){
+			switch((int)INF.fuelLevel){
 			case 0:{
-				if(InfoAndStats.money >= 10 && InfoAndStats.metal >= 10){
-					InfoAndStats.money -= 10;
-					InfoAndStats.metal -= 10;
-					InfoAndStats.fuelFull = 25;
-					InfoAndStats.fuelAmount = 2;
-					InfoAndStats.fuelLevel = 1;
+				if(INF.money >= 10 && INF.metal >= 10){
+					INF.money -= 10;
+					INF.metal -= 10;
+					INF.fuelFull = 25;
+					INF.fuelAmount = 2;
+					INF.fuelLevel = 1;
 				}
 				break;
 			}
 			case 1:{
-				if(InfoAndStats.money >= 25 && InfoAndStats.metal >= 25){
-					InfoAndStats.money -= 25;
-					InfoAndStats.metal -= 25;
-					InfoAndStats.fuelFull = 50;
-					InfoAndStats.fuelAmount = 3;
-					InfoAndStats.fuelLevel = 2;
+				if(INF.money >= 25 && INF.metal >= 25){
+					INF.money -= 25;
+					INF.metal -= 25;
+					INF.fuelFull = 50;
+					INF.fuelAmount = 3;
+					INF.fuelLevel = 2;
 				}
 				break;
 			}
 			case 2:{
-				if(InfoAndStats.money >= 50 && InfoAndStats.metal >= 50){
-					InfoAndStats.money -= 50;
-					InfoAndStats.metal -= 50;
-					InfoAndStats.fuelFull = 75;
-					InfoAndStats.fuelAmount = 4;
-					InfoAndStats.fuelLevel = 3;
+				if(INF.money >= 50 && INF.metal >= 50){
+					INF.money -= 50;
+					INF.metal -= 50;
+					INF.fuelFull = 75;
+					INF.fuelAmount = 4;
+					INF.fuelLevel = 3;
 				}
 				break;
 			}
 			case 3:{
-				if(InfoAndStats.money >= 75 && InfoAndStats.metal >= 75){
-					InfoAndStats.money -= 75;
-					InfoAndStats.metal -= 75;
-					InfoAndStats.fuelFull = 100;
-					InfoAndStats.fuelAmount = 5;
-					InfoAndStats.fuelLevel = 4;
+				if(INF.money >= 75 && INF.metal >= 75){
+					INF.money -= 75;
+					INF.metal -= 75;
+					INF.fuelFull = 100;
+					INF.fuelAmount = 5;
+					INF.fuelLevel = 4;
 				}
 				break;
 			}
@@ -589,44 +586,44 @@ public class ResourceScreen implements Screen{
 		//---//
 		//Слушатель нажатия на коноку апгрейда металла//
 		if(controller.isClicked(upM.getX(), upM.getY(), upM.getWidth(), upM.getHeight())){
-			switch((int)InfoAndStats.metalLevel){
+			switch((int)INF.metalLevel){
 			case 0:{
-				if(InfoAndStats.fuel >= 10 && InfoAndStats.money >= 10){
-					InfoAndStats.fuel -= 10;
-					InfoAndStats.money -= 10;
-					InfoAndStats.metalFull = 25;
-					InfoAndStats.metalAmount = 2;
-					InfoAndStats.metalLevel = 1;
+				if(INF.fuel >= 10 && INF.money >= 10){
+					INF.fuel -= 10;
+					INF.money -= 10;
+					INF.metalFull = 25;
+					INF.metalAmount = 2;
+					INF.metalLevel = 1;
 				}
 				break;
 			}
 			case 1:{
-				if(InfoAndStats.fuel >= 25 && InfoAndStats.money >= 25){
-					InfoAndStats.fuel -= 25;
-					InfoAndStats.money -= 25;
-					InfoAndStats.metalFull = 50;
-					InfoAndStats.metalAmount = 3;
-					InfoAndStats.metalLevel = 2;
+				if(INF.fuel >= 25 && INF.money >= 25){
+					INF.fuel -= 25;
+					INF.money -= 25;
+					INF.metalFull = 50;
+					INF.metalAmount = 3;
+					INF.metalLevel = 2;
 				}
 				break;
 			}
 			case 2:{
-				if(InfoAndStats.fuel >= 50 && InfoAndStats.money >= 50){
-					InfoAndStats.fuel -= 50;
-					InfoAndStats.money -= 50;
-					InfoAndStats.metalFull = 75;
-					InfoAndStats.metalAmount = 4;
-					InfoAndStats.metalLevel = 3;
+				if(INF.fuel >= 50 && INF.money >= 50){
+					INF.fuel -= 50;
+					INF.money -= 50;
+					INF.metalFull = 75;
+					INF.metalAmount = 4;
+					INF.metalLevel = 3;
 				}
 				break;
 			}
 			case 3:{
-				if(InfoAndStats.fuel >= 75 && InfoAndStats.money >= 75){
-					InfoAndStats.fuel -= 75;
-					InfoAndStats.money -= 75;
-					InfoAndStats.metalFull = 100;
-					InfoAndStats.metalAmount = 5;
-					InfoAndStats.metalLevel = 4;
+				if(INF.fuel >= 75 && INF.money >= 75){
+					INF.fuel -= 75;
+					INF.money -= 75;
+					INF.metalFull = 100;
+					INF.metalAmount = 5;
+					INF.metalLevel = 4;
 				}
 				break;
 			}
@@ -636,18 +633,18 @@ public class ResourceScreen implements Screen{
 	}	
 	
 	private void resourcesCheck(){
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
-			InfoAndStats.money++;
+		if(INF.elapsedTime%(3600/INF.moneyAmount) == 0){
+			INF.money++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.fuelAmount) == 60){
-			InfoAndStats.fuel++;
+		if(INF.elapsedTime%(3600/INF.fuelAmount) == 60){
+			INF.fuel++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.metalAmount) == 120){
-			InfoAndStats.metal++;
+		if(INF.elapsedTime%(3600/INF.metalAmount) == 120){
+			INF.metal++;
 		}
-		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
-		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
-		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
+		if(INF.money>INF.moneyFull) INF.money = INF.moneyFull;
+		if(INF.fuel>INF.fuelFull) INF.fuel = INF.fuelFull;
+		if(INF.metal>INF.metalFull) INF.metal = INF.metalFull;
 	}
 	
 	@Override
@@ -670,8 +667,6 @@ public class ResourceScreen implements Screen{
 	@Override
 	public void dispose() {
 		backgroundTexture.dispose();
-		game.dispose();
-		batch.dispose();
 		text.dispose();
 	}
 

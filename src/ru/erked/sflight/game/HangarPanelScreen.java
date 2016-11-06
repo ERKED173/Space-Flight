@@ -1,6 +1,5 @@
 package ru.erked.sflight.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -8,13 +7,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
+import ru.erked.sflight.StartSFlight;
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.random.INF;
 import ru.erked.sflight.tech.SFButtonS;
 
 public class HangarPanelScreen implements Screen{
@@ -23,8 +22,7 @@ public class HangarPanelScreen implements Screen{
 	private static final float width = Gdx.graphics.getWidth();
 	private static final float height = Gdx.graphics.getHeight();
 	
-	private Game game;
-	private SpriteBatch batch;
+	private final StartSFlight game;
 	private SFlightInputController controller;
 	
 	//Background
@@ -39,7 +37,7 @@ public class HangarPanelScreen implements Screen{
 	private Sprite metalIcon;
 	
 	//Fonts
-	private static BitmapFont text;
+	private BitmapFont text;
 	
 	//Page
 	private int page = 1;
@@ -51,19 +49,18 @@ public class HangarPanelScreen implements Screen{
 	private SFButtonS info;
 	
 	//Rockets
-	public static SFButtonS rocketBall = new SFButtonS("rockets/rocketBall", 0.1F*width, 0.115F*width, 0.5F*height, 1.0F);
-	public static SFButtonS rocketCircle = new SFButtonS("rockets/rocketCircle", 0.1F*width, 0.265F*width, 0.5F*height, 1.0F);
-	public static SFButtonS rocketBasic = new SFButtonS("rockets/rocketBasic", 0.059262771F*width, 0.415F*width, 0.5F*height, 1.0F);
-	public static SFButtonS rocketKinetic = new SFButtonS("rockets/rocketKinetic", 0.03884503531366846697133361030328F*width, 0.135F*width, 0.5F*height, 1.0F);
+	public static SFButtonS rocketBall;
+	public static SFButtonS rocketCircle;
+	public static SFButtonS rocketBasic;
+	public static SFButtonS rocketKinetic;
 	
-	public HangarPanelScreen(Game game){
+	public HangarPanelScreen(final StartSFlight game){
 		this.game = game;
 	}
 	
 	@Override
 	public void show() {
 
-		batch = new SpriteBatch();
 		controller = new SFlightInputController();
 		
 		MainMenu.music.play();
@@ -74,8 +71,9 @@ public class HangarPanelScreen implements Screen{
 		schBack = "bckgrnd/hangar/hangar_1.png";
 		
 		metalIcon = new Sprite(new Texture("objects/metal.png"));
-		metalIcon.setBounds(0.095F*width, 0.185F*width, 0.075F*width, 0.075F*width);
+		metalIcon.setBounds(0.095F*width, 0.325F*height, 0.1F*height, 0.1F*height);
 		
+		rocketsInit();
 		SFButtonsInit();
 
 		FreeTypeFontGenerator genUS = new FreeTypeFontGenerator(Gdx.files.internal("fonts/prototype.ttf"));
@@ -83,13 +81,13 @@ public class HangarPanelScreen implements Screen{
 		FreeTypeFontParameter param = new FreeTypeFontParameter();
 		param.color = Color.WHITE;
 		param.size = 40;
-		if(InfoAndStats.lngRussian){
+		if(INF.lngRussian){
 			param.characters = FONT_CHARS_RU;
 			text = genRU.generateFont(param);
-			text.getData().setScale((float)(0.0006F*width));
+			text.getData().setScale((float)(0.001F*height));
 		}else{
 			text = genUS.generateFont(param);
-			text.getData().setScale((float)(0.00075F*width));
+			text.getData().setScale((float)(0.00115F*height));
 		}
 		
 		genRU.dispose();
@@ -98,42 +96,42 @@ public class HangarPanelScreen implements Screen{
 
 	@Override
 	public void render(float delta) {
-		InfoAndStats.elapsedTime++;
+		INF.elapsedTime++;
+		resourceCheck();
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		drawBackground();
 		
-		batch.begin();
+		game.batch.begin();
 		
-		backgroundSprite.draw(batch);
+		backgroundSprite.draw(game.batch);
 
-		metalIcon.draw(batch);
-		text.draw(batch, ": " + InfoAndStats.metal, metalIcon.getX() + 1.1F*metalIcon.getWidth(), metalIcon.getY() + 0.65F*metalIcon.getHeight());
+		metalIcon.draw(game.batch);
+		text.draw(game.batch, ": " + INF.metal, metalIcon.getX() + 1.1F*metalIcon.getWidth(), metalIcon.getY() + 0.65F*metalIcon.getHeight());
 		
 		drawBackButton();
 		drawNextPrev();
 		drawRockets();
 		drawBuyButton();
 		
-		if(!InfoAndStats.lngRussian){
-			text.draw(batch, "Control panel", 0.4F*width, 0.965F*height);
-			text.draw(batch, "Page: " + page, 0.765F*width, 0.175F*height);
+		if(!INF.lngRussian){
+			text.draw(game.batch, "Rockets' panel", 0.4F*width, 0.965F*height);
+			text.draw(game.batch, "Page: " + page, 0.765F*width, 0.175F*height);
 		}else{
-			text.draw(batch, "Панель управления", 0.35F*width, 0.965F*height);
-			text.draw(batch, "Страница: " + page, 0.72F*width, 0.175F*height);
+			text.draw(game.batch, "Панель ракет", 0.35F*width, 0.965F*height);
+			text.draw(game.batch, "Страница: " + page, 0.72F*width, 0.175F*height);
 		}
 		
-		batch.end();
+		game.batch.end();
 		
 		buttonListener();
-		hangarsCheck();
 		
 	}
 	
 	private void SFButtonsInit(){
-		if(!InfoAndStats.lngRussian){
+		if(!INF.lngRussian){
 			back = new SFButtonS("btns/back", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
 		}else{
 			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.2F*width, -0.005F*height, 1.0F);
@@ -144,36 +142,21 @@ public class HangarPanelScreen implements Screen{
 		prev.getSprite().setColor(Color.LIME);
 		buyRocket = new SFButtonS("btns/button", 0.125F*width, 0.1F*width, 0.15F*height, 1.0F);
 		buyRocket.getSprite().setColor(Color.LIME);
-		/***/
-		rocketsInit();
-		/***/
 		info = new SFButtonS("btns/button", 0.0825F*width, 0.25F*width, 0.15F*height, 0.65F);
 		info.getSprite().setColor(Color.LIME);
 	}
 	private void rocketsInit(){
-		rocketBall.setX(0.115F*width);
-		rocketBall.setY(0.5F*height);
-		rocketBall.setWidth(0.1F*width);
-		rocketBall.setHeight(0.1F*width/rocketBall.getAspectRatio());
+		rocketBall = new SFButtonS("rockets/rocketBall", 0.15F*height, 0.115F*width, 0.55F*height, 1.0F);
 		/***/
-		rocketCircle.setX(0.265F*width);
-		rocketCircle.setY(0.5F*height);
-		rocketCircle.setWidth(0.1F*width);
-		rocketCircle.setHeight(0.1F*width/rocketCircle.getAspectRatio());
+		rocketCircle = new SFButtonS("rockets/rocketCircle", 0.15F*height, 0.265F*width, 0.55F*height, 1.0F);
 		/***/
-		rocketBasic.setX(0.415F*width);
-		rocketBasic.setY(0.5F*height);
-		rocketBasic.setWidth(0.059262771F*width);
-		rocketBasic.setHeight(0.059262771F*width/rocketBasic.getAspectRatio());
+		rocketBasic = new SFButtonS("rockets/rocketBasic", 0.0937855248200075786282682834407F*height, 0.415F*width, 0.55F*height, 1.0F);
 		/***/
-		rocketKinetic.setX(0.135F*width);
-		rocketKinetic.setY(0.5F*height);
-		rocketKinetic.setWidth(0.03884503531366846697133361030328F*width);
-		rocketKinetic.setHeight(0.03884503531366846697133361030328F*width/rocketKinetic.getAspectRatio());
+		rocketKinetic = new SFButtonS("rockets/rocketKinetic", 0.07112068965517241379310344827586F*height, 0.135F*width, 0.55F*height, 1.0F);
 	}
 	
 	private void drawBackground(){
-		if(InfoAndStats.elapsedTime % 15 == 0){
+		if(INF.elapsedTime % 15 == 0){
 			backgroundSprite.setTexture(new Texture(schBack));
 			if(schBack.equals("bckgrnd/hangar/hangar_1.png")) schBack = "bckgrnd/hangar/hangar_2.png";
 			else if(schBack.equals("bckgrnd/hangar/hangar_2.png")) schBack = "bckgrnd/hangar/hangar_3.png";
@@ -196,7 +179,7 @@ public class HangarPanelScreen implements Screen{
 		}else{
 			back.setMode(false);
 		}
-		back.getSprite().draw(batch);
+		back.getSprite().draw(game.batch);
 	}
 	private void drawNextPrev(){
 		if(page == 1) prev.getSprite().setColor(Color.FOREST);
@@ -213,43 +196,43 @@ public class HangarPanelScreen implements Screen{
 		}else{
 			prev.setMode(false);
 		}
-		next.getSprite().draw(batch);
-		prev.getSprite().draw(batch);
-		buyRocket.getSprite().draw(batch);
+		next.getSprite().draw(game.batch);
+		prev.getSprite().draw(game.batch);
+		buyRocket.getSprite().draw(game.batch);
 		/***/
 		text.getData().setScale((float)(0.0015F*width));
 		if(!next.isActiveMode())
-			text.draw(batch, ">", next.getX() + 0.3F*next.getWidth(), next.getY() + 0.85F*next.getHeight());
+			text.draw(game.batch, ">", next.getX() + 0.3F*next.getWidth(), next.getY() + 0.85F*next.getHeight());
 		else
-			text.draw(batch, ">", next.getX() + 0.3F*next.getWidth(), next.getY() + 0.8F*next.getHeight());
+			text.draw(game.batch, ">", next.getX() + 0.3F*next.getWidth(), next.getY() + 0.8F*next.getHeight());
 		if(!prev.isActiveMode())
-			text.draw(batch, "<", prev.getX() + 0.3F*prev.getWidth(), prev.getY() + 0.85F*prev.getHeight());
+			text.draw(game.batch, "<", prev.getX() + 0.3F*prev.getWidth(), prev.getY() + 0.85F*prev.getHeight());
 		else
-			text.draw(batch, "<", prev.getX() + 0.3F*prev.getWidth(), prev.getY() + 0.8F*prev.getHeight());
-		text.getData().setScale((float)(0.00075F*width));
+			text.draw(game.batch, "<", prev.getX() + 0.3F*prev.getWidth(), prev.getY() + 0.8F*prev.getHeight());
+		text.getData().setScale((float)(0.00125F*height));
 		/***/
 		if(controller.isOn(info.getX(), info.getY(), info.getWidth(), info.getHeight())){
 			info.setMode(true);
 		}else{
 			info.setMode(false);
 		}
-		info.getSprite().draw(batch);
+		info.getSprite().draw(game.batch);
 		if(!info.isActiveMode()){
 			text.getData().setScale((float)(0.0015F*width));
-			if(!InfoAndStats.lngRussian){
-				text.draw(batch, "i", info.getX() + 0.4F*info.getWidth(), info.getY() + 0.75F*info.getHeight());
+			if(!INF.lngRussian){
+				text.draw(game.batch, "i", info.getX() + 0.4F*info.getWidth(), info.getY() + 0.75F*info.getHeight());
 			}else{
-				text.draw(batch, "i", info.getX() + 0.375F*info.getWidth(), info.getY() + 0.75F*info.getHeight());
+				text.draw(game.batch, "i", info.getX() + 0.375F*info.getWidth(), info.getY() + 0.75F*info.getHeight());
 			}
-			text.getData().setScale((float)(0.00075F*width));
+			text.getData().setScale((float)(0.00125F*height));
 		}else{
 			text.getData().setScale((float)(0.0015F*width));
-			if(!InfoAndStats.lngRussian){
-				text.draw(batch, "i", info.getX() + 0.4F*info.getWidth(), info.getY() + 0.7F*info.getHeight());
+			if(!INF.lngRussian){
+				text.draw(game.batch, "i", info.getX() + 0.4F*info.getWidth(), info.getY() + 0.7F*info.getHeight());
 			}else{
-				text.draw(batch, "i", info.getX() + 0.375F*info.getWidth(), info.getY() + 0.7F*info.getHeight());
+				text.draw(game.batch, "i", info.getX() + 0.375F*info.getWidth(), info.getY() + 0.7F*info.getHeight());
 			}
-			text.getData().setScale((float)(0.00075F*width));
+			text.getData().setScale((float)(0.00125F*height));
 		}
 		/***/
 	}
@@ -264,32 +247,32 @@ public class HangarPanelScreen implements Screen{
 				}
 			}
 			if(rocketBall.isActiveMode()){
-				if(!InfoAndStats.lngRussian){
-					text.draw(batch, "Name: " + InfoAndStats.rocketBall.getNameUS(), 0.55F*width, 0.825F*height);
-					text.draw(batch, "HP: " + InfoAndStats.rocketBall.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Price: " + InfoAndStats.rocketBall.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+				if(!INF.lngRussian){
+					text.draw(game.batch, "Name: " + INF.rocketBall.getNameUS(), 0.55F*width, 0.825F*height);
+					text.draw(game.batch, "HP: " + INF.rocketBall.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
+					text.draw(game.batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBall.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBall.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBall.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(game.batch, "Price: " + INF.rocketBall.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}else{
-					text.draw(batch, "Название: " + InfoAndStats.rocketBall.getNameRU(), 0.55F*width, 0.825F*height);
-					text.draw(batch, "НР: " + InfoAndStats.rocketBall.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBall.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Цена: " + InfoAndStats.rocketBall.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+					text.draw(game.batch, "Название: " + INF.rocketBall.getNameRU(), 0.55F*width, 0.825F*height);
+					text.draw(game.batch, "НР: " + INF.rocketBall.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
+					text.draw(game.batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBall.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBall.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBall.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(game.batch, "Цена: " + INF.rocketBall.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}
 			}
-			if(InfoAndStats.currentRocket.equals("rocketBall")){
-				if(!InfoAndStats.lngRussian){
-					text.draw(batch, "Selected", rocketBall.getX() - 0.1F*rocketBall.getWidth(), rocketBall.getY() - 0.1F*rocketBall.getHeight());
+			if(INF.currentRocket.equals("rocketBall")){
+				if(!INF.lngRussian){
+					text.draw(game.batch, "Selected", rocketBall.getX() - 0.1F*rocketBall.getWidth(), rocketBall.getY() - 0.1F*rocketBall.getHeight());
 				}else{
-					text.draw(batch, "Выбрана", rocketBall.getX() - 0.175F*rocketBall.getWidth(), rocketBall.getY() - 0.1F*rocketBall.getHeight());
+					text.draw(game.batch, "Выбрана", rocketBall.getX() - 0.175F*rocketBall.getWidth(), rocketBall.getY() - 0.1F*rocketBall.getHeight());
 				}
 			}
-			rocketBall.getSprite().draw(batch);
+			rocketBall.getSprite().draw(game.batch);
 			/***/
 			if(controller.isClicked(rocketCircle.getX(), rocketCircle.getY(), rocketCircle.getWidth(), rocketCircle.getHeight())){
 				if(rocketCircle.isActiveMode()) rocketCircle.setMode(false);
@@ -300,32 +283,32 @@ public class HangarPanelScreen implements Screen{
 				}
 			}
 			if(rocketCircle.isActiveMode()){
-				if(!InfoAndStats.lngRussian){
-					text.draw(batch, "Name: " + InfoAndStats.rocketCircle.getNameUS(), 0.55F*width, 0.825F*height);
-					text.draw(batch, "HP: " + InfoAndStats.rocketCircle.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Price: " + InfoAndStats.rocketCircle.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+				if(!INF.lngRussian){
+					text.draw(game.batch, "Name: " + INF.rocketCircle.getNameUS(), 0.55F*width, 0.825F*height);
+					text.draw(game.batch, "HP: " + INF.rocketCircle.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
+					text.draw(game.batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketCircle.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketCircle.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketCircle.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(game.batch, "Price: " + INF.rocketCircle.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}else{
-					text.draw(batch, "Название: " + InfoAndStats.rocketCircle.getNameRU(), 0.55F*width, 0.825F*height);
-					text.draw(batch, "НР: " + InfoAndStats.rocketCircle.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketCircle.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Цена: " + InfoAndStats.rocketCircle.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+					text.draw(game.batch, "Название: " + INF.rocketCircle.getNameRU(), 0.55F*width, 0.825F*height);
+					text.draw(game.batch, "НР: " + INF.rocketCircle.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
+					text.draw(game.batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketCircle.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketCircle.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketCircle.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(game.batch, "Цена: " + INF.rocketCircle.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}
 			}
-			if(InfoAndStats.currentRocket.equals("rocketCircle")){
-				if(!InfoAndStats.lngRussian){
-					text.draw(batch, "Selected", rocketCircle.getX() - 0.1F*rocketCircle.getWidth(), rocketCircle.getY() - 0.1F*rocketCircle.getHeight());
+			if(INF.currentRocket.equals("rocketCircle")){
+				if(!INF.lngRussian){
+					text.draw(game.batch, "Selected", rocketCircle.getX() - 0.1F*rocketCircle.getWidth(), rocketCircle.getY() - 0.1F*rocketCircle.getHeight());
 				}else{
-					text.draw(batch, "Выбрана", rocketCircle.getX() - 0.175F*rocketCircle.getWidth(), rocketCircle.getY() - 0.1F*rocketCircle.getHeight());
+					text.draw(game.batch, "Выбрана", rocketCircle.getX() - 0.175F*rocketCircle.getWidth(), rocketCircle.getY() - 0.1F*rocketCircle.getHeight());
 				}
 			}
-			rocketCircle.getSprite().draw(batch);
+			rocketCircle.getSprite().draw(game.batch);
 			/***/
 			if(controller.isClicked(rocketBasic.getX(), rocketBasic.getY(), rocketBasic.getWidth(), rocketBasic.getHeight())){
 				if(rocketBasic.isActiveMode()) rocketBasic.setMode(false);
@@ -336,32 +319,32 @@ public class HangarPanelScreen implements Screen{
 				}
 			}
 			if(rocketBasic.isActiveMode()){
-				if(!InfoAndStats.lngRussian){
-					text.draw(batch, "Name: " + InfoAndStats.rocketBasic.getNameUS(), 0.55F*width, 0.825F*height);
-					text.draw(batch, "HP: " + InfoAndStats.rocketBasic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Price: " + InfoAndStats.rocketBasic.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+				if(!INF.lngRussian){
+					text.draw(game.batch, "Name: " + INF.rocketBasic.getNameUS(), 0.55F*width, 0.825F*height);
+					text.draw(game.batch, "HP: " + INF.rocketBasic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
+					text.draw(game.batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBasic.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBasic.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBasic.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(game.batch, "Price: " + INF.rocketBasic.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}else{
-					text.draw(batch, "Название: " + InfoAndStats.rocketBasic.getNameRU(), 0.55F*width, 0.825F*height);
-					text.draw(batch, "НР: " + InfoAndStats.rocketBasic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketBasic.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Цена: " + InfoAndStats.rocketBasic.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+					text.draw(game.batch, "Название: " + INF.rocketBasic.getNameRU(), 0.55F*width, 0.825F*height);
+					text.draw(game.batch, "НР: " + INF.rocketBasic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
+					text.draw(game.batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBasic.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBasic.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketBasic.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(game.batch, "Цена: " + INF.rocketBasic.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}
 			}
-			if(InfoAndStats.currentRocket.equals("rocketBasic")){
-				if(!InfoAndStats.lngRussian){
-					text.draw(batch, "Selected", rocketBasic.getX() - 0.5F*rocketBasic.getWidth(), rocketBasic.getY() - 0.1F*rocketBasic.getHeight());
+			if(INF.currentRocket.equals("rocketBasic")){
+				if(!INF.lngRussian){
+					text.draw(game.batch, "Selected", rocketBasic.getX() - 0.5F*rocketBasic.getWidth(), rocketBasic.getY() - 0.1F*rocketBasic.getHeight());
 				}else{
-					text.draw(batch, "Выбрана", rocketBasic.getX() - 0.575F*rocketBasic.getWidth(), rocketBasic.getY() - 0.1F*rocketBasic.getHeight());
+					text.draw(game.batch, "Выбрана", rocketBasic.getX() - 0.575F*rocketBasic.getWidth(), rocketBasic.getY() - 0.1F*rocketBasic.getHeight());
 				}
 			}
-			rocketBasic.getSprite().draw(batch);
+			rocketBasic.getSprite().draw(game.batch);
 			/***/
 		}else if(page == 2){
 			if(controller.isClicked(rocketBall.getX(), rocketBall.getY(), rocketBall.getWidth(), rocketBall.getHeight())){
@@ -373,53 +356,53 @@ public class HangarPanelScreen implements Screen{
 			}
 			/***/
 			if(rocketKinetic.isActiveMode()){
-				if(!InfoAndStats.lngRussian){
-					text.draw(batch, "Name: " + InfoAndStats.rocketKinetic.getNameUS(), 0.55F*width, 0.825F*height);
-					text.draw(batch, "HP: " + InfoAndStats.rocketKinetic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Price: " + InfoAndStats.rocketKinetic.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+				if(!INF.lngRussian){
+					text.draw(game.batch, "Name: " + INF.rocketKinetic.getNameUS(), 0.55F*width, 0.825F*height);
+					text.draw(game.batch, "HP: " + INF.rocketKinetic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
+					text.draw(game.batch, "Resourses extraction: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketKinetic.getSpeedC() + " cosmocoins per 60 sec", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketKinetic.getSpeedF() + " fuel per 60 sec", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketKinetic.getSpeedM() + " metal per 60 sec", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(game.batch, "Price: " + INF.rocketKinetic.getCost() + " metal", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}else{
-					text.draw(batch, "Название: " + InfoAndStats.rocketKinetic.getNameRU(), 0.55F*width, 0.825F*height);
-					text.draw(batch, "НР: " + InfoAndStats.rocketKinetic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
-					text.draw(batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
-					text.draw(batch, InfoAndStats.rocketKinetic.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
-					text.draw(batch, "Цена: " + InfoAndStats.rocketKinetic.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
+					text.draw(game.batch, "Название: " + INF.rocketKinetic.getNameRU(), 0.55F*width, 0.825F*height);
+					text.draw(game.batch, "НР: " + INF.rocketKinetic.getHp(), 0.55F*width, 0.825F*height - 1.5F*text.getCapHeight());
+					text.draw(game.batch, "Добыча ресурсов: ", 0.55F*width, 0.825F*height - 3.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketKinetic.getSpeedC() + " космокоинов за 60 сек", 0.55F*width, 0.825F*height - 4.5F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketKinetic.getSpeedF() + " топлива за 60 сек", 0.55F*width, 0.825F*height - 6.0F*text.getCapHeight());
+					text.draw(game.batch, INF.rocketKinetic.getSpeedM() + " металла за 60 сек", 0.55F*width, 0.825F*height - 7.5F*text.getCapHeight());
+					text.draw(game.batch, "Цена: " + INF.rocketKinetic.getCost() + " металла", 0.55F*width, 0.825F*height - 9.0F*text.getCapHeight());
 				}
 			}
-			if(InfoAndStats.currentRocket.equals("rocketKinetic")){
-				if(!InfoAndStats.lngRussian){
-					text.draw(batch, "Selected", rocketKinetic.getX() - 1.1F*rocketKinetic.getWidth(), rocketKinetic.getY() - 0.1F*rocketKinetic.getHeight());
+			if(INF.currentRocket.equals("rocketKinetic")){
+				if(!INF.lngRussian){
+					text.draw(game.batch, "Selected", rocketKinetic.getX() - 1.1F*rocketKinetic.getWidth(), rocketKinetic.getY() - 0.1F*rocketKinetic.getHeight());
 				}else{
-					text.draw(batch, "Выбрана", rocketKinetic.getX() - 1.175F*rocketKinetic.getWidth(), rocketKinetic.getY() - 0.1F*rocketKinetic.getHeight());
+					text.draw(game.batch, "Выбрана", rocketKinetic.getX() - 1.175F*rocketKinetic.getWidth(), rocketKinetic.getY() - 0.1F*rocketKinetic.getHeight());
 				}
 			}
-			rocketKinetic.getSprite().draw(batch);
+			rocketKinetic.getSprite().draw(game.batch);
 			/***/
 		}
 	}
 	private void drawBuyButton(){
-		if(InfoAndStats.currentRocket.equals("null")){
+		if(INF.currentRocket.equals("null")){
 			if(page==1){
-				if(rocketBall.isActiveMode() && InfoAndStats.metal >= InfoAndStats.rocketBall.getCost()){
+				if(rocketBall.isActiveMode() && INF.metal >= INF.rocketBall.getCost()){
 					buyRocket.getSprite().setColor(Color.LIME);
 					if(controller.isOn(buyRocket.getX(), buyRocket.getY(), buyRocket.getWidth(), buyRocket.getHeight())){
 						buyRocket.setMode(true);
 					}else{
 						buyRocket.setMode(false);
 					}
-				}else if(rocketCircle.isActiveMode() && InfoAndStats.metal >= InfoAndStats.rocketCircle.getCost()){
+				}else if(rocketCircle.isActiveMode() && INF.metal >= INF.rocketCircle.getCost()){
 					buyRocket.getSprite().setColor(Color.LIME);
 					if(controller.isOn(buyRocket.getX(), buyRocket.getY(), buyRocket.getWidth(), buyRocket.getHeight())){
 						buyRocket.setMode(true);
 					}else{
 						buyRocket.setMode(false);
 					}
-				}else if(rocketBasic.isActiveMode() && InfoAndStats.metal >= InfoAndStats.rocketBasic.getCost()){
+				}else if(rocketBasic.isActiveMode() && INF.metal >= INF.rocketBasic.getCost()){
 					buyRocket.getSprite().setColor(Color.LIME);
 					if(controller.isOn(buyRocket.getX(), buyRocket.getY(), buyRocket.getWidth(), buyRocket.getHeight())){
 						buyRocket.setMode(true);
@@ -430,7 +413,7 @@ public class HangarPanelScreen implements Screen{
 					buyRocket.getSprite().setColor(Color.FOREST);
 				}
 			}else if(page==2){
-				if(rocketKinetic.isActiveMode() && InfoAndStats.metal >= InfoAndStats.rocketKinetic.getCost()){
+				if(rocketKinetic.isActiveMode() && INF.metal >= INF.rocketKinetic.getCost()){
 					buyRocket.getSprite().setColor(Color.LIME);
 					if(controller.isOn(buyRocket.getX(), buyRocket.getY(), buyRocket.getWidth(), buyRocket.getHeight())){
 						buyRocket.setMode(true);
@@ -444,24 +427,24 @@ public class HangarPanelScreen implements Screen{
 		}else{
 			buyRocket.getSprite().setColor(Color.FOREST);
 		}
-		buyRocket.getSprite().draw(batch);
+		buyRocket.getSprite().draw(game.batch);
 		/***/
-		if(!InfoAndStats.lngRussian){
+		if(!INF.lngRussian){
 			if(buyRocket.isActiveMode())
-				text.draw(batch, "Buy", buyRocket.getX() + 0.275F*buyRocket.getWidth(), buyRocket.getY() + 0.625F*buyRocket.getHeight());
+				text.draw(game.batch, "Buy", buyRocket.getX() + 0.275F*buyRocket.getWidth(), buyRocket.getY() + 0.625F*buyRocket.getHeight());
 			else
-				text.draw(batch, "Buy", buyRocket.getX() + 0.275F*buyRocket.getWidth(), buyRocket.getY() + 0.65F*buyRocket.getHeight());
+				text.draw(game.batch, "Buy", buyRocket.getX() + 0.275F*buyRocket.getWidth(), buyRocket.getY() + 0.65F*buyRocket.getHeight());
 		}else{
 			if(buyRocket.isActiveMode())
-				text.draw(batch, "Купить", buyRocket.getX() + 0.075F*buyRocket.getWidth(), buyRocket.getY() + 0.625F*buyRocket.getHeight());
+				text.draw(game.batch, "Купить", buyRocket.getX() + 0.075F*buyRocket.getWidth(), buyRocket.getY() + 0.625F*buyRocket.getHeight());
 			else
-				text.draw(batch, "Купить", buyRocket.getX() + 0.075F*buyRocket.getWidth(), buyRocket.getY() + 0.65F*buyRocket.getHeight());
+				text.draw(game.batch, "Купить", buyRocket.getX() + 0.075F*buyRocket.getWidth(), buyRocket.getY() + 0.65F*buyRocket.getHeight());
 		}
 	}
 	
 	private void buttonListener(){
 		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
-			game.setScreen(new AngarScreen(game));
+			game.setScreen(new HangarScreen(game));
 			this.dispose();
 		}
 		if(controller.isClicked(next.getX(), next.getY(), next.getWidth(), next.getHeight())){
@@ -478,40 +461,40 @@ public class HangarPanelScreen implements Screen{
 			rocketBasic.setMode(false);
 			rocketKinetic.setMode(false);
 		}
-		if(controller.isClicked(buyRocket.getX(), buyRocket.getY(), buyRocket.getWidth(), buyRocket.getHeight()) && (InfoAndStats.currentRocket.equals("null"))){
-			if(rocketBall.isActiveMode() && InfoAndStats.metal>=InfoAndStats.rocketBall.getCost()){
-				InfoAndStats.metal -= InfoAndStats.rocketBall.getCost();
-				InfoAndStats.currentRocket = "rocketBall";
-			}else if(rocketCircle.isActiveMode() && InfoAndStats.metal>=InfoAndStats.rocketCircle.getCost()){
-				InfoAndStats.metal -= InfoAndStats.rocketCircle.getCost();
-				InfoAndStats.currentRocket = "rocketCircle";
-			}else if(rocketBasic.isActiveMode() && InfoAndStats.metal>=InfoAndStats.rocketBasic.getCost()){
-				InfoAndStats.metal -= InfoAndStats.rocketBasic.getCost();
-				InfoAndStats.currentRocket = "rocketBasic";
-			}else if(rocketKinetic.isActiveMode() && InfoAndStats.metal>=InfoAndStats.rocketKinetic.getCost()){
-				InfoAndStats.metal -= InfoAndStats.rocketKinetic.getCost();
-				InfoAndStats.currentRocket = "rocketKinetic";
+		if(controller.isClicked(buyRocket.getX(), buyRocket.getY(), buyRocket.getWidth(), buyRocket.getHeight()) && (INF.currentRocket.equals("null"))){
+			if(rocketBall.isActiveMode() && INF.metal>=INF.rocketBall.getCost()){
+				INF.metal -= INF.rocketBall.getCost();
+				INF.currentRocket = "rocketBall";
+			}else if(rocketCircle.isActiveMode() && INF.metal>=INF.rocketCircle.getCost()){
+				INF.metal -= INF.rocketCircle.getCost();
+				INF.currentRocket = "rocketCircle";
+			}else if(rocketBasic.isActiveMode() && INF.metal>=INF.rocketBasic.getCost()){
+				INF.metal -= INF.rocketBasic.getCost();
+				INF.currentRocket = "rocketBasic";
+			}else if(rocketKinetic.isActiveMode() && INF.metal>=INF.rocketKinetic.getCost()){
+				INF.metal -= INF.rocketKinetic.getCost();
+				INF.currentRocket = "rocketKinetic";
 			}
 		}
 		if(controller.isClicked(info.getX(), info.getY(), info.getWidth(), info.getHeight())){
-			game.setScreen(new InformationScreen(game, 1));
+			game.setScreen(new InformationScreen(game, 1, new HangarPanelScreen(game)));
 			this.dispose();
 		}
 	}
 	
-	private void hangarsCheck(){
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
-			InfoAndStats.money++;
+	private void resourceCheck(){
+		if(INF.elapsedTime%(3600/INF.moneyAmount) == 0){
+			INF.money++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.fuelAmount) == 60){
-			InfoAndStats.fuel++;
+		if(INF.elapsedTime%(3600/INF.fuelAmount) == 60){
+			INF.fuel++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.metalAmount) == 120){
-			InfoAndStats.metal++;
+		if(INF.elapsedTime%(3600/INF.metalAmount) == 120){
+			INF.metal++;
 		}
-		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
-		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
-		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
+		if(INF.money>INF.moneyFull) INF.money = INF.moneyFull;
+		if(INF.fuel>INF.fuelFull) INF.fuel = INF.fuelFull;
+		if(INF.metal>INF.metalFull) INF.metal = INF.metalFull;
 		/***/
 		if(page < 1) page = 1;
 		if(page > 5) page = 5;
@@ -537,9 +520,15 @@ public class HangarPanelScreen implements Screen{
 
 	@Override
 	public void dispose() {
+		rocketBall.setMode(false);
+		rocketBall.getSprite().getTexture().dispose();
+		rocketBasic.setMode(false);
+		rocketBasic.getSprite().getTexture().dispose();
+		rocketCircle.setMode(false);
+		rocketCircle.getSprite().getTexture().dispose();
+		rocketKinetic.setMode(false);
+		rocketKinetic.getSprite().getTexture().dispose();
 		backgroundTexture.dispose();
-		game.dispose();
-		batch.dispose();
 		text.dispose();
 	}
 

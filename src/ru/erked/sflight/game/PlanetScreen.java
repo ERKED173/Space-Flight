@@ -1,6 +1,5 @@
 package ru.erked.sflight.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -14,9 +13,10 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector3;
 
+import ru.erked.sflight.StartSFlight;
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.random.INF;
 import ru.erked.sflight.tech.SFButtonA;
 import ru.erked.sflight.tech.SFButtonS;
 
@@ -26,7 +26,7 @@ public class PlanetScreen implements Screen{
 	private static final float width = Gdx.graphics.getWidth();
 	private static final float height = Gdx.graphics.getHeight();
 	
-	private Game game;
+	private final StartSFlight game;
 	private SpriteBatch batch;
 	private SFlightInputController controller;
 	public static OrthographicCamera camera;
@@ -39,6 +39,9 @@ public class PlanetScreen implements Screen{
 	private Sprite earth;
 	private SFButtonS loon;
 	private SFButtonS emion;
+	
+	//Resources
+	private Sprite fuel;
 	
 	//"Select" button
 	private SFButtonS select;
@@ -53,7 +56,7 @@ public class PlanetScreen implements Screen{
 	//Fonts
 	private static BitmapFont text;
 	
-	public PlanetScreen(Game game){
+	public PlanetScreen(final StartSFlight game){
 		this.game = game;
 	}
 	
@@ -61,6 +64,7 @@ public class PlanetScreen implements Screen{
 	public void show() {
 
 		batch = new SpriteBatch();
+		
 		controller = new SFlightInputController();
 		
 		camera = new OrthographicCamera(width, height);
@@ -76,8 +80,11 @@ public class PlanetScreen implements Screen{
 		earth.setBounds(-0.125F*width, -0.85F*width, 1.25F*width, 1.25F*width);
 		earth.setOriginCenter();
 		earth.setRotation((float)(359.0D*Math.random()));
+		fuel  = new Sprite(new Texture("objects/fuel.png"));
+		fuel.setBounds(0.025F*width, 0.025F*width, 0.05F*width, 0.05F*width);
 		
-		if(!InfoAndStats.lngRussian){
+		
+		if(!INF.lngRussian){
 			back = new SFButtonA("btns/back", 0.132F*width, 0.8523F*width, 0.005F*height, camera, 1.0F);
 		}else{
 			back = new SFButtonA("btns/RU/backR", 0.132F*width, 0.8523F*width, 0.005F*height, camera, 1.0F);
@@ -94,7 +101,7 @@ public class PlanetScreen implements Screen{
 		FreeTypeFontParameter param2 = new FreeTypeFontParameter();
 		param2.color = Color.WHITE;
 		param2.size = 40;
-		if(InfoAndStats.lngRussian){
+		if(INF.lngRussian){
 			param2.characters = FONT_CHARS_RU;
 			text = genRU.generateFont(param2);
 			text.getData().setScale((float)(0.0005F*width));
@@ -109,12 +116,16 @@ public class PlanetScreen implements Screen{
 
 	@Override
 	public void render(float delta) {
-		InfoAndStats.elapsedTime++;
+		INF.elapsedTime++;
+		resourcesCheck();
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		touchUpdate();
+		
+		fuel.setX((float)(camera.position.x - (float)width/2.0F) + (float)0.025F*width);
+		fuel.setY((float)(camera.position.y - (float)height/2.0F) + (float)0.025F*width);
 		
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
@@ -125,9 +136,12 @@ public class PlanetScreen implements Screen{
 		
 		earth.rotate(0.0166666666666667F);
 		earth.draw(batch);
+		fuel.draw(batch);
 		
 		loon.getSprite().draw(batch);
 		emion.getSprite().draw(batch);
+		
+		text.draw(batch, ": " + INF.fuel, (camera.position.x - width/2.0F) + 0.085F*width, (camera.position.y - height/2.0F) + 0.06F*width);
 		
 		back.setCoordinates();
 		back.getSprite().draw(batch);
@@ -137,8 +151,8 @@ public class PlanetScreen implements Screen{
 			back.setMode(false);
 		}
 		
-		if(!InfoAndStats.lngRussian){
-			text.draw(batch, "Planet choice", camera.position.x - 0.475F*width, camera.position.y + 0.465F*height);
+		if(!INF.lngRussian){
+			text.draw(batch, "Selecting the planet", camera.position.x - 0.475F*width, camera.position.y + 0.465F*height);
 		}else{
 			text.draw(batch, "Выбор планеты", camera.position.x - 0.475F*width, camera.position.y + 0.465F*height);
 		}
@@ -153,7 +167,6 @@ public class PlanetScreen implements Screen{
 		}
 	
 		buttonListener();
-		resourcesCheck();
 		
 	}
 	
@@ -163,7 +176,7 @@ public class PlanetScreen implements Screen{
 			select.getSprite().draw(batch);
 			select.setX(0.6F*width);
 			select.setY(0.16F*backgroundSprite.getHeight());
-			if(InfoAndStats.planetLoon.isAvailable() && !InfoAndStats.currentPlanet.equals("planetLoon")){
+			if(INF.planetLoon.isAvailable() && !INF.currentPlanet.equals("planetLoon") && INF.fuel >= INF.planetLoon.getFuelTo()){
 				select.getSprite().setColor(Color.CYAN);
 				if(controller.isOnGameHangar(select.getX(), select.getY(), select.getWidth(), select.getHeight())){
 					select.setMode(true);
@@ -171,31 +184,31 @@ public class PlanetScreen implements Screen{
 					select.setMode(false);
 				}
 				if(controller.isClickedGameHangar(select.getX(), select.getY(), select.getWidth(), select.getHeight())){
-					InfoAndStats.currentPlanet = "planetLoon";
+					INF.currentPlanet = "planetLoon";
 				}
 			}else{
 				select.getSprite().setColor(Color.TEAL);
 			}
-			if(!InfoAndStats.lngRussian){
+			if(!INF.lngRussian){
 				text.draw(batch, "Select", 1.0375F*select.getX(), 1.09F*select.getY());
-				text.draw(batch, "Planet's name: " + InfoAndStats.planetLoon.getNameUS(), 3.0F*loon.getX(), 1.27F*loon.getY());
-				text.draw(batch, "Level: " + InfoAndStats.planetLoon.getLevel(), 3.0F*loon.getX(), 1.27F*loon.getY() - 1.5F*text.getCapHeight());
-				text.draw(batch, "You need " + InfoAndStats.planetLoon.getFuelTo() + " fuel", 3.0F*loon.getX(), 1.27F*loon.getY() - 3.0F*text.getCapHeight());
+				text.draw(batch, "Planet's name: " + INF.planetLoon.getNameUS(), 3.0F*loon.getX(), 1.27F*loon.getY());
+				text.draw(batch, "Level: " + INF.planetLoon.getLevel(), 3.0F*loon.getX(), 1.27F*loon.getY() - 1.5F*text.getCapHeight());
+				text.draw(batch, "You need " + INF.planetLoon.getFuelTo() + " fuel", 3.0F*loon.getX(), 1.27F*loon.getY() - 3.0F*text.getCapHeight());
 				text.draw(batch, "to reach the planet", 3.0F*loon.getX(), 1.27F*loon.getY() - 4.5F*text.getCapHeight());
-				if(InfoAndStats.currentPlanet.equals("planetLoon")) text.draw(batch, "Selected", 3.0F*loon.getX(), 1.27F*loon.getY() - 6.0F*text.getCapHeight());
+				if(INF.currentPlanet.equals("planetLoon")) text.draw(batch, "Selected", 3.0F*loon.getX(), 1.27F*loon.getY() - 6.0F*text.getCapHeight());
 			}else{
 				text.draw(batch, "Выбрать", 1.0375F*select.getX(), 1.08F*select.getY());
-				text.draw(batch, "Название планеты: " + InfoAndStats.planetLoon.getNameRU(), 3.0F*loon.getX(), 1.225F*loon.getY());
-				text.draw(batch, "Уровень: " + InfoAndStats.planetLoon.getLevel(), 3.0F*loon.getX(), 1.225F*loon.getY() - 1.5F*text.getCapHeight());
+				text.draw(batch, "Название планеты: " + INF.planetLoon.getNameRU(), 3.0F*loon.getX(), 1.225F*loon.getY());
+				text.draw(batch, "Уровень: " + INF.planetLoon.getLevel(), 3.0F*loon.getX(), 1.225F*loon.getY() - 1.5F*text.getCapHeight());
 				text.draw(batch, "Для достижения планеты", 3.0F*loon.getX(), 1.225F*loon.getY() - 3.0F*text.getCapHeight());
-				text.draw(batch, "нужно " + InfoAndStats.planetLoon.getFuelTo() + " топлива", 3.0F*loon.getX(), 1.225F*loon.getY() - 4.5F*text.getCapHeight());
-				if(InfoAndStats.currentPlanet.equals("planetLoon")) text.draw(batch, "Выбрана", 3.0F*loon.getX(), 1.225F*loon.getY() - 6.0F*text.getCapHeight());
+				text.draw(batch, "нужно " + INF.planetLoon.getFuelTo() + " топлива", 3.0F*loon.getX(), 1.225F*loon.getY() - 4.5F*text.getCapHeight());
+				if(INF.currentPlanet.equals("planetLoon")) text.draw(batch, "Выбрана", 3.0F*loon.getX(), 1.225F*loon.getY() - 6.0F*text.getCapHeight());
 			}
 		}
 		/***/
 		if(emion.isActiveMode()){
 			select.getSprite().draw(batch);
-			if(InfoAndStats.planetEmion.isAvailable() && !InfoAndStats.currentPlanet.equals("planetEmion")){
+			if(INF.planetEmion.isAvailable() && !INF.currentPlanet.equals("planetEmion") && INF.fuel >= INF.planetEmion.getFuelTo()){
 				select.getSprite().setColor(Color.CYAN);
 				if(controller.isOnGameHangar(select.getX(), select.getY(), select.getWidth(), select.getHeight())){
 					select.setMode(true);
@@ -203,25 +216,25 @@ public class PlanetScreen implements Screen{
 					select.setMode(false);
 				}
 				if(controller.isClickedGameHangar(select.getX(), select.getY(), select.getWidth(), select.getHeight())){
-					InfoAndStats.currentPlanet = "planetEmion";
+					INF.currentPlanet = "planetEmion";
 				}
 			}else{
 				select.getSprite().setColor(Color.TEAL);
 			}
-			if(!InfoAndStats.lngRussian){
+			if(!INF.lngRussian){
 				text.draw(batch, "Select", 1.115F*select.getX(), 1.07F*select.getY());
-				text.draw(batch, "Planet's name: " + InfoAndStats.planetEmion.getNameUS(), 0.5F*emion.getX(), 1.22F*emion.getY());
-				text.draw(batch, "Level: " + InfoAndStats.planetEmion.getLevel(), 0.5F*emion.getX(), 1.22F*emion.getY() - 1.5F*text.getCapHeight());
-				text.draw(batch, "You need " + InfoAndStats.planetEmion.getFuelTo() + " fuel", 0.5F*emion.getX(), 1.22F*emion.getY() - 3.0F*text.getCapHeight());
+				text.draw(batch, "Planet's name: " + INF.planetEmion.getNameUS(), 0.5F*emion.getX(), 1.22F*emion.getY());
+				text.draw(batch, "Level: " + INF.planetEmion.getLevel(), 0.5F*emion.getX(), 1.22F*emion.getY() - 1.5F*text.getCapHeight());
+				text.draw(batch, "You need " + INF.planetEmion.getFuelTo() + " fuel", 0.5F*emion.getX(), 1.22F*emion.getY() - 3.0F*text.getCapHeight());
 				text.draw(batch, "to reach the planet", 0.5F*emion.getX(), 1.22F*emion.getY() - 4.5F*text.getCapHeight());
-				if(InfoAndStats.currentPlanet.equals("planetEmion")) text.draw(batch, "Selected", 0.5F*emion.getX(), 1.22F*emion.getY() - 6.0F*text.getCapHeight());
+				if(INF.currentPlanet.equals("planetEmion")) text.draw(batch, "Selected", 0.5F*emion.getX(), 1.22F*emion.getY() - 6.0F*text.getCapHeight());
 			}else{
 				text.draw(batch, "Выбрать", 1.115F*select.getX(), 1.06F*select.getY());
-				text.draw(batch, "Название планеты: " + InfoAndStats.planetEmion.getNameRU(), 0.5F*emion.getX(), 1.18F*emion.getY());
-				text.draw(batch, "Уровень: " + InfoAndStats.planetEmion.getLevel(), 0.5F*emion.getX(), 1.18F*emion.getY() - 1.5F*text.getCapHeight());
+				text.draw(batch, "Название планеты: " + INF.planetEmion.getNameRU(), 0.5F*emion.getX(), 1.18F*emion.getY());
+				text.draw(batch, "Уровень: " + INF.planetEmion.getLevel(), 0.5F*emion.getX(), 1.18F*emion.getY() - 1.5F*text.getCapHeight());
 				text.draw(batch, "Для достижения планеты", 0.5F*emion.getX(), 1.18F*emion.getY() - 3.0F*text.getCapHeight());
-				text.draw(batch, "нужно " + InfoAndStats.planetEmion.getFuelTo() + " топлива", 0.5F*emion.getX(), 1.18F*emion.getY() - 4.5F*text.getCapHeight());
-				if(InfoAndStats.currentPlanet.equals("planetEmion")) text.draw(batch, "Выбрана", 0.5F*emion.getX(), 1.18F*emion.getY() - 6.0F*text.getCapHeight());
+				text.draw(batch, "нужно " + INF.planetEmion.getFuelTo() + " топлива", 0.5F*emion.getX(), 1.18F*emion.getY() - 4.5F*text.getCapHeight());
+				if(INF.currentPlanet.equals("planetEmion")) text.draw(batch, "Выбрана", 0.5F*emion.getX(), 1.18F*emion.getY() - 6.0F*text.getCapHeight());
 			}
 		}
 		/***/
@@ -268,18 +281,18 @@ public class PlanetScreen implements Screen{
 	}
 	
 	private void resourcesCheck(){
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
-			InfoAndStats.money++;
+		if(INF.elapsedTime%(3600/INF.moneyAmount) == 0){
+			INF.money++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.fuelAmount) == 60){
-			InfoAndStats.fuel++;
+		if(INF.elapsedTime%(3600/INF.fuelAmount) == 60){
+			INF.fuel++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.metalAmount) == 120){
-			InfoAndStats.metal++;
+		if(INF.elapsedTime%(3600/INF.metalAmount) == 120){
+			INF.metal++;
 		}
-		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
-		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
-		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
+		if(INF.money>INF.moneyFull) INF.money = INF.moneyFull;
+		if(INF.fuel>INF.fuelFull) INF.fuel = INF.fuelFull;
+		if(INF.metal>INF.metalFull) INF.metal = INF.metalFull;
 	}
 	
 	@Override
@@ -301,9 +314,8 @@ public class PlanetScreen implements Screen{
 
 	@Override
 	public void dispose() {
-		backgroundTexture.dispose();
-		game.dispose();
 		batch.dispose();
+		backgroundTexture.dispose();
 		text.dispose();
 	}
 

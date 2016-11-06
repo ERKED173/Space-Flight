@@ -1,6 +1,5 @@
 package ru.erked.sflight.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -8,13 +7,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
+import ru.erked.sflight.StartSFlight;
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.random.INF;
 import ru.erked.sflight.tech.SFButtonS;
 
 public class StatisticScreen implements Screen{
@@ -23,8 +22,7 @@ public class StatisticScreen implements Screen{
 	private static final float width = Gdx.graphics.getWidth();
 	private static final float height = Gdx.graphics.getHeight();
 	
-	private Game game;
-	private SpriteBatch batch;
+	private final StartSFlight game;
 	private SFlightInputController controller;
 	
 	//Background
@@ -37,22 +35,19 @@ public class StatisticScreen implements Screen{
 	//Fonts
 	private static BitmapFont header;
 	private static BitmapFont text;
-	public static String statsUS = "STATISTICS";
-	public static String statsRU = "СТАТИСТИКА";
 	public static String elapsedTime;
 	private static long hours;
 	private static long minutes;
 	private static long seconds;
 	public static long launches;
 	
-	public StatisticScreen(Game game){
+	public StatisticScreen(final StartSFlight game){
 		this.game = game;
 	}
 	
 	@Override
 	public void show() {
 
-		batch = new SpriteBatch();
 		controller = new SFlightInputController();
 		
 		MainMenu.music.play();
@@ -61,7 +56,7 @@ public class StatisticScreen implements Screen{
 		backgroundSprite = new Sprite(backgroundTexture);
 		backgroundSprite.setBounds(0.0F, 0.0F, width, height);
 		
-		if(!InfoAndStats.lngRussian){
+		if(!INF.lngRussian){
 			back = new SFButtonS("btns/back", 0.132F*width, width - 0.185F*width, 0.045F*height, 1.0F);
 		}else{
 			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.185F*width, 0.045F*height, 1.0F);
@@ -72,7 +67,7 @@ public class StatisticScreen implements Screen{
 		FreeTypeFontParameter param = new FreeTypeFontParameter();
 		param.color = Color.SKY;
 		param.size = 40;
-		if(InfoAndStats.lngRussian){
+		if(INF.lngRussian){
 			param.characters = FONT_CHARS_RU;
 			header = genRU.generateFont(param);
 		}else{
@@ -81,15 +76,16 @@ public class StatisticScreen implements Screen{
 		FreeTypeFontParameter param2 = new FreeTypeFontParameter();
 		param2.color = Color.WHITE;
 		param2.size = 40;
-		if(InfoAndStats.lngRussian){
+		if(INF.lngRussian){
 			param2.characters = FONT_CHARS_RU;
 			text = genRU.generateFont(param2);
+			header.getData().setScale((float)(0.0025F*height));
+			text.getData().setScale((float)(0.00115F*height));
 		}else{
 			text = genUS.generateFont(param2);
+			header.getData().setScale((float)(0.003F*height));
+			text.getData().setScale((float)(0.0015F*height));
 		}
-		
-		header.getData().setScale((float)(0.0015F*width));
-		text.getData().setScale((float)(0.00075F*width));
 		
 		genRU.dispose();
 		genUS.dispose();
@@ -97,62 +93,67 @@ public class StatisticScreen implements Screen{
 
 	@Override
 	public void render(float delta) {
-		InfoAndStats.elapsedTime++;
+		INF.elapsedTime++;
+		resourcesCheck();
 		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		batch.begin();
+		game.batch.begin();
 		
-		backgroundSprite.draw(batch);
+		backgroundSprite.draw(game.batch);
 		
 		if(controller.isOn(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
 			back.setMode(true);
 		}else{
 			back.setMode(false);
 		}
-		back.getSprite().draw(batch);
+		back.getSprite().draw(game.batch);
 		
-		seconds = InfoAndStats.elapsedTime/60;
+		seconds = INF.elapsedTime/60;
 		minutes = (int)seconds/60;
 		hours = (int)minutes/60;
-		launches = InfoAndStats.launch;
-		if(!InfoAndStats.lngRussian){
+		launches = INF.launch;
+		long sec = (INF.survTimeRecord/60)%60;
+		long min = INF.survTimeRecord/3600;
+		if(!INF.lngRussian){
 			elapsedTime = "Time in the game: " + Integer.toString((int) hours) + "h " + Integer.toString((int) minutes%60) + "m " + Integer.toString((int) seconds%60) + "s";
-			header.draw(batch, statsUS, width/2 - (int)(0.055F*width)*2.5F, 0.9F*height);
-			text.draw(batch, elapsedTime, 0.075F*width, 0.75F*height);
-			text.draw(batch, "Rocket launches: " + Long.toString((int)(launches)), 0.075F*width, 0.7F*height);
+			header.draw(game.batch, "STATISTICS", 0.315F*width, 0.9F*height);
+			text.draw(game.batch, elapsedTime, 0.075F*width, 0.9F*height - 2.0F*header.getCapHeight());
+			text.draw(game.batch, "Rocket launches: " + Long.toString((int)(launches)), 0.075F*width, 0.9F*height - 2.85F*header.getCapHeight());
+			text.draw(game.batch, "Record of the enemy destruction: " + INF.killsRecord, 0.075F*width, 0.9F*height - 4.55F*header.getCapHeight());
+			text.draw(game.batch, "Record of the survived time: " + min + " min " + sec + " sec", 0.075F*width, 0.9F*height - 5.4F*header.getCapHeight());
 		}else{
 			elapsedTime = "Время в игре: " + Integer.toString((int) hours) + "ч " + Integer.toString((int) minutes%60) + "м " + Integer.toString((int) seconds%60) + "с";
-			header.draw(batch, statsRU, width/2 - (int)(0.185F*width), 0.9F*height);
-			text.draw(batch, elapsedTime, 0.075F*width, 0.75F*height);
-			text.draw(batch, "Запусков ракет: " + Long.toString((int)(launches)), 0.075F*width, 0.7F*height);
+			header.draw(game.batch, "СТАТИСТИКА", 0.315F*width, 0.9F*height);
+			text.draw(game.batch, elapsedTime, 0.075F*width, 0.9F*height - 2.0F*header.getCapHeight());
+			text.draw(game.batch, "Запусков ракет: " + Long.toString((int)(launches)), 0.075F*width, 0.9F*height - 2.85F*header.getCapHeight());
+			text.draw(game.batch, "Рекорд уничтожения противников: " + INF.killsRecord, 0.075F*width, 0.9F*height - 4.55F*header.getCapHeight());
+			text.draw(game.batch, "Рекорд прожитого времени: " + min + " мин " + sec + " сек", 0.075F*width, 0.9F*height - 5.4F*header.getCapHeight());
 		}
 		
-		batch.end();
+		game.batch.end();
 		
 		if(controller.isClicked(back.getX(), back.getY(), back.getWidth(), back.getHeight())){
 			game.setScreen(new AnalyticCentreScreen(game));
 			this.dispose();
 		}
 		
-		resourcesCheck();
-		
 	}
 
 	private void resourcesCheck(){
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
-			InfoAndStats.money++;
+		if(INF.elapsedTime%(3600/INF.moneyAmount) == 0){
+			INF.money++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.fuelAmount) == 60){
-			InfoAndStats.fuel++;
+		if(INF.elapsedTime%(3600/INF.fuelAmount) == 60){
+			INF.fuel++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.metalAmount) == 120){
-			InfoAndStats.metal++;
+		if(INF.elapsedTime%(3600/INF.metalAmount) == 120){
+			INF.metal++;
 		}
-		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
-		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
-		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
+		if(INF.money>INF.moneyFull) INF.money = INF.moneyFull;
+		if(INF.fuel>INF.fuelFull) INF.fuel = INF.fuelFull;
+		if(INF.metal>INF.metalFull) INF.metal = INF.metalFull;
 	}
 	
 	@Override
@@ -178,8 +179,6 @@ public class StatisticScreen implements Screen{
 	@Override
 	public void dispose() {
 		backgroundTexture.dispose();
-		game.dispose();
-		batch.dispose();
 		header.dispose();
 		text.dispose();
 	}

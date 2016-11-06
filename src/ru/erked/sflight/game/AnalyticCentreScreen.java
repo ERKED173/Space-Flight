@@ -1,6 +1,5 @@
 package ru.erked.sflight.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -8,13 +7,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
+import ru.erked.sflight.StartSFlight;
 import ru.erked.sflight.controllers.SFlightInputController;
 import ru.erked.sflight.menu.MainMenu;
-import ru.erked.sflight.random.InfoAndStats;
+import ru.erked.sflight.random.INF;
 import ru.erked.sflight.tech.SFButtonS;
 
 public class AnalyticCentreScreen implements Screen{
@@ -23,8 +22,7 @@ public class AnalyticCentreScreen implements Screen{
 	private static final float width = Gdx.graphics.getWidth();
 	private static final float height = Gdx.graphics.getHeight();
 	
-	private Game game;
-	private SpriteBatch batch;
+	private final StartSFlight game;
 	private SFlightInputController controller;
 	public static float prevDay = (-1.0F)*1.0F;
 	
@@ -33,7 +31,6 @@ public class AnalyticCentreScreen implements Screen{
 	public static Sprite backgroundSprite;
 	private float backgroundX;
 	private float backgroundY;
-	public static final float backgroundTentionIndex = (float)width/400.0F;
 	//"Back" Button
 	private SFButtonS back;
 	//Statistics' board
@@ -60,7 +57,7 @@ public class AnalyticCentreScreen implements Screen{
 	private float alp = 1.0F;
 	private boolean isTransAnalytic;
 	
-	public AnalyticCentreScreen(Game game){
+	public AnalyticCentreScreen(final StartSFlight game){
 		this.game = game;
 	}
 	
@@ -69,14 +66,19 @@ public class AnalyticCentreScreen implements Screen{
 
 		MainMenu.music.play();
 		
-		batch = new SpriteBatch();
 		controller = new SFlightInputController();
 		
 		backgroundTexture = new Texture("bckgrnd/analytic_inside.png");
 		backgroundSprite = new Sprite(backgroundTexture);
-		backgroundX = 0.0F;
-		backgroundY = (-1)*(230*backgroundTentionIndex)/2 + height/2;
-		backgroundSprite.setBounds(backgroundX, backgroundY, width, backgroundTentionIndex*230.0F);
+		if((float)backgroundTexture.getWidth()/backgroundTexture.getHeight() > (float)width/height){
+			backgroundX = 0.0F;
+			backgroundY = height/2 - width*(float)backgroundTexture.getHeight()/backgroundTexture.getWidth()/2;
+			backgroundSprite.setBounds(backgroundX, backgroundY, width, width*(float)backgroundTexture.getHeight()/backgroundTexture.getWidth());
+		}else{
+			backgroundX = width/2 - 0.5625F*((float)height*((float)backgroundTexture.getWidth()/backgroundTexture.getHeight()));
+			backgroundY = 0.0F;
+			backgroundSprite.setBounds(backgroundX, backgroundY, (float)height*((float)backgroundTexture.getWidth()/backgroundTexture.getHeight()), height);
+		}
 
 		resourcePanelInit();
 		
@@ -85,7 +87,7 @@ public class AnalyticCentreScreen implements Screen{
 		FreeTypeFontParameter param = new FreeTypeFontParameter();
 		param.color = Color.WHITE;
 		param.size = 40;
-		if(!InfoAndStats.lngRussian){
+		if(!INF.lngRussian){
 			text = genUS.generateFont(param);
 			text.getData().setScale((float)(0.0007F*width));
 		}else{
@@ -95,11 +97,14 @@ public class AnalyticCentreScreen implements Screen{
 		}
 		
 		board = new SFButtonS("objects/board", 0.2F*width, 0.6F*backgroundSprite.getWidth(), backgroundSprite.getY() + 0.475F*backgroundSprite.getHeight(), 1.0F);
-		if(!InfoAndStats.lngRussian){
+		if(!INF.lngRussian){
 			back = new SFButtonS("btns/back", 0.132F*width, width - 0.147F*width, 0.005F*height, 1.0F);
 		}else{
 			back = new SFButtonS("btns/RU/backR", 0.132F*width, width - 0.147F*width, 0.005F*height, 1.0F);
 		}
+		
+		genUS.dispose();
+		genRU.dispose();
 		
 		isTransAnalytic = false;
 		blackAlpha.setBounds(0.0F, 0.0F, width, height);
@@ -147,7 +152,7 @@ public class AnalyticCentreScreen implements Screen{
 		}else{
 			back.setMode(false);
 		}
-		back.getSprite().draw(batch);
+		back.getSprite().draw(game.batch);
 	}
 	private void drawScoreboard(){
 		if(controller.isOn(board.getX(), board.getY(), board.getWidth(), board.getHeight())){
@@ -155,31 +160,32 @@ public class AnalyticCentreScreen implements Screen{
 		}else{
 			board.setMode(false);
 		}
-		board.getSprite().draw(batch);
+		board.getSprite().draw(game.batch);
 	}
 	private void drawResourcePanel(){
 		if(controller.isOn(resourcePanel1X, resourcePanel1Y, resourcePanel1Width, resourcePanel1Height)){
-			if(InfoAndStats.elapsedTime % 15 == 0){
+			if(INF.elapsedTime % 15 == 0){
 				resourcePanelActiveSprite.setTexture(new Texture(schResA));
 				if(schResA.equals("objects/resourcesPanelActive/resourcesPanelActive_1.png")) schResA = "objects/resourcesPanelActive/resourcesPanelActive_2.png";
 				else if(schResA.equals("objects/resourcesPanelActive/resourcesPanelActive_2.png")) schResA = "objects/resourcesPanelActive/resourcesPanelActive_3.png";
 				else if(schResA.equals("objects/resourcesPanelActive/resourcesPanelActive_3.png")) schResA = "objects/resourcesPanelActive/resourcesPanelActive_1.png";
 			}
-			resourcePanelActiveSprite.draw(batch);
+			resourcePanelActiveSprite.draw(game.batch);
 		}else{
-			if(InfoAndStats.elapsedTime % 15 == 0){
+			if(INF.elapsedTime % 15 == 0){
 				resourcePanelInactiveSprite.setTexture(new Texture(schResI));
 				if(schResI.equals("objects/resourcesPanelInactive/resourcesPanelInactive_1.png")) schResI = "objects/resourcesPanelInactive/resourcesPanelInactive_2.png";
 				else if(schResI.equals("objects/resourcesPanelInactive/resourcesPanelInactive_2.png")) schResI = "objects/resourcesPanelInactive/resourcesPanelInactive_3.png";
 				else if(schResI.equals("objects/resourcesPanelInactive/resourcesPanelInactive_3.png")) schResI = "objects/resourcesPanelInactive/resourcesPanelInactive_1.png";
 			}
-			resourcePanelInactiveSprite.draw(batch);
+			resourcePanelInactiveSprite.draw(game.batch);
 		}
 	}
 
 	@Override
 	public void render(float delta) {
-		InfoAndStats.elapsedTime++;
+		INF.elapsedTime++;
+		resourcesCheck();
 		
 		if(alp>0.0F && (!isTransAnalytic)){
 			blackAlpha.setAlpha(alp);
@@ -192,42 +198,41 @@ public class AnalyticCentreScreen implements Screen{
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		batch.begin();
+		game.batch.begin();
 		
-		backgroundSprite.draw(batch);
+		backgroundSprite.draw(game.batch);
 
-		if(!InfoAndStats.lngRussian){
-			text.draw(batch, "Analytic centre", 0.01F*width, 0.99F*height);
+		if(!INF.lngRussian){
+			text.draw(game.batch, "Analytic centre", 0.01F*width, 0.99F*height);
 		}else{
-			text.draw(batch, "Аналитический центр", 0.01F*width, 0.99F*height);
+			text.draw(game.batch, "Аналитический центр", 0.01F*width, 0.99F*height);
 		}
 		
 		drawBackButton();
 		drawScoreboard();
 		drawResourcePanel();
 		
-		blackAlpha.draw(batch);
+		blackAlpha.draw(game.batch);
 		
-		batch.end();
+		game.batch.end();
 		
-		resourcesCheck();
 		btnListener();
 		
 	}
 
 	private void resourcesCheck(){
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.moneyAmount) == 0){
-			InfoAndStats.money++;
+		if(INF.elapsedTime%(3600/INF.moneyAmount) == 0){
+			INF.money++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.fuelAmount) == 60){
-			InfoAndStats.fuel++;
+		if(INF.elapsedTime%(3600/INF.fuelAmount) == 60){
+			INF.fuel++;
 		}
-		if(InfoAndStats.elapsedTime%(3600/InfoAndStats.metalAmount) == 120){
-			InfoAndStats.metal++;
+		if(INF.elapsedTime%(3600/INF.metalAmount) == 120){
+			INF.metal++;
 		}
-		if(InfoAndStats.money>InfoAndStats.moneyFull) InfoAndStats.money = InfoAndStats.moneyFull;
-		if(InfoAndStats.fuel>InfoAndStats.fuelFull) InfoAndStats.fuel = InfoAndStats.fuelFull;
-		if(InfoAndStats.metal>InfoAndStats.metalFull) InfoAndStats.metal = InfoAndStats.metalFull;
+		if(INF.money>INF.moneyFull) INF.money = INF.moneyFull;
+		if(INF.fuel>INF.fuelFull) INF.fuel = INF.fuelFull;
+		if(INF.metal>INF.metalFull) INF.metal = INF.metalFull;
 	}
 	
 	@Override
@@ -251,14 +256,16 @@ public class AnalyticCentreScreen implements Screen{
 	}
 
 	private void textureDispose(){
+		blackAlpha.getTexture().dispose();
+		back.getSprite().getTexture().dispose();
 		backgroundTexture.dispose();
 		board.getTexture().dispose();
+		resourcePanelActive.dispose();
+		resourcePanelInactive.dispose();
 	}
 	
 	@Override
 	public void dispose() {
-		game.dispose();
-		batch.dispose();
 		text.dispose();
 		textureDispose();
 		GameScreen.isFromMenu = false;
